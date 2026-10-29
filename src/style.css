@@ -1,0 +1,80 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  display: flex;
+  height: 100vh;
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: #1f2937;
+  background: #f1f5f4;
+}
+
+.sidebar {
+  width: 340px;
+  flex-shrink: 0;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#map { flex: 1; }
+
+h1 { font-size: 20px; margin: 0; }
+h2 {
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #4b5563;
+  margin: 0 0 8px;
+}
+
+.muted { color: #6b7280; margin: 2px 0 0; font-size: 13px; }
+
+.panel {
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 14px;
+  border: 1px solid #e5e7eb;
+}
+
+.panel label { display: flex; align-items: center; gap: 8px; padding: 3px 0; cursor: pointer; }
+.panel label.field { flex-direction: column; align-items: stretch; gap: 4px; margin-bottom: 8px; }
+
+select { padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 8px; font: inherit; }
+
+.dot, .swatch { width: 12px; height: 12px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.dot.ring { box-shadow: 0 0 0 2px #fff, 0 0 0 3px #ef4444; }
+.swatch { border-radius: 3px; opacity: .6; }
+.swatch.heat { background: linear-gradient(90deg, #2563eb, #facc15, #dc2626); opacity: 1; }
+
+.btn-group { display: flex; gap: 6px; }
+
+.btn {
+  flex: 1;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+.btn.active { border-color: #15803d; color: #15803d; font-weight: 600; }
+.btn.primary { background: #15803d; border-color: #15803d; color: #fff; font-weight: 600; margin-top: 6px; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.note { font-size: 12px; color: #92400e; background: #fef3c7; padding: 6px 8px; border-radius: 6px; margin: 8px 0 0; }
+
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; text-align: center; }
+.stats b { display: block; font-size: 20px; }
+.stats span { font-size: 11px; color: #6b7280; }
+
+footer { font-size: 11px; }
+
+@media (max-width: 760px) {
+  body { flex-direction: column-reverse; height: auto; }
+  #map { height: 60vh; flex: none; }
+  .sidebar { width: 100%; }
+}

@@ -1,0 +1,36 @@
+name: Build isochrones
+
+# Jalankan manual dari tab Actions, atau otomatis ketika data SPPG berubah.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [data/SPPG.geojson, scripts/build_isochrones.py]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Hitung isochrone dari OpenRouteService
+        env:
+          ORS_API_KEY: ${{ secrets.ORS_API_KEY }}
+        run: |
+          if [ -z "$ORS_API_KEY" ]; then
+            echo "::warning::Secret ORS_API_KEY belum ada, langkah ini dilewati"
+            exit 0
+          fi
+          python scripts/build_isochrones.py
+      - name: Commit hasil
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/isochrones.geojson
+          git diff --cached --quiet || git commit -m "Update isochrones dari OpenRouteService"
+          git push
