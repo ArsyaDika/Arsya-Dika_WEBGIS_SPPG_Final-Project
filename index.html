@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WebGIS Keterjangkauan SPPG Kota Semarang</title>
+<meta name="description" content="Analisis keterjangkauan Satuan Pelayanan Pemenuhan Gizi (SPPG) terhadap SD, SMP, dan SMA di Kota Semarang.">
+
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@7.1.0/turf.min.js"></script>
+<link href="src/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+<header>
+<h1>Keterjangkauan SPPG</h1>
+<p class="muted">Kota Semarang · SD, SMP, SMA</p>
+</header>
+
+<section class="panel">
+<h2>Basemap</h2>
+<div class="btn-group">
+<button data-style="street" class="btn active">Street</button>
+<button data-style="dark" class="btn">Dark</button>
+<button data-style="sat" class="btn">Satelit</button>
+</div>
+</section>
+
+<section class="panel">
+<h2>Layer</h2>
+<label><input type="checkbox" data-layer="sd-layer" checked><span class="dot" style="background:#3b82f6"></span>SD</label>
+<label><input type="checkbox" data-layer="smp-layer" checked><span class="dot" style="background:#f59e0b"></span>SMP</label>
+<label><input type="checkbox" data-layer="sma-layer" checked><span class="dot" style="background:#8b5cf6"></span>SMA</label>
+<label><input type="checkbox" data-layer="sppg-layer" checked><span class="dot" style="background:#111827"></span>SPPG</label>
+<label><input type="checkbox" data-layer="iso-layer" checked><span class="swatch" style="background:#22c55e"></span>Area terjangkau</label>
+<label><input type="checkbox" data-layer="candidate-layer" checked><span class="dot ring" style="background:#ef4444"></span>Kandidat SPPG baru</label>
+<label><input type="checkbox" data-layer="heatmap-layer"><span class="swatch heat"></span>Kepadatan sekolah</label>
+</section>
+
+<section class="panel">
+<h2>Analisis</h2>
+<label class="field">Waktu tempuh berkendara
+<select id="waktu">
+<option value="5">5 menit</option>
+<option value="10" selected>10 menit</option>
+<option value="15">15 menit</option>
+</select>
+</label>
+<p id="selected" class="muted">Klik titik SPPG di peta untuk analisis satu SPPG.</p>
+<button id="run-local" class="btn primary" disabled>Analisis SPPG terpilih</button>
+<button id="run-global" class="btn primary">Analisis seluruh kota</button>
+<p id="iso-note" class="note" hidden></p>
+</section>
+
+<section class="panel">
+<h2>Hasil</h2>
+<div class="stats">
+<div><b id="served">–</b><span>sekolah terjangkau</span></div>
+<div><b id="unserved">–</b><span>belum terjangkau</span></div>
+<div><b id="pct">–</b><span>cakupan</span></div>
+</div>
+<canvas id="chartSekolah" height="180"></canvas>
+</section>
+
+<footer class="muted">
+Data: sekolah dan SPPG Kota Semarang (bootcamp WebGIS). Basemap © OpenStreetMap contributors.
+</footer>
+
+</aside>
+
+<main id="map"></main>
+
+<script src="src/app.js"></script>
+</body>
+</html>
