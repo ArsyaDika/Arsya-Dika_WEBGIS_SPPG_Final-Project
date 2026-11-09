@@ -47,3 +47,28 @@ Belum diverifikasi di browser. Cara cek: muat ulang halaman lewat Live Server, b
 
 **Pelajaran**
 Event handler yang didaftarkan lewat `map.on` akan dijalankan untuk setiap event yang cocok. Jangan daftarkan fungsi yang sama ke dua event yang menyala bersamaan.
+
+---
+
+## 3. `toggleLayer` butuh dua klik untuk menyembunyikan layer
+
+**Masalah**
+Klik pertama pada tombol SD/SMP/SMA/SPPG/Candidate/Heatmap tidak terlihat berubah. Layer baru hilang pada klik kedua.
+
+**Perubahan**
+`src/app.js` baris 344:
+```diff
+-map.setLayoutProperty(id,'visibility',v==='visible'?'none':'visible');
++map.setLayoutProperty(id,'visibility',v==='none'?'visible':'none');
+```
+
+**Alasan**
+- Layer yang baru dibuat tidak punya properti `visibility` di layout, jadi `getLayoutProperty` mengembalikan `undefined`, bukan `'visible'`.
+- Kode lama: `undefined === 'visible'` bernilai salah, sehingga diset ke `'visible'` (tidak ada perubahan terlihat). Baru klik kedua menyembunyikan.
+- Kode baru hanya menganggap layer tersembunyi kalau nilainya persis `'none'`. Nilai lain (`undefined` atau `'visible'`) berarti terlihat, sehingga klik pertama langsung menyembunyikan.
+
+**Hasil**
+Belum diverifikasi di browser. Cara cek: klik tombol SD sekali, titik biru harus langsung hilang. Klik lagi, harus muncul kembali.
+
+**Pelajaran**
+Nilai default properti MapLibre bisa `undefined`. Saat membuat toggle, uji kondisi "mati" yang pasti (`'none'`), bukan kondisi "hidup" yang bisa punya banyak bentuk.

@@ -341,7 +341,8 @@ function clear(){
 window.toggleLayer=(id)=>{
 if(!map.getLayer(id)) return;
 const v=map.getLayoutProperty(id,'visibility');
-map.setLayoutProperty(id,'visibility',v==='visible'?'none':'visible');
+// ================= memperbaiki v==='visible'?'none':'visible' menjadi v==='none'?'visible':'none' agar klik pertama langsung menyembunyikan layer (visibility awal undefined) =================
+map.setLayoutProperty(id,'visibility',v==='none'?'visible':'none');
 };
 
 window.setStyle=(t)=>map.setStyle(styles[t]);
