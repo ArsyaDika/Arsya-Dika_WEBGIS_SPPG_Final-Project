@@ -443,3 +443,25 @@ Menunggu pemeriksaan pengguna sebelum dipakai untuk isochrone.
 
 **Pelajaran**
 Saat satu sumber data tidak bisa dipercaya, cari sumber kedua yang independen untuk memeriksa silang (di sini: data sekolah), dan catat dengan jelas mana yang diperbaiki dan mana yang masih perkiraan.
+
+---
+
+## 17. Menandai SPPG yang dipakai dalam analisis (123 dari 128)
+
+**Masalah**
+Lima SPPG tidak layak dipakai untuk analisis cakupan kota: satu tidak ditemukan koordinatnya (masih memegang titik lama yang salah) dan empat berada jauh di luar Kota Semarang.
+
+**Perubahan**
+- Berkas baru `scripts/tandai-analisis.mjs`: menambah properti `dipakai_analisis` (true/false) dan `alasan_dikeluarkan` ke setiap fitur di `data/SPPG_geocoded.geojson`.
+- Aturan: koordinat tidak ditemukan dikeluarkan; SPPG di luar kota dan lebih dari 8 km dari sekolah terdekat dikeluarkan; sisanya dipakai.
+
+**Alasan**
+- Menyimpan keputusan sebagai data (bukan hanya di kode peta) membuat alasannya bisa ditelusuri dan dipakai ulang oleh skrip isochrone dan peta.
+- SPPG yang berjarak 11 sampai 31 km tidak mungkin menjangkau sekolah dalam 10 menit berkendara, jadi memanggil API untuk mereka hanya membuang kuota.
+- Ambang 8 km adalah angka kerja yang aman untuk 10 menit berkendara; bisa diubah di konstanta `BATAS_LUAR_KOTA_KM`.
+
+**Hasil**
+Diverifikasi dari keluaran: 123 dari 128 dipakai. Lima yang dikeluarkan: Plumbon 2 (koordinat tidak ditemukan), Bedono 2, Krandon Lor, Candirejo, dan Jambu (jauh dari kota).
+
+**Pelajaran**
+Tulis keputusan penyaringan data beserta alasannya ke dalam data itu sendiri, supaya semua langkah berikutnya memakai aturan yang sama dan bisa diaudit.
