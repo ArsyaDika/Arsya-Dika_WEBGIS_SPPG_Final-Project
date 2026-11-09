@@ -300,3 +300,37 @@ README sekarang cocok dengan isi folder. Hasil render bisa dicek di halaman repo
 
 **Pelajaran**
 Dokumentasi adalah bagian dari kode: perbarui bersamaan dengan perubahan. Hindari perbedaan huruf besar-kecil nama file agar proyek berjalan sama di semua sistem operasi.
+
+---
+
+## 12. Library CDN tanpa versi di Index.html
+
+**Masalah**
+`chart.js` dan Tailwind dimuat tanpa nomor versi:
+```html
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+```
+Tanpa versi, browser selalu mengambil rilis terbaru, sehingga tampilan atau grafik bisa rusak sewaktu-waktu tanpa kita mengubah kode.
+
+**Perubahan**
+`Index.html` baris 10-11 (sekarang 11-14 karena ada komentar):
+```diff
+-<script src="https://cdn.tailwindcss.com"></script>
+-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
++<script src="https://cdn.tailwindcss.com/3.4.17"></script>
++<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+```
+
+**Alasan**
+- Versi 3.4.17 sama dengan yang terlihat di tab Network saat ini, jadi tampilan tidak berubah.
+- Chart.js dikunci ke 4.4.1 dengan berkas `dist/chart.umd.js` yang menyediakan global `Chart` untuk dipakai `app.js`.
+- Dua URL baru diuji dengan `curl`: keduanya merespons HTTP 200.
+- `cdn.tailwindcss.com` memang ditujukan untuk pengembangan, bukan produksi. Untuk produksi, build Tailwind menjadi berkas CSS. Itu di luar cakupan perbaikan ini.
+- `maplibre-gl@4.7.1` dan `@turf/turf@7` sudah berversi, jadi tidak diubah.
+
+**Hasil**
+URL diverifikasi (HTTP 200). Belum diverifikasi di browser. Cara cek: muat ulang, panel samping harus tampil sama seperti sebelumnya, dan setelah Run Isochrone tiga grafik muncul tanpa error di Console.
+
+**Pelajaran**
+Selalu kunci versi library yang dimuat dari CDN. Perilaku yang berubah tiba-tiba tanpa perubahan kode sering berasal dari versi library yang ikut berubah.

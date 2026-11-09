@@ -7,8 +7,10 @@
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet"/>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- ================= memperbaiki cdn.tailwindcss.com menjadi cdn.tailwindcss.com/3.4.17 agar tampilan tidak berubah saat Tailwind merilis versi baru (CDN ini hanya untuk pengembangan, bukan produksi) ================= -->
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<!-- ================= memperbaiki chart.js tanpa versi menjadi chart.js@4.4.1 agar grafik tidak rusak saat rilis mayor baru ================= -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
 
 <style>
