@@ -43,7 +43,7 @@ Saat ada error 404 pada script, buka tab Network, lihat URL yang diminta browser
 - `init` bersifat async (menunggu fetch GeoJSON), sehingga dua pemanggilan bersamaan bisa balapan: keduanya lolos `clear()` lalu sama-sama `addSource`.
 
 **Hasil**
-Dicek dengan membuka halaman lewat Live Server dan memeriksa console: tidak ada lagi error "already exists" saat pemuatan pertama.
+Belum diverifikasi di browser. Cara cek: muat ulang halaman lewat Live Server, buka Console (F12), dan pastikan tidak ada error `Source "sd" already exists`.
 
 **Pelajaran**
 Event handler yang didaftarkan lewat `map.on` akan dijalankan untuk setiap event yang cocok. Jangan daftarkan fungsi yang sama ke dua event yang menyala bersamaan.
