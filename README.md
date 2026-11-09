@@ -20,10 +20,11 @@ WebGIS ini dibuat untuk menganalisis keterjangkauan SPPG terhadap fasilitas pend
 ## Data
 - Data sekolah (SD, SMP, SMA)
 - Data SPPG
-- Batas kota Semarang
+<!-- ================= memperbaiki "Batas kota Semarang" menjadi dihapus agar README sesuai isi folder data/ (file batas kota tidak ada) ================= -->
 
 ## Cara Menjalankan
-Buka file `index.html` menggunakan Live Server
+<!-- ================= memperbaiki `index.html` menjadi `Index.html` agar sama dengan nama file asli (penting di Linux/GitHub Pages yang membedakan huruf besar-kecil) ================= -->
+Buka file `Index.html` menggunakan Live Server
 
 ## Output
 - WebGIS interaktif

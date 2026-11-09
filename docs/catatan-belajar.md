@@ -272,3 +272,31 @@ Dua API key MapID (basemap dan routing) tertulis langsung di empat URL di `src/a
 
 **Pelajaran**
 Kunci di sisi browser selalu publik. Yang melindungi bukan menyembunyikannya, melainkan membatasi apa yang bisa dilakukan kunci itu.
+
+---
+
+## 11. README tidak sesuai isi proyek
+
+**Masalah**
+- README menyebut data "Batas kota Semarang", padahal folder `data/` hanya berisi `SD`, `SMP`, `SMA`, dan `SPPG`.
+- README menyuruh membuka `index.html` (huruf kecil), padahal file aslinya `Index.html`.
+
+**Perubahan**
+`README.md`:
+```diff
+-- Batas kota Semarang
+-Buka file `index.html` menggunakan Live Server
++Buka file `Index.html` menggunakan Live Server
+```
+Baris yang diperbaiki diberi keterangan sebagai komentar HTML `<!-- ... -->` agar tidak tampil di halaman GitHub.
+
+**Alasan**
+- Dokumentasi yang menyebut data yang tidak ada menyesatkan orang yang mengkloning repo.
+- Windows tidak membedakan huruf besar-kecil nama file, tetapi Linux dan GitHub Pages membedakan. `index.html` dan `Index.html` bisa dianggap file berbeda sehingga halaman 404 saat dipublikasikan.
+- Catatan: GitHub Pages dan sebagian server mencari `index.html` huruf kecil sebagai halaman awal. Jika nanti dipublikasikan di sana, ganti nama file menjadi `index.html` (perubahan ini belum saya lakukan karena Anda bisa saja memakai Live Server saja).
+
+**Hasil**
+README sekarang cocok dengan isi folder. Hasil render bisa dicek di halaman repo GitHub.
+
+**Pelajaran**
+Dokumentasi adalah bagian dari kode: perbarui bersamaan dengan perubahan. Hindari perbedaan huruf besar-kecil nama file agar proyek berjalan sama di semua sistem operasi.
