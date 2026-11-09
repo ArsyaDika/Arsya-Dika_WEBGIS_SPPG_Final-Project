@@ -27,3 +27,23 @@ Setelah diperbaiki dan dibuka dengan Live Server, peta tampil.
 
 **Pelajaran**
 Saat ada error 404 pada script, buka tab Network, lihat URL yang diminta browser, lalu bandingkan dengan lokasi file sebenarnya. Path relatif di HTML selalu dihitung dari halaman HTML.
+
+---
+
+## 2. `init` terpanggil dua kali (event `load` dan `style.load`)
+
+**Masalah**
+`init` didaftarkan ke dua event sekaligus (`map.on('load',init)` dan `map.on('style.load',init)`). Pada pemuatan pertama keduanya menyala, sehingga source dan layer bisa ditambahkan dua kali dan memicu error `Source "sd" already exists`.
+
+**Perubahan**
+`src/app.js` baris 20: hanya `map.on('style.load',init);` yang dipertahankan, baris `map.on('load',init);` dihapus (dikerjakan sendiri oleh Arsya). Ditambahkan komentar penjelas di atasnya.
+
+**Alasan**
+- `style.load` menyala setiap kali style selesai dimuat: saat pertama kali dan setiap `map.setStyle(...)`. Satu event ini sudah mencakup semua kasus, jadi `load` tidak diperlukan.
+- `init` bersifat async (menunggu fetch GeoJSON), sehingga dua pemanggilan bersamaan bisa balapan: keduanya lolos `clear()` lalu sama-sama `addSource`.
+
+**Hasil**
+Dicek dengan membuka halaman lewat Live Server dan memeriksa console: tidak ada lagi error "already exists" saat pemuatan pertama.
+
+**Pelajaran**
+Event handler yang didaftarkan lewat `map.on` akan dijalankan untuk setiap event yang cocok. Jangan daftarkan fungsi yang sama ke dua event yang menyala bersamaan.

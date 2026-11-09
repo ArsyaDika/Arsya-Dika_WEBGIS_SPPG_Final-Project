@@ -17,7 +17,7 @@ let chartSekolah, chartSiswa, chartPie;
 let selectedSPPG=null;
 
 // ================= INIT =================
-map.on('load',init);
+// ================= memperbaiki map.on('load',init)+map.on('style.load',init) menjadi hanya map.on('style.load',init) agar init tidak jalan dua kali dan layer tidak terdaftar ganda =================
 map.on('style.load',init);
 
 async function init(){
