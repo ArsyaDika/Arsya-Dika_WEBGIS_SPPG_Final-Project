@@ -214,7 +214,8 @@ return;
 // 2. BUAT GRID (REPRESENTASI AREA)
 // ===============================
 const grid = turf.squareGrid(
-turf.bbox(geo),
+// ================= memperbaiki turf.bbox(geo) menjadi turf.bbox(turf.featureCollection(sekolahData)) agar grid menutupi seluruh sekolah (termasuk yang di luar isochrone), bukan hanya area isochrone =================
+turf.bbox(turf.featureCollection(sekolahData)),
 1, // 1 km grid (realistis)
 {units:'kilometers'}
 );

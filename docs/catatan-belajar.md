@@ -153,3 +153,29 @@ Catatan: error masih muncul sebagai "Uncaught (in promise)" di Console. Pesan su
 
 **Pelajaran**
 `fetch` hanya gagal untuk masalah jaringan. Respons 404/500 tetap dianggap berhasil, jadi cek `res.ok`. Validasi bentuk data dari API luar sebelum dipakai.
+
+---
+
+## 7. Grid kandidat SPPG hanya menutupi area isochrone
+
+**Masalah**
+Rekomendasi lokasi SPPG baru sering kosong atau meleset.
+
+**Perubahan**
+`src/app.js` di `generateCandidate`:
+```diff
+-turf.bbox(geo),
++turf.bbox(turf.featureCollection(sekolahData)),
+```
+
+**Alasan**
+- Algoritmanya: ambil sekolah yang tidak terlayani (di luar isochrone), bagi area menjadi sel 1 km, hitung kebutuhan siswa per sel, lalu ambil 5 sel teratas.
+- Kode lama membuat grid dari `bbox` isochrone. Sekolah yang tidak terlayani justru berada di luar isochrone, jadi sebagian besar tidak jatuh ke sel mana pun dan hanya yang kebetulan berada di sudut kotak isochrone yang terhitung.
+- Kode baru membuat grid dari `bbox` seluruh sekolah sehingga semua sekolah yang belum terlayani masuk perhitungan.
+
+**Hasil**
+`node --check src/app.js` lolos. Belum diverifikasi di browser. Cara cek: jalankan Run Isochrone, harus muncul sampai 5 titik merah kandidat di area yang tidak tertutup hijau, dengan popup "Sekolah belum terlayani" yang terisi.
+Catatan performa: grid jadi lebih besar (lihat perkiraan jumlah sel di hasil perhitungan bbox saat perbaikan ini dibuat). Jika terasa lambat, langkah lanjutan adalah mengelompokkan sekolah ke sel dengan perhitungan indeks, tanpa `booleanPointInPolygon` per sel.
+
+**Pelajaran**
+Saat membuat grid analisis, tentukan dulu area yang ingin dianalisis. Di sini area itu adalah tempat kebutuhan berada (sekolah belum terlayani), bukan area layanan (isochrone).
