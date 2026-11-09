@@ -113,6 +113,12 @@ paint:{'fill-color':'#22c55e','fill-opacity':0.3}
 });
 }
 
+// ================= memperbaiki tiga fallback siswa berbeda (200 / 1 / 200-300-400) menjadi satu fungsi getSiswa agar dashboard, heatmap, dan kandidat memakai angka yang sama (data GeoJSON tidak punya kolom siswa, jadi memakai estimasi per jenjang) =================
+const SISWA_DEFAULT={SD:200,SMP:300,SMA:400};
+function getSiswa(s){
+return s.properties.siswa || SISWA_DEFAULT[s.properties.jenjang] || 200;
+}
+
 // ================= ANALYSIS =================
 function analyze(geo){
 
@@ -123,7 +129,8 @@ sekolahData.forEach(s=>{
 try{
 if(turf.booleanPointInPolygon(turf.point(s.geometry.coordinates),geo)){
 const j=s.properties.jenjang;
-const siswa=s.properties.siswa || 200;
+// ================= memperbaiki s.properties.siswa || 200 menjadi getSiswa(s) agar estimasi siswa sesuai jenjang =================
+const siswa=getSiswa(s);
 
 if(j==='SD'){sd++;siswaSD+=siswa;}
 if(j==='SMP'){smp++;siswaSMP+=siswa;}
@@ -177,7 +184,8 @@ type:'FeatureCollection',
 features:sekolahData.map(s=>({
 type:'Feature',
 geometry:s.geometry,
-properties:{weight:s.properties.siswa || 1}
+// ================= memperbaiki weight s.properties.siswa || 1 menjadi getSiswa(s)/SISWA_DEFAULT.SMA agar bobot heatmap mengikuti jumlah siswa dan tetap bernilai 0-1 (tidak jenuh) =================
+properties:{weight:getSiswa(s)/SISWA_DEFAULT.SMA}
 }))
 }
 });
@@ -252,7 +260,8 @@ jumlahSekolah++;
 
 // ambil siswa (real atau fallback)
 const j = s.properties.jenjang;
-const siswa = s.properties.siswa || (j==='SD'?200:(j==='SMP'?300:400));
+// ================= memperbaiki fallback siswa lokal (200/300/400) menjadi getSiswa(s) agar sama dengan dashboard dan heatmap =================
+const siswa = getSiswa(s);
 
 totalSiswa += siswa;
 

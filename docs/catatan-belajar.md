@@ -204,3 +204,39 @@ Keterbatasan: status tombol toggle (layer yang sebelumnya disembunyikan) kembali
 
 **Pelajaran**
 Kalau data hasil kerja hidup di dalam style peta, simpan salinannya di variabel JavaScript. Style bisa diganti kapan saja, tetapi variabel tidak ikut hilang.
+
+---
+
+## 9. Angka siswa tidak konsisten (dashboard, heatmap, kandidat)
+
+**Masalah**
+Data GeoJSON tidak punya kolom `siswa`, sehingga semua angka siswa berasal dari tebakan di kode, dan tebakannya berbeda-beda:
+- dashboard: 200 untuk semua jenjang,
+- kandidat: 200 (SD) / 300 (SMP) / 400 (SMA),
+- heatmap: bobot 1.
+
+**Perubahan**
+`src/app.js`: ditambah `SISWA_DEFAULT={SD:200,SMP:300,SMA:400}` dan fungsi `getSiswa(s)`. Tiga tempat dipakaikan fungsi ini:
+```diff
+-const siswa=s.properties.siswa || 200;
++const siswa=getSiswa(s);
+```
+```diff
+-properties:{weight:s.properties.siswa || 1}
++properties:{weight:getSiswa(s)/SISWA_DEFAULT.SMA}
+```
+```diff
+-const siswa = s.properties.siswa || (j==='SD'?200:(j==='SMP'?300:400));
++const siswa = getSiswa(s);
+```
+
+**Alasan**
+- Satu sumber kebenaran: kalau nanti ada data siswa asli (kolom `siswa`) atau estimasi diubah, cukup ubah di satu fungsi.
+- Bobot heatmap dibagi 400 supaya nilainya 0,5 sampai 1. Bobot ratusan membuat peta panas jenuh (semua area menjadi warna maksimum).
+- Angka tetap estimasi. Dashboard "Total Siswa Terlayani" bukan data asli dan sebaiknya diberi label "estimasi" bila dipublikasikan.
+
+**Hasil**
+`node --check src/app.js` lolos. Belum diverifikasi di browser. Cara cek: jalankan Run Isochrone. Total siswa di dashboard harus kelipatan estimasi per jenjang (mis. 3 SD + 1 SMP = 900), dan popup kandidat memakai angka dari estimasi yang sama.
+
+**Pelajaran**
+Angka yang dipakai di banyak tempat harus berasal dari satu fungsi atau konstanta. Kalau tidak, perubahan di satu tempat membuat hasil di tempat lain bertentangan.
