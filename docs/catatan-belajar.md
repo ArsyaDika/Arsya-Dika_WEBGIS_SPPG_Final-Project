@@ -97,3 +97,25 @@ Belum diverifikasi di browser. Cara cek: klik satu titik hitam (SPPG), popup har
 
 **Pelajaran**
 Selalu cek nama kolom asli di data (buka GeoJSON atau lihat console `e.features[0].properties`) sebelum menulis kode yang membacanya. Data dari sumber berbeda sering punya skema berbeda.
+
+---
+
+## 5. Handler klik menumpuk (popup muncul ganda)
+
+**Masalah**
+Setelah ganti basemap atau menjalankan analisis lebih dari sekali, satu klik pada titik bisa memunculkan beberapa popup sekaligus.
+
+**Perubahan**
+`src/app.js`:
+- `bindPopup()` diberi penanda `let popupBound=false;` dan di awal fungsi `if(popupBound) return; popupBound=true;`.
+- Di `generateCandidate()` handler `map.on('click','candidate-layer',...)` dibungkus `if(!candidatePopupBound){ candidatePopupBound=true; ... }`, dengan `let candidatePopupBound=false;` dideklarasikan di atas fungsi.
+
+**Alasan**
+- Setiap `map.on(...)` menambah satu pendengar baru, tidak menggantikan yang lama. `bindPopup()` dipanggil dari `init`, yang jalan setiap `style.load` (termasuk ganti basemap). `generateCandidate()` jalan setiap analisis. Jadi jumlah pendengar terus bertambah.
+- Pendengar yang diikat ke nama layer (`map.on('click', 'sd-layer', ...)`) tetap bekerja walau layernya dihapus lalu dibuat ulang dengan id yang sama. Karena itu cukup didaftarkan sekali.
+
+**Hasil**
+`node --check src/app.js` lolos (tidak ada error sintaks). Belum diverifikasi di browser. Cara cek: ganti basemap beberapa kali, lalu klik satu titik sekolah, hanya boleh muncul satu popup. Jalankan Run Isochrone dua kali, klik satu kandidat merah, juga hanya satu popup.
+
+**Pelajaran**
+Jangan menaruh `map.on(...)` di dalam fungsi yang dipanggil berulang. Daftarkan sekali (di luar fungsi, atau dijaga penanda).

@@ -58,7 +58,11 @@ paint:{'circle-color':color,'circle-radius':5}
 }
 
 // ================= POPUP =================
+let popupBound=false;
 function bindPopup(){
+// ================= memperbaiki bindPopup yang mendaftarkan map.on('click') setiap init menjadi hanya sekali lewat flag popupBound agar popup tidak muncul ganda setelah ganti basemap =================
+if(popupBound) return;
+popupBound=true;
 ['sd','smp','sma','sppg'].forEach(layer=>{
 map.on('click',layer+'-layer',(e)=>{
 const p=e.features[0].properties;
@@ -179,6 +183,7 @@ paint:{
 }
 
 // ================= CANDIDATE =================
+let candidatePopupBound=false;
 function generateCandidate(geo){
 
 safeRemove('candidate');
@@ -290,6 +295,9 @@ paint:{
 // ===============================
 // 6. POPUP (BIAR INFORMATIVE)
 // ===============================
+// ================= memperbaiki map.on('click','candidate-layer') yang didaftarkan setiap generateCandidate menjadi hanya sekali lewat flag candidatePopupBound agar popup kandidat tidak ganda =================
+if(!candidatePopupBound){
+candidatePopupBound=true;
 map.on('click','candidate-layer',(e)=>{
 
 const p = e.features[0].properties;
@@ -304,6 +312,7 @@ Total siswa: ${p.siswa}
 .addTo(map);
 
 });
+}
 
 }
 
