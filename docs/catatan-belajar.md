@@ -119,3 +119,37 @@ Setelah ganti basemap atau menjalankan analisis lebih dari sekali, satu klik pad
 
 **Pelajaran**
 Jangan menaruh `map.on(...)` di dalam fungsi yang dipanggil berulang. Daftarkan sekali (di luar fungsi, atau dijaga penanda).
+
+---
+
+## 6. `getIso` tanpa pengecekan dan tombol Global mengabaikan input waktu
+
+**Masalah**
+- Kalau API isochrone gagal (API key salah, kuota habis, jaringan), kode langsung mengakses `data.polygons[0]` dan error yang muncul membingungkan (`Cannot read properties of undefined`).
+- Tombol Run Global selalu memakai 600 detik, mengabaikan isi kotak "Isochrone".
+
+**Perubahan**
+`src/app.js`:
+```diff
+ const res=await fetch(url);
++if(!res.ok) throw new Error('API isochrone gagal: HTTP '+res.status);
+ const data=await res.json();
++if(!data.polygons || data.polygons.length===0) throw new Error('API isochrone tidak mengembalikan polygon');
+ return data.polygons[0];
+```
+```diff
+-const iso=await getIso(sppgData[0],600);
++const iso=await getIso(sppgData[0],document.getElementById('waktu').value);
+```
+
+**Alasan**
+- `fetch` tidak melempar error untuk respons HTTP 4xx/5xx, jadi `res.ok` harus dicek sendiri.
+- Pesan error yang menyebut penyebab sebenarnya (status HTTP atau polygon kosong) jauh lebih mudah dilacak daripada `TypeError`.
+- Nilai waktu diambil dari input yang sama dengan tombol Run Isochrone supaya perilaku kedua tombol konsisten.
+
+**Hasil**
+`node --check src/app.js` lolos. Belum diverifikasi di browser. Cara cek: isi waktu 300 lalu tekan Run Global, area hijau harus lebih kecil dari 600. Untuk uji error, ubah sementara key API di URL lalu lihat pesan di Console.
+Catatan: error masih muncul sebagai "Uncaught (in promise)" di Console. Pesan sudah jelas, tetapi belum ada `try/catch` yang menampilkan alert ke pengguna.
+
+**Pelajaran**
+`fetch` hanya gagal untuk masalah jaringan. Respons 404/500 tetap dianggap berhasil, jadi cek `res.ok`. Validasi bentuk data dari API luar sebelum dipakai.

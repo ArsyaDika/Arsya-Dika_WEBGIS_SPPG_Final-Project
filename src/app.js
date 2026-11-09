@@ -85,7 +85,10 @@ async function getIso(point,waktu){
 const [lng,lat]=point.geometry.coordinates;
 const url=`https://routing.mapid.io/isochrone?key=68da7e7d06823ed3f510cc48&time_limit=${waktu}&point=${lat},${lng}&profile=car`;
 const res=await fetch(url);
+// ================= memperbaiki getIso yang langsung res.json() dan data.polygons[0] menjadi dicek res.ok dan data.polygons dulu agar error API tampil jelas, bukan TypeError tanpa pesan =================
+if(!res.ok) throw new Error('API isochrone gagal: HTTP '+res.status);
 const data=await res.json();
+if(!data.polygons || data.polygons.length===0) throw new Error('API isochrone tidak mengembalikan polygon');
 return data.polygons[0];
 }
 
@@ -330,7 +333,8 @@ generateHeatmap();
 };
 
 document.getElementById('run-global').onclick=async()=>{
-const iso=await getIso(sppgData[0],600);
+// ================= memperbaiki getIso(sppgData[0],600) menjadi memakai nilai input #waktu agar tombol Global mengikuti waktu yang diisi pengguna =================
+const iso=await getIso(sppgData[0],document.getElementById('waktu').value);
 drawIso(iso);
 analyze(iso);
 generateCandidate(iso);
