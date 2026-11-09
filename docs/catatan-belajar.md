@@ -386,3 +386,32 @@ Belum diuji: pemulihan isochrone/kandidat/heatmap setelah ganti basemap (menungg
 
 **Pelajaran**
 Cara menyelidiki: lihat tab Network untuk memastikan apakah kode yang dikira jalan memang jalan. Dan baca dokumentasi opsi bawaan fungsi (`diff`). Perilaku bawaan tidak selalu sesuai asumsi.
+
+---
+
+## 15. Isochrone 10 menit untuk semua SPPG disimpan sebagai berkas statis
+
+**Masalah**
+Isochrone sebelumnya dihitung saat tombol ditekan lewat API MapID (berbayar, langganan sudah berhenti). Hasilnya hanya untuk satu SPPG, dan setiap pemakaian menghabiskan kuota API.
+
+**Perubahan**
+- Berkas baru `scripts/fetch-isochrones.mjs`: membaca `data/SPPG.geojson`, memanggil OpenRouteService (`/v2/isochrones/driving-car`, `range=[600]`, `range_type=time`) untuk setiap SPPG, lalu menulis `data/isochrone-600.geojson`.
+- Berkas hasil `data/isochrone-600.geojson`: 128 poligon dengan properti `sppg_idx`, `sppg_no`, `sppg_nama`, `waktu_detik`.
+- API key dibaca dari `.env` (diabaikan git) dan tidak pernah dicetak.
+
+**Alasan**
+- Jaringan jalan hampir tidak berubah, jadi isochrone cukup dihitung sekali (offline), lalu dimuat seperti data biasa. Halaman web tidak butuh API key dan tidak kena batas kuota.
+- Skrip memberi jeda 3,5 detik antar permintaan (batas gratis 20 per menit), mengulang otomatis jika kena batas (HTTP 429), menyimpan bertahap, dan bisa dilanjutkan jika terputus.
+- Alamat bawaan `api.heigit.org/openrouteservice` dipilih karena ada kabar alamat lama `api.openrouteservice.org` akan ditutup (belum terkonfirmasi resmi). Kedua alamat saya uji dan sama-sama berhasil dengan key yang sama.
+
+**Hasil**
+Diverifikasi: 128/128 isochrone tersimpan, 0 gagal, semua bertipe `Polygon` dengan cincin tertutup, 62 sampai 239 titik per poligon, ukuran berkas sekitar 506 KB.
+Belum dipakai di peta (langkah berikutnya).
+
+**Temuan data (penting untuk analisis berikutnya)**
+- Dari 128 SPPG hanya 49 koordinat unik. 22 SPPG berbagi satu titik yang sama (`110.4108585,-7.098096`) walau kelurahannya tersebar di banyak kecamatan, tanda geokoding gagal. Isochrone dari titik-titik itu identik.
+- 10 SPPG berstatus Kabupaten Semarang (di luar Kota Semarang).
+- Konsekuensi: persentase cakupan yang dihitung dari koordinat ini tidak mencerminkan kondisi lapangan sampai koordinat diperbaiki.
+
+**Pelajaran**
+Hasil yang tidak berubah-ubah (isochrone dari titik tetap) sebaiknya dihitung sekali dan disimpan sebagai data statis. Dan periksa kualitas data masukan (keunikan, sebaran) sebelum membangun analisis di atasnya.
