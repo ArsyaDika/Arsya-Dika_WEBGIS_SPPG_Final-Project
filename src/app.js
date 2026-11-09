@@ -62,7 +62,8 @@ function bindPopup(){
 ['sd','smp','sma','sppg'].forEach(layer=>{
 map.on('click',layer+'-layer',(e)=>{
 const p=e.features[0].properties;
-const nama=p.NAMA || p.nama || "Tidak ada nama";
+// ================= memperbaiki p.NAMA || p.nama menjadi p.NAMA || p.nama || p['Nama SPPG'] agar popup SPPG menampilkan nama (kolom data SPPG bernama 'Nama SPPG') =================
+const nama=p.NAMA || p.nama || p['Nama SPPG'] || "Tidak ada nama";
 const jenjang=p.jenjang || layer.toUpperCase();
 
 new maplibregl.Popup()

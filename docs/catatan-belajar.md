@@ -72,3 +72,28 @@ Belum diverifikasi di browser. Cara cek: klik tombol SD sekali, titik biru harus
 
 **Pelajaran**
 Nilai default properti MapLibre bisa `undefined`. Saat membuat toggle, uji kondisi "mati" yang pasti (`'none'`), bukan kondisi "hidup" yang bisa punya banyak bentuk.
+
+---
+
+## 4. Popup SPPG selalu menampilkan "Tidak ada nama"
+
+**Masalah**
+Klik titik SPPG memunculkan popup "Tidak ada nama", padahal data punya nama.
+
+**Perubahan**
+`src/app.js` baris 65 (setelah baris komentar):
+```diff
+-const nama=p.NAMA || p.nama || "Tidak ada nama";
++const nama=p.NAMA || p.nama || p['Nama SPPG'] || "Tidak ada nama";
+```
+
+**Alasan**
+- Hasil pemeriksaan `data/*.geojson`: SD/SMP/SMA memakai kolom `NAMA`, tetapi SPPG memakai kolom `Nama SPPG` (ada spasi). Ke-128 fitur SPPG tidak punya `NAMA` maupun `nama`.
+- Nama properti yang mengandung spasi tidak bisa ditulis `p.Nama SPPG`. Harus memakai kurung siku: `p['Nama SPPG']`.
+- Urutan `||` dipertahankan agar sekolah tetap memakai `NAMA`, dan teks "Tidak ada nama" menjadi pilihan terakhir.
+
+**Hasil**
+Belum diverifikasi di browser. Cara cek: klik satu titik hitam (SPPG), popup harus menampilkan nilai kolom `Nama SPPG`.
+
+**Pelajaran**
+Selalu cek nama kolom asli di data (buka GeoJSON atau lihat console `e.features[0].properties`) sebelum menulis kode yang membacanya. Data dari sumber berbeda sering punya skema berbeda.
