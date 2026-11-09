@@ -15,6 +15,8 @@ zoom:12
 let sekolahData=[], sppgData=[];
 let chartSekolah, chartSiswa, chartPie;
 let selectedSPPG=null;
+// ================= memperbaiki hasil analisis yang tidak tersimpan menjadi disimpan di lastIso agar bisa digambar ulang setelah ganti basemap =================
+let lastIso=null;
 
 // ================= INIT =================
 // ================= memperbaiki map.on('load',init)+map.on('style.load',init) menjadi hanya map.on('style.load',init) agar init tidak jalan dua kali dan layer tidak terdaftar ganda =================
@@ -44,6 +46,13 @@ addLayer('sma',sma,'#8b5cf6');
 addLayer('sppg',sppg,'#000');
 
 bindPopup();
+
+// ================= memperbaiki init yang hanya menggambar layer dasar menjadi juga menggambar ulang isochrone, kandidat, dan heatmap dari lastIso agar hasil analisis tidak hilang saat ganti basemap =================
+if(lastIso){
+drawIso(lastIso);
+generateCandidate(lastIso);
+generateHeatmap();
+}
 }
 
 // ================= LAYER =================
@@ -93,6 +102,7 @@ return data.polygons[0];
 }
 
 function drawIso(geo){
+lastIso=geo;
 safeRemove('iso');
 map.addSource('iso',{type:'geojson',data:geo});
 map.addLayer({

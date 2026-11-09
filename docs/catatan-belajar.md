@@ -179,3 +179,28 @@ Catatan performa: grid jadi lebih besar (lihat perkiraan jumlah sel di hasil per
 
 **Pelajaran**
 Saat membuat grid analisis, tentukan dulu area yang ingin dianalisis. Di sini area itu adalah tempat kebutuhan berada (sekolah belum terlayani), bukan area layanan (isochrone).
+
+---
+
+## 8. Hasil analisis hilang saat ganti basemap
+
+**Masalah**
+Setelah menjalankan isochrone lalu menekan Street/Dark/Satellite, area hijau, titik kandidat, dan heatmap hilang. Pengguna harus mengulang analisis.
+
+**Perubahan**
+`src/app.js`:
+- Variabel baru `let lastIso=null;`.
+- `drawIso(geo)` menyimpan `lastIso=geo;`.
+- Di akhir `init()` ditambah: jika `lastIso` ada, panggil `drawIso(lastIso)`, `generateCandidate(lastIso)`, dan `generateHeatmap()`.
+
+**Alasan**
+- `map.setStyle(...)` mengganti seluruh style, jadi semua source dan layer buatan kita ikut terhapus. Event `style.load` kemudian menjalankan `init`, yang hanya menggambar sekolah dan SPPG.
+- Dengan menyimpan isochrone terakhir, `init` bisa menggambar ulang tiga layer analisis dari data yang sama tanpa memanggil API lagi. Angka dashboard tidak ikut hilang karena elemen HTML-nya tidak diganti.
+- `sekolahData` sudah terisi sebelum bagian ini dijalankan, sehingga `generateCandidate` dan `generateHeatmap` aman dipanggil.
+
+**Hasil**
+`node --check src/app.js` lolos. Belum diverifikasi di browser. Cara cek: jalankan Run Isochrone, lalu ganti basemap. Area hijau, titik merah, dan heatmap harus tetap tampil.
+Keterbatasan: status tombol toggle (layer yang sebelumnya disembunyikan) kembali ke tampil setelah ganti basemap.
+
+**Pelajaran**
+Kalau data hasil kerja hidup di dalam style peta, simpan salinannya di variabel JavaScript. Style bisa diganti kapan saja, tetapi variabel tidak ikut hilang.
