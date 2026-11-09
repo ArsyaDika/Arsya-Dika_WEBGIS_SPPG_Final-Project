@@ -1,12 +1,29 @@
-// ================= BASEMAP =================
+// ================= KUNCI API =================
 // ================= memperbaiki API key yang tertulis langsung di 4 URL menjadi dua konstanta di satu tempat agar kunci mudah diganti/dirotasi tanpa mencari di banyak baris =================
-const MAPID_BASEMAP_KEY='69a8edeffdb1d3dbc8b3022c';
+// ================= memperbaiki MAPID_BASEMAP_KEY menjadi dihapus agar tidak ada lagi key MapID basemap di kode (langganan MapID sudah berhenti; basemap pindah ke penyedia gratis tanpa key) =================
 const MAPID_ROUTING_KEY='68da7e7d06823ed3f510cc48';
 
+// ================= BASEMAP =================
+// ================= pembuatan daftar basemap gratis tanpa API key (pengganti MapID) agar peta tetap tampil setelah langganan berhenti =================
 const styles={
-street:`https://basemap.mapid.io/styles/street-2d-building/style.json?key=${MAPID_BASEMAP_KEY}`,
-dark:`https://basemap.mapid.io/styles/dark/style.json?key=${MAPID_BASEMAP_KEY}`,
-sat:`https://basemap.mapid.io/styles/satellite/style.json?key=${MAPID_BASEMAP_KEY}`
+// Street: OpenFreeMap (vektor, data OpenStreetMap)
+street:'https://tiles.openfreemap.org/styles/liberty',
+// Dark: CARTO Dark Matter (vektor)
+dark:'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+// Satellite: Esri World Imagery (tile raster), ditulis sebagai objek style MapLibre
+sat:{
+version:8,
+sources:{
+esri:{
+type:'raster',
+tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+tileSize:256,
+maxzoom:19,
+attribution:'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
+}
+},
+layers:[{id:'esri-satellite',type:'raster',source:'esri'}]
+}
 };
 
 const map=new maplibregl.Map({

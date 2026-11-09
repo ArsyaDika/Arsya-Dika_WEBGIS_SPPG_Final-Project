@@ -334,3 +334,29 @@ URL diverifikasi (HTTP 200). Belum diverifikasi di browser. Cara cek: muat ulang
 
 **Pelajaran**
 Selalu kunci versi library yang dimuat dari CDN. Perilaku yang berubah tiba-tiba tanpa perubahan kode sering berasal dari versi library yang ikut berubah.
+
+---
+
+## 13. Ganti basemap MapID dengan penyedia gratis tanpa API key
+
+**Masalah**
+Langganan MapID sudah berhenti, jadi tiga basemap (Street, Dark, Satellite) bergantung pada layanan berbayar dan API key di kode.
+
+**Perubahan**
+`src/app.js`: `styles` sekarang berisi:
+- `street`: OpenFreeMap Liberty (`https://tiles.openfreemap.org/styles/liberty`)
+- `dark`: CARTO Dark Matter (`https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json`)
+- `sat`: Esri World Imagery, ditulis sebagai objek style MapLibre dengan sumber `raster` dan atribusi Esri.
+Konstanta `MAPID_BASEMAP_KEY` dihapus. Kode dibagi per sesi dengan komentar `// ===== KUNCI API =====` dan `// ===== BASEMAP =====`.
+
+**Alasan**
+- OpenFreeMap dan CARTO adalah style vektor yang bisa langsung diberikan ke MapLibre lewat URL, tanpa key.
+- Esri World Imagery hanya menyediakan tile gambar (raster). MapLibre menerima style berbentuk objek, jadi satelit ditulis sebagai satu sumber raster dan satu layer raster.
+- Atribusi wajib ditampilkan; OpenFreeMap dan CARTO sudah menyertakannya di style, sedangkan untuk Esri ditambahkan lewat properti `attribution`.
+
+**Hasil**
+Diuji di browser (Live Server): Street tampil dengan titik sekolah/SPPG dan tidak ada error "already exists" di Console. Dark dan Satellite memuat tile dengan benar (semua permintaan HTTP 200).
+**Masalah yang ditemukan saat uji:** setelah klik Dark atau Satellite, titik sekolah/SPPG hilang. Ini tidak terkait penyedia basemap; penyebab dan perbaikannya ada di entri 14.
+
+**Pelajaran**
+Uji di browser, jangan hanya membaca kode. Dua catatan sebelumnya menandai hasil sebagai "belum diverifikasi" dan memang ada bug yang baru ketahuan saat dijalankan.
