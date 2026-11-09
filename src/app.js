@@ -400,4 +400,5 @@ const v=map.getLayoutProperty(id,'visibility');
 map.setLayoutProperty(id,'visibility',v==='none'?'visible':'none');
 };
 
-window.setStyle=(t)=>map.setStyle(styles[t]);
+// ================= memperbaiki map.setStyle(styles[t]) menjadi map.setStyle(styles[t],{diff:false}) agar style dimuat ulang penuh dan event style.load menyala sehingga init menggambar ulang layer sekolah/SPPG (mode diff bawaan menghapus layer kita tanpa memicu style.load) =================
+window.setStyle=(t)=>map.setStyle(styles[t],{diff:false});

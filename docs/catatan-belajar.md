@@ -360,3 +360,29 @@ Diuji di browser (Live Server): Street tampil dengan titik sekolah/SPPG dan tida
 
 **Pelajaran**
 Uji di browser, jangan hanya membaca kode. Dua catatan sebelumnya menandai hasil sebagai "belum diverifikasi" dan memang ada bug yang baru ketahuan saat dijalankan.
+
+---
+
+## 14. Titik sekolah/SPPG hilang setelah ganti basemap (`setStyle` mode diff)
+
+**Masalah**
+Setelah klik Dark atau Satellite, basemap berubah tetapi semua titik sekolah dan SPPG hilang. Di tab Network tidak ada permintaan `SD.geojson` baru, artinya `init` tidak jalan lagi.
+
+**Perubahan**
+`src/app.js`:
+```diff
+-window.setStyle=(t)=>map.setStyle(styles[t]);
++window.setStyle=(t)=>map.setStyle(styles[t],{diff:false});
+```
+
+**Alasan**
+- Secara bawaan `map.setStyle` memakai mode **diff**: MapLibre membandingkan style lama dengan yang baru lalu mengubahnya di tempat. Layer buatan kita (`sd-layer`, `sppg-layer`, dll.) tidak ada di style baru, jadi ikut dihapus. Karena style tidak dibuat ulang, event `style.load` tidak menyala sehingga `init` tidak menggambar ulang.
+- `{diff:false}` memaksa style dimuat penuh dari nol. Event `style.load` menyala setiap kali, dan `init` menggambar ulang semuanya.
+- Perbaikan ini juga membuat entri 8 (menggambar ulang isochrone/kandidat/heatmap setelah ganti basemap) benar-benar bisa bekerja. Tanpa `diff:false`, `init` tidak pernah dijalankan ulang.
+
+**Hasil**
+Diuji di browser: halaman dimuat ulang, lalu `setStyle('dark')` dan `setStyle('sat')`. Permintaan GeoJSON (SD, SMP, SMA, SPPG) terjadi tiga putaran (awal + dua kali ganti), dan titik tampil di atas citra satelit. Console hanya berisi 404 `favicon.ico` dan satu peringatan MapLibre dari style basemap.
+Belum diuji: pemulihan isochrone/kandidat/heatmap setelah ganti basemap (menunggu isochrone dari API baru).
+
+**Pelajaran**
+Cara menyelidiki: lihat tab Network untuk memastikan apakah kode yang dikira jalan memang jalan. Dan baca dokumentasi opsi bawaan fungsi (`diff`). Perilaku bawaan tidak selalu sesuai asumsi.
