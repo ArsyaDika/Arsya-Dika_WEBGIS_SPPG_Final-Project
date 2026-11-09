@@ -1,0 +1,9 @@
+# ================= menyembunyikan berkas rahasia agar API key tidak ter-commit ke GitHub =================
+.env
+.env.*
+!.env.example
+
+# berkas sampah sistem / editor
+.DS_Store
+Thumbs.db
+node_modules/
