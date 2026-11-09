@@ -415,3 +415,31 @@ Belum dipakai di peta (langkah berikutnya).
 
 **Pelajaran**
 Hasil yang tidak berubah-ubah (isochrone dari titik tetap) sebaiknya dihitung sekali dan disimpan sebagai data statis. Dan periksa kualitas data masukan (keunikan, sebaran) sebelum membangun analisis di atasnya.
+
+---
+
+## 16. Perbaikan koordinat SPPG lewat geocoding kelurahan
+
+**Masalah**
+Dari 128 SPPG hanya 49 koordinat unik. 22 SPPG berbagi satu titik (`110.4108585,-7.098096`) walau kelurahannya berbeda-beda. Kolom `Latitude`/`Longitude` di properti ternyata sama persis dengan geometri, jadi tidak ada sumber koordinat benar di berkas aslinya.
+
+**Perubahan**
+- Berkas baru `scripts/geocode-sppg.mjs`: mencari 93 kombinasi kelurahan unik ke Nominatim (OpenStreetMap), lalu memeriksa silang hasilnya dengan titik tengah sekolah di kelurahan yang sama (dari data `DESA`/`KECAMATAN` pada SD/SMP/SMA). Jika Nominatim meleset lebih dari 3 km atau gagal, dipakai titik tengah sekolah.
+- Keluaran baru (berkas asli `data/SPPG.geojson` tidak diubah): `data/SPPG_geocoded.geojson` (properti tambahan `geo_sumber`, `geo_akurasi`, `geo_jarak_cek_km`, `lng_lama`, `lat_lama`) dan `data/SPPG_geocode_laporan.csv` untuk diperiksa di Excel.
+
+**Alasan**
+- Satu pencarian per kelurahan (bukan per SPPG) menghemat permintaan dan sesuai kebijakan Nominatim (maksimal 1 permintaan per detik, memakai identitas klien).
+- Pemeriksaan silang dengan data sekolah memakai informasi yang sudah ada di proyek untuk menangkap hasil geocoding yang salah daerah.
+- Titik yang dihasilkan adalah titik pusat kelurahan, bukan lokasi gedung SPPG. Ini jauh lebih baik daripada titik cadangan yang salah, tetapi tetap perkiraan.
+
+**Hasil**
+Diverifikasi dari keluaran skrip:
+- Sumber koordinat per SPPG: Nominatim 122, titik tengah sekolah 5, tidak ditemukan 1.
+- Koordinat unik naik dari 49 menjadi 93 (maksimal 4 SPPG per titik, yaitu SPPG di kelurahan yang sama).
+- Kota Semarang: 118 SPPG, semuanya terselesaikan, semua berada di dalam kotak kota (lng 110,291 sampai 110,494; lat -7,096 sampai -6,958).
+- Jarak pemeriksaan silang Nominatim ke titik tengah sekolah: median 0,27 km, maksimum 1,45 km, tidak ada yang melewati batas 3 km.
+- Kabupaten Semarang (10 SPPG): 1 tidak ditemukan (`SPPG Semarang Suruh Plumbon 2`) dan masih memegang koordinat lama yang salah, sehingga harus dikeluarkan dari analisis. Dari 9 sisanya, 5 berada dalam 8 km dari sekolah terdekat (Ungaran), sedangkan 4 lainnya berada 11 sampai 31 km dari kota dan tidak mungkin menjangkau sekolah dalam 10 menit.
+Menunggu pemeriksaan pengguna sebelum dipakai untuk isochrone.
+
+**Pelajaran**
+Saat satu sumber data tidak bisa dipercaya, cari sumber kedua yang independen untuk memeriksa silang (di sini: data sekolah), dan catat dengan jelas mana yang diperbaiki dan mana yang masih perkiraan.
