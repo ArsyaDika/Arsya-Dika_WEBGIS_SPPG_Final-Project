@@ -1,8 +1,12 @@
 // ================= BASEMAP =================
+// ================= memperbaiki API key yang tertulis langsung di 4 URL menjadi dua konstanta di satu tempat agar kunci mudah diganti/dirotasi tanpa mencari di banyak baris =================
+const MAPID_BASEMAP_KEY='69a8edeffdb1d3dbc8b3022c';
+const MAPID_ROUTING_KEY='68da7e7d06823ed3f510cc48';
+
 const styles={
-street:'https://basemap.mapid.io/styles/street-2d-building/style.json?key=69a8edeffdb1d3dbc8b3022c',
-dark:'https://basemap.mapid.io/styles/dark/style.json?key=69a8edeffdb1d3dbc8b3022c',
-sat:'https://basemap.mapid.io/styles/satellite/style.json?key=69a8edeffdb1d3dbc8b3022c'
+street:`https://basemap.mapid.io/styles/street-2d-building/style.json?key=${MAPID_BASEMAP_KEY}`,
+dark:`https://basemap.mapid.io/styles/dark/style.json?key=${MAPID_BASEMAP_KEY}`,
+sat:`https://basemap.mapid.io/styles/satellite/style.json?key=${MAPID_BASEMAP_KEY}`
 };
 
 const map=new maplibregl.Map({
@@ -92,7 +96,7 @@ if(layer==='sppg') selectedSPPG=e.features[0];
 // ================= ISOCHRONE =================
 async function getIso(point,waktu){
 const [lng,lat]=point.geometry.coordinates;
-const url=`https://routing.mapid.io/isochrone?key=68da7e7d06823ed3f510cc48&time_limit=${waktu}&point=${lat},${lng}&profile=car`;
+const url=`https://routing.mapid.io/isochrone?key=${MAPID_ROUTING_KEY}&time_limit=${waktu}&point=${lat},${lng}&profile=car`;
 const res=await fetch(url);
 // ================= memperbaiki getIso yang langsung res.json() dan data.polygons[0] menjadi dicek res.ok dan data.polygons dulu agar error API tampil jelas, bukan TypeError tanpa pesan =================
 if(!res.ok) throw new Error('API isochrone gagal: HTTP '+res.status);

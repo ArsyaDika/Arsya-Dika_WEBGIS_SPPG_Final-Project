@@ -240,3 +240,35 @@ Data GeoJSON tidak punya kolom `siswa`, sehingga semua angka siswa berasal dari 
 
 **Pelajaran**
 Angka yang dipakai di banyak tempat harus berasal dari satu fungsi atau konstanta. Kalau tidak, perubahan di satu tempat membuat hasil di tempat lain bertentangan.
+
+---
+
+## 10. API key tersebar di kode
+
+**Masalah**
+Dua API key MapID (basemap dan routing) tertulis langsung di empat URL di `src/app.js`. Kalau kunci perlu diganti, harus mencari di banyak baris, dan repo ini publik di GitHub.
+
+**Perubahan**
+`src/app.js`:
+```diff
++const MAPID_BASEMAP_KEY='...';
++const MAPID_ROUTING_KEY='...';
+-street:'https://basemap.mapid.io/styles/street-2d-building/style.json?key=69a8...',
++street:`https://basemap.mapid.io/styles/street-2d-building/style.json?key=${MAPID_BASEMAP_KEY}`,
+ (dark, sat dan URL isochrone diubah dengan cara yang sama)
+```
+
+**Alasan**
+- Satu tempat untuk mengganti kunci mengurangi risiko ada yang terlewat.
+- Perubahan ini hanya merapikan. Kunci tetap terbaca siapa pun, karena JavaScript di browser selalu bisa dilihat lewat "View source" dan kunci lama juga masih ada di riwayat commit git.
+
+**Hasil**
+`node --check src/app.js` lolos. Belum diverifikasi di browser. Cara cek: basemap dan tombol Street/Dark/Satellite tetap memuat peta, dan Run Isochrone tetap mendapat respons.
+
+**Yang masih harus dikerjakan manual (tidak bisa dilakukan lewat kode)**
+1. Masuk ke dashboard MapID, buat kunci baru, dan cabut kunci yang lama (rotasi).
+2. Jika MapID menyediakannya, batasi kunci baru hanya untuk domain situs ini (domain restriction).
+3. Untuk aplikasi frontend murni, kunci memang tidak bisa disembunyikan. Pembatasan domain dan kuota adalah pengamannya. Menyembunyikan kunci sepenuhnya butuh server perantara (proxy).
+
+**Pelajaran**
+Kunci di sisi browser selalu publik. Yang melindungi bukan menyembunyikannya, melainkan membatasi apa yang bisa dilakukan kunci itu.
