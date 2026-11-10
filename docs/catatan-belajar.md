@@ -972,3 +972,23 @@ Diuji di browser (waktu 10 menit): SPPG Karangayu dijangkau 425 sekolah (124.611
 
 **Pelajaran**
 Satu kata ("terlayani") yang dipakai untuk dua konsep menyesatkan. Beri nama berbeda, dan sertakan ukuran tumpang tindih agar pembaca tahu angka mana yang boleh dijumlahkan.
+
+---
+
+## 39. Tiga usulan tema warna (hanya rancangan, belum diterapkan)
+
+**Permintaan**
+Pengguna meminta tiga template warna yang sesuai untuk tema SPPG, dalam bentuk gambar, untuk dipilih sendiri.
+
+**Perubahan**
+Folder baru `docs/ide-tema/`: `tema-1-hijau-gizi.png`, `tema-2-terakota-hangat.png`, `tema-3-malam-analitik.png`, halaman sumber `mockup-tema.html` (buka dengan `?tema=1`, `2`, atau `3`), serta `peta-terang.png` dan `peta-gelap.png` (peta bersih dari aplikasi sebagai latar). Tidak ada perubahan pada aplikasi.
+
+**Alasan**
+Tiap mockup memakai tata letak Opsi 3 yang sudah dipilih, dengan angka nyata dari data, dan menyertakan palet (primer, sekunder, aksen, rel, latar, kartu, baik, waspada, bahaya) beserta kode warna titik untuk ketujuh jenjang, SPPG, SPPG berdekatan, halo beban berlebih, kandidat, dan area cakupan. Warna "baik/waspada/bahaya" konsisten di tiap tema agar makna status tidak berubah.
+
+**Hasil**
+Tiga gambar dibuat dan diperiksa visual. Satu cacat teks palet pada tema gelap (teks gelap di atas warna gelap) ditemukan dan diperbaiki dengan pemilihan warna teks otomatis menurut kecerahan.
+**Catatan:** titik pada peta mockup adalah ilustrasi tata warna (posisi acak tetap), bukan data.
+
+**Pelajaran**
+Uji keterbacaan teks pada setiap latar warna; kontras mudah terlewat saat membuat varian tema.
