@@ -465,3 +465,34 @@ Diverifikasi dari keluaran: 123 dari 128 dipakai. Lima yang dikeluarkan: Plumbon
 
 **Pelajaran**
 Tulis keputusan penyaringan data beserta alasannya ke dalam data itu sendiri, supaya semua langkah berikutnya memakai aturan yang sama dan bisa diaudit.
+
+---
+
+## 18. Parameter SPPG berdekatan (berubah merah + alasan)
+
+**Masalah / permintaan**
+Menambah parameter: SPPG yang berdekatan dengan SPPG lain ditandai merah, lengkap dengan alasannya.
+
+**Perubahan**
+- `Index.html`: panel baru "SPPG Berdekatan" berisi kotak angka `#jarakDekat` (meter, awal 500) dan penghitung `#jumlahDekat` dari `#jumlahSppg`; legenda menambah "SPPG berdekatan" dan warna kandidat dibedakan.
+- `src/app.js`, sesi baru `// ===== SPPG BERDEKATAN =====`:
+  - `terapkanSppgBerdekatan()`: untuk tiap SPPG mencari SPPG lain dalam jarak `#jarakDekat` memakai `turf.distance(..., {units:'meters'})`, lalu menulis properti `dekat` (1/0) dan `alasan`.
+  - Warna lingkaran SPPG memakai ekspresi data `['case',['==',['get','dekat'],1],'#ef4444','#000']`.
+  - Popup SPPG menampilkan alasan (dengan `esc()` agar teks data aman di HTML).
+  - Pendengar `input` pada kotak jarak, sehingga warna berubah langsung saat angka diganti.
+- Sumber SPPG diganti dari `SPPG.geojson` ke `SPPG_geocoded.geojson` yang disaring `dipakai_analisis` (123 SPPG).
+- Warna kandidat dari merah ke pink (`#ec4899`) supaya tidak sama dengan SPPG berdekatan.
+
+**Alasan**
+- Warna berbasis properti (data-driven) lebih ringan daripada membuat layer baru, dan tetap bekerja setelah ganti basemap karena `init` memanggil ulang `terapkanSppgBerdekatan()`.
+- Jarak dibuat parameter karena tidak ada angka standar tunggal. Nilai awal 500 m dipilih dari hitungan: dengan 100 m, 500 m, 1000 m, dan 2000 m berturut-turut 62, 66, 90, dan 115 dari 123 SPPG ditandai.
+- Alasan di popup membedakan "titik/kelurahan yang sama" dari jarak sebenarnya karena posisi SPPG masih setingkat kelurahan. 62 dari 123 SPPG berbagi titik yang persis sama dengan SPPG lain, jadi banyak tanda merah pada jarak kecil berasal dari ketelitian koordinat, bukan jarak nyata di lapangan.
+
+**Hasil**
+Diuji di browser (Live Server):
+- Awal 66 dari 123 merah; saat jarak diubah ke 100 m menjadi 62, ke 1000 m menjadi 90, kembali ke 500 m menjadi 66. Angka sama dengan hitungan offline.
+- Klik SPPG merah memunculkan popup alasan, mis. "Berdekatan dengan 1 SPPG lain dalam radius 500 m: ... (titik/kelurahan yang sama). Layanan berpotensi tumpang tindih."
+- Console hanya berisi 404 `favicon.ico` dan peringatan dari style basemap.
+
+**Pelajaran**
+Parameter yang memengaruhi banyak titik sebaiknya diubah lewat satu input yang langsung memperbarui peta. Dan sebelum menetapkan angka bawaan, hitung dulu sebaran hasilnya (di sini 54% pada 500 m) agar tanda tidak menjadi sekadar "semua merah".

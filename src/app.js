@@ -50,7 +50,9 @@ clear();
 const sd=await fetch('./data/SD.geojson').then(r=>r.json());
 const smp=await fetch('./data/SMP.geojson').then(r=>r.json());
 const sma=await fetch('./data/SMA.geojson').then(r=>r.json());
-const sppg=await fetch('./data/SPPG.geojson').then(r=>r.json());
+// ================= memperbaiki fetch SPPG.geojson (koordinat salah, 128 SPPG) menjadi SPPG_geocoded.geojson yang disaring dipakai_analisis (123 SPPG) agar peta dan analisis memakai koordinat yang sudah diperbaiki =================
+const sppgSemua=await fetch('./data/SPPG_geocoded.geojson').then(r=>r.json());
+const sppg={type:'FeatureCollection',features:sppgSemua.features.filter(f=>f.properties.dipakai_analisis)};
 
 sekolahData=[
 ...sd.features.map(f=>({...f,properties:{...f.properties,jenjang:'SD'}})),
@@ -64,9 +66,13 @@ sppgData=sppg.features;
 addLayer('sd',sd,'#3b82f6');
 addLayer('smp',smp,'#f59e0b');
 addLayer('sma',sma,'#8b5cf6');
-addLayer('sppg',sppg,'#000');
+// ================= pembuatan warna SPPG berdasarkan properti dekat: merah jika berdekatan dengan SPPG lain, hitam jika tidak =================
+addLayer('sppg',sppg,['case',['==',['get','dekat'],1],'#ef4444','#000']);
 
 bindPopup();
+
+// ================= penghitungan SPPG berdekatan setelah layer SPPG ada (juga saat ganti basemap) =================
+terapkanSppgBerdekatan();
 
 // ================= memperbaiki init yang hanya menggambar layer dasar menjadi juga menggambar ulang isochrone, kandidat, dan heatmap dari lastIso agar hasil analisis tidak hilang saat ganti basemap =================
 if(lastIso){
@@ -102,13 +108,58 @@ const jenjang=p.jenjang || layer.toUpperCase();
 
 new maplibregl.Popup()
 .setLngLat(e.lngLat)
-.setHTML(`<b>${nama}</b><br>${jenjang}`)
+// ================= memperbaiki popup yang hanya menampilkan nama+jenjang menjadi juga menampilkan alasan SPPG berdekatan (merah) agar pengguna tahu mengapa SPPG itu ditandai =================
+.setHTML(`<b>${esc(nama)}</b><br>${jenjang}`+(layer==='sppg'&&p.dekat==1?`<br><span style="color:#dc2626">&#9888; ${esc(p.alasan)}</span>`:''))
 .addTo(map);
 
 if(layer==='sppg') selectedSPPG=e.features[0];
 });
 });
 }
+
+// ================= SPPG BERDEKATAN =================
+// ================= pembuatan fungsi esc agar teks dari data aman ditampilkan di popup HTML =================
+function esc(t){
+return String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ================= pembuatan penghitungan SPPG berdekatan: tandai dekat=1 dan tulis alasan jika ada SPPG lain dalam jarak (meter) yang diatur pengguna =================
+function terapkanSppgBerdekatan(){
+const input=document.getElementById('jarakDekat');
+const meter=Math.max(0,Number(input&&input.value)||0);
+let jumlah=0;
+
+sppgData.forEach((a,i)=>{
+const tetangga=[];
+sppgData.forEach((b,j)=>{
+if(i===j) return;
+const d=turf.distance(a.geometry.coordinates.slice(0,2),b.geometry.coordinates.slice(0,2),{units:'meters'});
+if(d<=meter) tetangga.push({nama:b.properties['Nama SPPG'],d});
+});
+tetangga.sort((x,y)=>x.d-y.d);
+
+if(tetangga.length>0){
+const daftar=tetangga.slice(0,3).map(t=>`${t.nama} (${t.d<1?'titik/kelurahan yang sama':Math.round(t.d)+' m'})`).join(', ');
+const sisa=tetangga.length>3?` dan ${tetangga.length-3} lainnya`:'';
+a.properties.dekat=1;
+a.properties.alasan=`Berdekatan dengan ${tetangga.length} SPPG lain dalam radius ${meter} m: ${daftar}${sisa}. Layanan berpotensi tumpang tindih.`;
+jumlah++;
+}else{
+a.properties.dekat=0;
+a.properties.alasan='';
+}
+});
+
+const src=map.getSource('sppg');
+if(src) src.setData({type:'FeatureCollection',features:sppgData});
+const e1=document.getElementById('jumlahDekat'), e2=document.getElementById('jumlahSppg');
+if(e1) e1.innerText=jumlah;
+if(e2) e2.innerText=sppgData.length;
+}
+
+// ================= pembuatan pendengar input jarak agar warna SPPG langsung berubah saat angka diganti =================
+const inputJarak=document.getElementById('jarakDekat');
+if(inputJarak) inputJarak.addEventListener('input',terapkanSppgBerdekatan);
 
 // ================= ISOCHRONE =================
 async function getIso(point,waktu){
@@ -331,7 +382,8 @@ id:'candidate-layer',
 type:'circle',
 source:'candidate',
 paint:{
-'circle-color':'#ef4444',
+// ================= memperbaiki warna kandidat #ef4444 (merah) menjadi #ec4899 (pink) agar tidak sama dengan SPPG berdekatan yang kini merah =================
+'circle-color':'#ec4899',
 'circle-radius':10
 }
 });

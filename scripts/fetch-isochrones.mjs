@@ -13,7 +13,8 @@ import fs from 'node:fs';
 const argv = process.argv.slice(2);
 const argIdx = argv.indexOf('--range');
 const RANGE_DETIK = argIdx >= 0 ? Number(argv[argIdx + 1]) : 600;
-const OUT_FILE = `data/isochrone-${RANGE_DETIK}.geojson`;
+// ================= memperbaiki nama keluaran isochrone-600.geojson menjadi isochrone-sppg-600.geojson agar hasil lama (koordinat salah) tidak tertimpa dan tidak ikut dilanjutkan =================
+const OUT_FILE = `data/isochrone-sppg-${RANGE_DETIK}.geojson`;
 const ORS_BASE = process.env.ORS_BASE || 'https://api.heigit.org/openrouteservice';
 const PROFIL = 'driving-car';
 // batas gratis ORS: 20 permintaan isochrone per menit -> 1 permintaan per 3,5 detik agar aman
@@ -37,8 +38,21 @@ if (!KEY) {
   process.exit(1);
 }
 
-// ================= pembacaan data SPPG dan hasil yang sudah ada (agar bisa dilanjutkan) =================
-const sppg = JSON.parse(fs.readFileSync('data/SPPG.geojson', 'utf8')).features;
+// ================= memperbaiki sumber SPPG.geojson menjadi SPPG_geocoded.geojson (hanya dipakai_analisis) agar isochrone dihitung dari koordinat yang sudah benar =================
+const semuaSppg = JSON.parse(fs.readFileSync('data/SPPG_geocoded.geojson', 'utf8')).features;
+const sppg = semuaSppg.map((f, i) => ({ ...f, idx: i })).filter((f) => f.properties.dipakai_analisis);
+console.log(`SPPG dipakai analisis: ${sppg.length} dari ${semuaSppg.length}`);
+
+// ================= pengelompokan SPPG berkoordinat sama agar tiap titik unik hanya dipanggil sekali ke API =================
+const kelompok = new Map(); // "lng,lat" -> [SPPG...]
+for (const s of sppg) {
+  const k = s.geometry.coordinates.slice(0, 2).join(',');
+  if (!kelompok.has(k)) kelompok.set(k, []);
+  kelompok.get(k).push(s);
+}
+console.log(`Titik unik yang dipanggil ke API: ${kelompok.size}`);
+
+// ================= pembacaan hasil yang sudah ada (agar bisa dilanjutkan) =================
 let hasil = { type: 'FeatureCollection', features: [] };
 if (fs.existsSync(OUT_FILE)) {
   hasil = JSON.parse(fs.readFileSync(OUT_FILE, 'utf8'));
@@ -76,29 +90,33 @@ async function tarik(lng, lat) {
 // ================= perulangan semua SPPG: tarik, beri atribut, simpan bertahap =================
 const gagal = [];
 let sisaKuota = '-';
-for (let i = 0; i < sppg.length; i++) {
-  if (sudah.has(i)) continue;
-  const s = sppg[i];
-  const [lng, lat] = s.geometry.coordinates;
-  const nama = s.properties['Nama SPPG'] || `SPPG-${i}`;
+let urut = 0;
+for (const [kunci, anggota] of kelompok) {
+  urut++;
+  if (anggota.every((s) => sudah.has(s.idx))) continue; // semua SPPG di titik ini sudah punya isochrone
+  const [lng, lat] = kunci.split(',').map(Number);
+  const label = anggota.map((s) => s.properties['Nama SPPG']).join(' + ');
   try {
     const { feature, sisa } = await tarik(lng, lat);
     sisaKuota = sisa ?? sisaKuota;
-    hasil.features.push({
-      type: 'Feature',
-      geometry: feature.geometry,
-      properties: {
-        sppg_idx: i,
-        sppg_no: s.properties['No SPPG'] ?? null,
-        sppg_nama: nama,
-        waktu_detik: RANGE_DETIK,
-      },
-    });
-    console.log(`[${hasil.features.length}/${sppg.length}] ${nama}  (sisa kuota header: ${sisaKuota})`);
-    if (hasil.features.length % 10 === 0) simpan();
+    // satu isochrone dipakai bersama oleh semua SPPG yang berada di titik yang sama
+    for (const s of anggota) {
+      hasil.features.push({
+        type: 'Feature',
+        geometry: feature.geometry,
+        properties: {
+          sppg_idx: s.idx, // urutan di data/SPPG_geocoded.geojson
+          sppg_no: s.properties['No SPPG'] ?? null,
+          sppg_nama: s.properties['Nama SPPG'] ?? `SPPG-${s.idx}`,
+          waktu_detik: RANGE_DETIK,
+        },
+      });
+    }
+    console.log(`[titik ${urut}/${kelompok.size}] ${label}  (SPPG tersimpan: ${hasil.features.length}/${sppg.length}, sisa kuota header: ${sisaKuota})`);
+    if (urut % 10 === 0) simpan();
   } catch (e) {
-    gagal.push({ i, nama, alasan: e.message });
-    console.log(`  GAGAL ${nama}: ${e.message}`);
+    gagal.push({ titik: kunci, sppg: label, alasan: e.message });
+    console.log(`  GAGAL ${label}: ${e.message}`);
   }
   await tidur(JEDA_MS);
 }

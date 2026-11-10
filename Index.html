@@ -63,6 +63,15 @@ font-weight:600;
 <button id="run-local" class="btn">Run Isochrone</button>
 </div>
 
+<!-- ================= pembuatan panel parameter SPPG berdekatan: jarak (meter) yang dianggap berdekatan, SPPG yang berdekatan berubah merah ================= -->
+<div class="panel">
+<h3 class="font-bold">SPPG Berdekatan</h3>
+<label for="jarakDekat" class="text-sm">Dianggap berdekatan jika jarak &le; (meter)</label>
+<input id="jarakDekat" type="number" min="0" step="50" value="500" class="w-full border p-2 rounded mb-2"/>
+<p class="text-sm">SPPG merah: <b id="jumlahDekat">0</b> dari <b id="jumlahSppg">0</b></p>
+<p class="text-xs text-slate-500">Klik SPPG merah untuk melihat alasannya. Posisi SPPG setingkat kelurahan, jadi jarak di bawah sekitar 1 km hanya perkiraan.</p>
+</div>
+
 <div class="panel">
 <h3 class="font-bold">Global Analysis</h3>
 <button id="run-global" class="btn">Run Global</button>
@@ -91,7 +100,8 @@ font-weight:600;
 <li>🟠 SMP</li>
 <li>🟣 SMA</li>
 <li>⚫ SPPG</li>
-<li>🔴 Kandidat</li>
+<li>🔴 SPPG berdekatan</li>
+<li><span style="color:#ec4899">●</span> Kandidat</li>
 <li>🟡 Heatmap</li>
 <li>🟢 Isochrone</li>
 </ul>
