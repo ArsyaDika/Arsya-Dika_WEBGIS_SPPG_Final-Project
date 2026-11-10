@@ -760,3 +760,25 @@ Diverifikasi: 123/123 isochrone, 0 cincin tidak valid, 0 poligon di bawah 10 km2
 
 **Pelajaran**
 Saat data dihasilkan skrip dan sering berubah, jangan lupa lapisan cache: periksa bahwa aplikasi benar-benar memakai berkas terbaru, bukan hanya bahwa berkasnya sudah berubah di disk.
+
+---
+
+## 30. Data jumlah murid resmi BPS per kecamatan (tahun ajaran 2025/2026)
+
+**Masalah**
+Jumlah siswa di aplikasi hanyalah estimasi (SD 200, SMP 300, SMA 400 per sekolah), dan jenjang SMK serta madrasah tidak ada. Pengguna menyediakan PDF "Kota Semarang Dalam Angka 2026" (BPS).
+
+**Perubahan**
+- Teks PDF diekstrak per halaman (pustaka `pdf-parse` dipasang di folder sementara, di luar proyek; alat `pdftotext`/`pdftoppm` tidak bisa dipakai di lingkungan ini).
+- `scripts/parse-bps-murid.mjs`: mengurai tabel 4.1.3 sampai 4.1.9 (SD, MI, SMP, MTs, SMA, SMK, MA), mengambil kolom tahun ajaran 2025/2026 (negeri, swasta, jumlah) untuk 16 kecamatan, dan memeriksa konsistensi.
+- Berkas baru `data/murid_bps_2025.json`.
+
+**Alasan**
+Ini sumber resmi yang bisa diperiksa: jumlah murid per kecamatan dan per status (negeri/swasta) untuk semua jenjang. Dipakai untuk menggantikan angka tebakan, dengan total per kecamatan tetap sama persis dengan BPS.
+
+**Hasil**
+Pemeriksaan otomatis lolos untuk ketujuh jenjang: 16 kecamatan, jumlah kecamatan = total kota BPS, dan negeri + swasta = jumlah. Total Kota Semarang 2025/2026: SD 124.968, MI 19.469, SMP 64.306, MTs 9.298, SMA 30.742, SMK 36.100, MA 6.842 (total 291.725 murid). Bandingkan dengan estimasi lama 198.600 untuk 823 sekolah: estimasi lama kurang sekitar 32%.
+**Keterbatasan:** BPS hanya memberi total per kecamatan dan status, bukan per sekolah. Jumlah murid per sekolah nanti dibagi merata dalam satu kecamatan, jenjang, dan status (negeri/swasta), sehingga total per kecamatan akurat tetapi variasi antar sekolah tidak.
+
+**Pelajaran**
+Cek total hasil parsing terhadap baris total sumber (jumlah kecamatan = total kota). Itu cara murah untuk menangkap salah baca kolom atau baris yang hilang.

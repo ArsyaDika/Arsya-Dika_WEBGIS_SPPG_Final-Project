@@ -1,0 +1,827 @@
+{
+ "sumber": "BPS Kota Semarang, Kota Semarang Dalam Angka 2026, tabel 4.1.3-4.1.9 (data semester ganjil, Dapodik Kemendikdasmen dan EMIS Kemenag)",
+ "tahun_ajaran": "2025/2026",
+ "data": [
+  {
+   "jenjang": "SD",
+   "kecamatan": "Mijen",
+   "negeri": 5220,
+   "swasta": 3493,
+   "jumlah": 8713
+  },
+  {
+   "jenjang": "SD",
+   "kecamatan": "Gunung Pati",
+   "negeri": 4853,
+   "swasta": 1422,
+   "jumlah": 6275
+  },
+  {
+   "jenjang": "SD",
+   "kecamatan": "Banyumanik",
+   "negeri": 7520,
+   "swasta": 4752,
+   "jumlah": 12272
+  },
+  {
+   "jenjang": "SD",
+   "kecamatan": "Gajah Mungkur",
+   "negeri": 3195,
+   "swasta": 2107,
+   "jumlah": 5302
+  },
+  {
+   "jenjang": "SD",
+   "kecamatan": "Semarang Selatan",
+   "negeri": 3137,
+   "swasta": 3262,
+   "jumlah": 6399
+  },
+  {
+   "jenjang": "SD",
+   "kecamatan": "Candisari",
+   "negeri": 4314,
+   "swasta": 1906,
+   "jumlah": 6220
+  },
+  {
+   "jenjang": "SD",
+   "kecamatan": "Tembalang",
+   "negeri": 7395,
+   "swasta": 3932,
+   "jumlah": 11327
+  },
+  {
+   "jenjang": "SD",
+   "kecamatan": "Pedurungan",
+   "negeri": 7918,
+   "swasta": 6053,
+   "jumlah": 13971
+  },
+  {
+   "jenjang": "SD",
+   "kecamatan": "Genuk",
+   "negeri": 4804,
+   "swasta": 3021,
+   "jumlah": 7825
+  },
+  {
+   "jenjang": "SD",
+   "kecamatan": "Gayamsari",
+   "negeri": 4225,
+   "swasta": 721,
+   "jumlah": 4946
+  },
+  {
+   "jenjang": "SD",
+   "kecamatan": "Semarang Timur",
+   "negeri": 4207,
+   "swasta": 2300,
+   "jumlah": 6507
+  },
+  {
+   "jenjang": "SD",
+   "kecamatan": "Semarang Utara",
+   "negeri": 3649,
+   "swasta": 2787,
+   "jumlah": 6436
+  },
+  {
+   "jenjang": "SD",
+   "kecamatan": "Semarang Tengah",
+   "negeri": 3046,
+   "swasta": 3278,
+   "jumlah": 6324
+  },
+  {
+   "jenjang": "SD",
+   "kecamatan": "Semarang Barat",
+   "negeri": 7315,
+   "swasta": 4648,
+   "jumlah": 11963
+  },
+  {
+   "jenjang": "SD",
+   "kecamatan": "Tugu",
+   "negeri": 2095,
+   "swasta": 66,
+   "jumlah": 2161
+  },
+  {
+   "jenjang": "SD",
+   "kecamatan": "Ngaliyan",
+   "negeri": 6654,
+   "swasta": 1673,
+   "jumlah": 8327
+  },
+  {
+   "jenjang": "MI",
+   "kecamatan": "Mijen",
+   "negeri": 0,
+   "swasta": 966,
+   "jumlah": 966
+  },
+  {
+   "jenjang": "MI",
+   "kecamatan": "Gunung Pati",
+   "negeri": 593,
+   "swasta": 2067,
+   "jumlah": 2660
+  },
+  {
+   "jenjang": "MI",
+   "kecamatan": "Banyumanik",
+   "negeri": 0,
+   "swasta": 42,
+   "jumlah": 42
+  },
+  {
+   "jenjang": "MI",
+   "kecamatan": "Gajah Mungkur",
+   "negeri": 0,
+   "swasta": 0,
+   "jumlah": 0
+  },
+  {
+   "jenjang": "MI",
+   "kecamatan": "Semarang Selatan",
+   "negeri": 0,
+   "swasta": 157,
+   "jumlah": 157
+  },
+  {
+   "jenjang": "MI",
+   "kecamatan": "Candisari",
+   "negeri": 0,
+   "swasta": 0,
+   "jumlah": 0
+  },
+  {
+   "jenjang": "MI",
+   "kecamatan": "Tembalang",
+   "negeri": 0,
+   "swasta": 4022,
+   "jumlah": 4022
+  },
+  {
+   "jenjang": "MI",
+   "kecamatan": "Pedurungan",
+   "negeri": 0,
+   "swasta": 2788,
+   "jumlah": 2788
+  },
+  {
+   "jenjang": "MI",
+   "kecamatan": "Genuk",
+   "negeri": 0,
+   "swasta": 3434,
+   "jumlah": 3434
+  },
+  {
+   "jenjang": "MI",
+   "kecamatan": "Gayamsari",
+   "negeri": 0,
+   "swasta": 349,
+   "jumlah": 349
+  },
+  {
+   "jenjang": "MI",
+   "kecamatan": "Semarang Timur",
+   "negeri": 0,
+   "swasta": 158,
+   "jumlah": 158
+  },
+  {
+   "jenjang": "MI",
+   "kecamatan": "Semarang Utara",
+   "negeri": 0,
+   "swasta": 305,
+   "jumlah": 305
+  },
+  {
+   "jenjang": "MI",
+   "kecamatan": "Semarang Tengah",
+   "negeri": 0,
+   "swasta": 195,
+   "jumlah": 195
+  },
+  {
+   "jenjang": "MI",
+   "kecamatan": "Semarang Barat",
+   "negeri": 0,
+   "swasta": 477,
+   "jumlah": 477
+  },
+  {
+   "jenjang": "MI",
+   "kecamatan": "Tugu",
+   "negeri": 0,
+   "swasta": 1062,
+   "jumlah": 1062
+  },
+  {
+   "jenjang": "MI",
+   "kecamatan": "Ngaliyan",
+   "negeri": 0,
+   "swasta": 2854,
+   "jumlah": 2854
+  },
+  {
+   "jenjang": "SMP",
+   "kecamatan": "Mijen",
+   "negeri": 1943,
+   "swasta": 2343,
+   "jumlah": 4286
+  },
+  {
+   "jenjang": "SMP",
+   "kecamatan": "Gunung Pati",
+   "negeri": 2230,
+   "swasta": 1502,
+   "jumlah": 3732
+  },
+  {
+   "jenjang": "SMP",
+   "kecamatan": "Banyumanik",
+   "negeri": 3201,
+   "swasta": 2315,
+   "jumlah": 5516
+  },
+  {
+   "jenjang": "SMP",
+   "kecamatan": "Gajah Mungkur",
+   "negeri": 1631,
+   "swasta": 1471,
+   "jumlah": 3102
+  },
+  {
+   "jenjang": "SMP",
+   "kecamatan": "Semarang Selatan",
+   "negeri": 3145,
+   "swasta": 2606,
+   "jumlah": 5751
+  },
+  {
+   "jenjang": "SMP",
+   "kecamatan": "Candisari",
+   "negeri": 1654,
+   "swasta": 1483,
+   "jumlah": 3137
+  },
+  {
+   "jenjang": "SMP",
+   "kecamatan": "Tembalang",
+   "negeri": 2989,
+   "swasta": 2205,
+   "jumlah": 5194
+  },
+  {
+   "jenjang": "SMP",
+   "kecamatan": "Pedurungan",
+   "negeri": 3429,
+   "swasta": 2486,
+   "jumlah": 5915
+  },
+  {
+   "jenjang": "SMP",
+   "kecamatan": "Genuk",
+   "negeri": 1586,
+   "swasta": 1755,
+   "jumlah": 3341
+  },
+  {
+   "jenjang": "SMP",
+   "kecamatan": "Gayamsari",
+   "negeri": 773,
+   "swasta": 1917,
+   "jumlah": 2690
+  },
+  {
+   "jenjang": "SMP",
+   "kecamatan": "Semarang Timur",
+   "negeri": 1648,
+   "swasta": 1619,
+   "jumlah": 3267
+  },
+  {
+   "jenjang": "SMP",
+   "kecamatan": "Semarang Utara",
+   "negeri": 764,
+   "swasta": 792,
+   "jumlah": 1556
+  },
+  {
+   "jenjang": "SMP",
+   "kecamatan": "Semarang Tengah",
+   "negeri": 3831,
+   "swasta": 2424,
+   "jumlah": 6255
+  },
+  {
+   "jenjang": "SMP",
+   "kecamatan": "Semarang Barat",
+   "negeri": 3180,
+   "swasta": 2661,
+   "jumlah": 5841
+  },
+  {
+   "jenjang": "SMP",
+   "kecamatan": "Tugu",
+   "negeri": 750,
+   "swasta": 856,
+   "jumlah": 1606
+  },
+  {
+   "jenjang": "SMP",
+   "kecamatan": "Ngaliyan",
+   "negeri": 1935,
+   "swasta": 1182,
+   "jumlah": 3117
+  },
+  {
+   "jenjang": "MTs",
+   "kecamatan": "Mijen",
+   "negeri": 0,
+   "swasta": 1620,
+   "jumlah": 1620
+  },
+  {
+   "jenjang": "MTs",
+   "kecamatan": "Gunung Pati",
+   "negeri": 0,
+   "swasta": 1374,
+   "jumlah": 1374
+  },
+  {
+   "jenjang": "MTs",
+   "kecamatan": "Banyumanik",
+   "negeri": 0,
+   "swasta": 106,
+   "jumlah": 106
+  },
+  {
+   "jenjang": "MTs",
+   "kecamatan": "Gajah Mungkur",
+   "negeri": 0,
+   "swasta": 0,
+   "jumlah": 0
+  },
+  {
+   "jenjang": "MTs",
+   "kecamatan": "Semarang Selatan",
+   "negeri": 0,
+   "swasta": 77,
+   "jumlah": 77
+  },
+  {
+   "jenjang": "MTs",
+   "kecamatan": "Candisari",
+   "negeri": 0,
+   "swasta": 0,
+   "jumlah": 0
+  },
+  {
+   "jenjang": "MTs",
+   "kecamatan": "Tembalang",
+   "negeri": 1069,
+   "swasta": 1079,
+   "jumlah": 2148
+  },
+  {
+   "jenjang": "MTs",
+   "kecamatan": "Pedurungan",
+   "negeri": 978,
+   "swasta": 757,
+   "jumlah": 1735
+  },
+  {
+   "jenjang": "MTs",
+   "kecamatan": "Genuk",
+   "negeri": 0,
+   "swasta": 872,
+   "jumlah": 872
+  },
+  {
+   "jenjang": "MTs",
+   "kecamatan": "Gayamsari",
+   "negeri": 0,
+   "swasta": 67,
+   "jumlah": 67
+  },
+  {
+   "jenjang": "MTs",
+   "kecamatan": "Semarang Timur",
+   "negeri": 0,
+   "swasta": 0,
+   "jumlah": 0
+  },
+  {
+   "jenjang": "MTs",
+   "kecamatan": "Semarang Utara",
+   "negeri": 0,
+   "swasta": 0,
+   "jumlah": 0
+  },
+  {
+   "jenjang": "MTs",
+   "kecamatan": "Semarang Tengah",
+   "negeri": 0,
+   "swasta": 0,
+   "jumlah": 0
+  },
+  {
+   "jenjang": "MTs",
+   "kecamatan": "Semarang Barat",
+   "negeri": 0,
+   "swasta": 24,
+   "jumlah": 24
+  },
+  {
+   "jenjang": "MTs",
+   "kecamatan": "Tugu",
+   "negeri": 0,
+   "swasta": 526,
+   "jumlah": 526
+  },
+  {
+   "jenjang": "MTs",
+   "kecamatan": "Ngaliyan",
+   "negeri": 0,
+   "swasta": 749,
+   "jumlah": 749
+  },
+  {
+   "jenjang": "SMA",
+   "kecamatan": "Mijen",
+   "negeri": 1493,
+   "swasta": 385,
+   "jumlah": 1878
+  },
+  {
+   "jenjang": "SMA",
+   "kecamatan": "Gunung Pati",
+   "negeri": 1257,
+   "swasta": 448,
+   "jumlah": 1705
+  },
+  {
+   "jenjang": "SMA",
+   "kecamatan": "Banyumanik",
+   "negeri": 2437,
+   "swasta": 1448,
+   "jumlah": 3885
+  },
+  {
+   "jenjang": "SMA",
+   "kecamatan": "Gajah Mungkur",
+   "negeri": 0,
+   "swasta": 1195,
+   "jumlah": 1195
+  },
+  {
+   "jenjang": "SMA",
+   "kecamatan": "Semarang Selatan",
+   "negeri": 2712,
+   "swasta": 1698,
+   "jumlah": 4410
+  },
+  {
+   "jenjang": "SMA",
+   "kecamatan": "Candisari",
+   "negeri": 0,
+   "swasta": 576,
+   "jumlah": 576
+  },
+  {
+   "jenjang": "SMA",
+   "kecamatan": "Tembalang",
+   "negeri": 1074,
+   "swasta": 46,
+   "jumlah": 1120
+  },
+  {
+   "jenjang": "SMA",
+   "kecamatan": "Pedurungan",
+   "negeri": 1282,
+   "swasta": 331,
+   "jumlah": 1613
+  },
+  {
+   "jenjang": "SMA",
+   "kecamatan": "Genuk",
+   "negeri": 1091,
+   "swasta": 204,
+   "jumlah": 1295
+  },
+  {
+   "jenjang": "SMA",
+   "kecamatan": "Gayamsari",
+   "negeri": 0,
+   "swasta": 944,
+   "jumlah": 944
+  },
+  {
+   "jenjang": "SMA",
+   "kecamatan": "Semarang Timur",
+   "negeri": 0,
+   "swasta": 826,
+   "jumlah": 826
+  },
+  {
+   "jenjang": "SMA",
+   "kecamatan": "Semarang Utara",
+   "negeri": 921,
+   "swasta": 183,
+   "jumlah": 1104
+  },
+  {
+   "jenjang": "SMA",
+   "kecamatan": "Semarang Tengah",
+   "negeri": 2569,
+   "swasta": 1478,
+   "jumlah": 4047
+  },
+  {
+   "jenjang": "SMA",
+   "kecamatan": "Semarang Barat",
+   "negeri": 1275,
+   "swasta": 1925,
+   "jumlah": 3200
+  },
+  {
+   "jenjang": "SMA",
+   "kecamatan": "Tugu",
+   "negeri": 0,
+   "swasta": 746,
+   "jumlah": 746
+  },
+  {
+   "jenjang": "SMA",
+   "kecamatan": "Ngaliyan",
+   "negeri": 2198,
+   "swasta": 0,
+   "jumlah": 2198
+  },
+  {
+   "jenjang": "SMK",
+   "kecamatan": "Mijen",
+   "negeri": 0,
+   "swasta": 1559,
+   "jumlah": 1559
+  },
+  {
+   "jenjang": "SMK",
+   "kecamatan": "Gunung Pati",
+   "negeri": 0,
+   "swasta": 538,
+   "jumlah": 538
+  },
+  {
+   "jenjang": "SMK",
+   "kecamatan": "Banyumanik",
+   "negeri": 1673,
+   "swasta": 507,
+   "jumlah": 2180
+  },
+  {
+   "jenjang": "SMK",
+   "kecamatan": "Gajah Mungkur",
+   "negeri": 0,
+   "swasta": 1454,
+   "jumlah": 1454
+  },
+  {
+   "jenjang": "SMK",
+   "kecamatan": "Semarang Selatan",
+   "negeri": 7900,
+   "swasta": 98,
+   "jumlah": 7998
+  },
+  {
+   "jenjang": "SMK",
+   "kecamatan": "Candisari",
+   "negeri": 0,
+   "swasta": 966,
+   "jumlah": 966
+  },
+  {
+   "jenjang": "SMK",
+   "kecamatan": "Tembalang",
+   "negeri": 0,
+   "swasta": 452,
+   "jumlah": 452
+  },
+  {
+   "jenjang": "SMK",
+   "kecamatan": "Pedurungan",
+   "negeri": 0,
+   "swasta": 1872,
+   "jumlah": 1872
+  },
+  {
+   "jenjang": "SMK",
+   "kecamatan": "Genuk",
+   "negeri": 0,
+   "swasta": 967,
+   "jumlah": 967
+  },
+  {
+   "jenjang": "SMK",
+   "kecamatan": "Gayamsari",
+   "negeri": 0,
+   "swasta": 2735,
+   "jumlah": 2735
+  },
+  {
+   "jenjang": "SMK",
+   "kecamatan": "Semarang Timur",
+   "negeri": 5797,
+   "swasta": 941,
+   "jumlah": 6738
+  },
+  {
+   "jenjang": "SMK",
+   "kecamatan": "Semarang Utara",
+   "negeri": 1844,
+   "swasta": 73,
+   "jumlah": 1917
+  },
+  {
+   "jenjang": "SMK",
+   "kecamatan": "Semarang Tengah",
+   "negeri": 0,
+   "swasta": 2788,
+   "jumlah": 2788
+  },
+  {
+   "jenjang": "SMK",
+   "kecamatan": "Semarang Barat",
+   "negeri": 0,
+   "swasta": 870,
+   "jumlah": 870
+  },
+  {
+   "jenjang": "SMK",
+   "kecamatan": "Tugu",
+   "negeri": 0,
+   "swasta": 2198,
+   "jumlah": 2198
+  },
+  {
+   "jenjang": "SMK",
+   "kecamatan": "Ngaliyan",
+   "negeri": 0,
+   "swasta": 868,
+   "jumlah": 868
+  },
+  {
+   "jenjang": "MA",
+   "kecamatan": "Mijen",
+   "negeri": 0,
+   "swasta": 1024,
+   "jumlah": 1024
+  },
+  {
+   "jenjang": "MA",
+   "kecamatan": "Gunung Pati",
+   "negeri": 0,
+   "swasta": 672,
+   "jumlah": 672
+  },
+  {
+   "jenjang": "MA",
+   "kecamatan": "Banyumanik",
+   "negeri": 0,
+   "swasta": 232,
+   "jumlah": 232
+  },
+  {
+   "jenjang": "MA",
+   "kecamatan": "Gajah Mungkur",
+   "negeri": 0,
+   "swasta": 0,
+   "jumlah": 0
+  },
+  {
+   "jenjang": "MA",
+   "kecamatan": "Semarang Selatan",
+   "negeri": 0,
+   "swasta": 19,
+   "jumlah": 19
+  },
+  {
+   "jenjang": "MA",
+   "kecamatan": "Candisari",
+   "negeri": 0,
+   "swasta": 0,
+   "jumlah": 0
+  },
+  {
+   "jenjang": "MA",
+   "kecamatan": "Tembalang",
+   "negeri": 0,
+   "swasta": 1023,
+   "jumlah": 1023
+  },
+  {
+   "jenjang": "MA",
+   "kecamatan": "Pedurungan",
+   "negeri": 1273,
+   "swasta": 409,
+   "jumlah": 1682
+  },
+  {
+   "jenjang": "MA",
+   "kecamatan": "Genuk",
+   "negeri": 1354,
+   "swasta": 202,
+   "jumlah": 1556
+  },
+  {
+   "jenjang": "MA",
+   "kecamatan": "Gayamsari",
+   "negeri": 0,
+   "swasta": 62,
+   "jumlah": 62
+  },
+  {
+   "jenjang": "MA",
+   "kecamatan": "Semarang Timur",
+   "negeri": 0,
+   "swasta": 0,
+   "jumlah": 0
+  },
+  {
+   "jenjang": "MA",
+   "kecamatan": "Semarang Utara",
+   "negeri": 0,
+   "swasta": 0,
+   "jumlah": 0
+  },
+  {
+   "jenjang": "MA",
+   "kecamatan": "Semarang Tengah",
+   "negeri": 0,
+   "swasta": 0,
+   "jumlah": 0
+  },
+  {
+   "jenjang": "MA",
+   "kecamatan": "Semarang Barat",
+   "negeri": 0,
+   "swasta": 0,
+   "jumlah": 0
+  },
+  {
+   "jenjang": "MA",
+   "kecamatan": "Tugu",
+   "negeri": 0,
+   "swasta": 402,
+   "jumlah": 402
+  },
+  {
+   "jenjang": "MA",
+   "kecamatan": "Ngaliyan",
+   "negeri": 0,
+   "swasta": 170,
+   "jumlah": 170
+  }
+ ],
+ "total_kota": {
+  "SD": {
+   "negeri": 79547,
+   "swasta": 45421,
+   "jumlah": 124968
+  },
+  "MI": {
+   "negeri": 593,
+   "swasta": 18876,
+   "jumlah": 19469
+  },
+  "SMP": {
+   "negeri": 34689,
+   "swasta": 29617,
+   "jumlah": 64306
+  },
+  "MTs": {
+   "negeri": 2047,
+   "swasta": 7251,
+   "jumlah": 9298
+  },
+  "SMA": {
+   "negeri": 18309,
+   "swasta": 12433,
+   "jumlah": 30742
+  },
+  "SMK": {
+   "negeri": 17214,
+   "swasta": 18886,
+   "jumlah": 36100
+  },
+  "MA": {
+   "negeri": 2627,
+   "swasta": 4215,
+   "jumlah": 6842
+  }
+ }
+}
