@@ -875,11 +875,14 @@ function clear(){
 hapusLayanan();
 }
 
-window.toggleLayer=(id)=>{
-if(!map.getLayer(id)) return;
-const v=map.getLayoutProperty(id,'visibility');
+// ================= memperbaiki toggleLayer yang hanya menerima satu id menjadi menerima beberapa id dipisah koma (mis. 'sd-layer,mi-layer') agar satu tombol bisa mengatur jenjang yang setara; keadaan ditentukan dari layer pertama yang ada =================
+window.toggleLayer=(daftar)=>{
+const ids=String(daftar).split(',').map(s=>s.trim()).filter(id=>map.getLayer(id));
+if(!ids.length) return;
+const v=map.getLayoutProperty(ids[0],'visibility');
 // ================= memperbaiki v==='visible'?'none':'visible' menjadi v==='none'?'visible':'none' agar klik pertama langsung menyembunyikan layer (visibility awal undefined) =================
-map.setLayoutProperty(id,'visibility',v==='none'?'visible':'none');
+const baru=v==='none'?'visible':'none';
+ids.forEach(id=>map.setLayoutProperty(id,'visibility',baru));
 };
 
 // ================= memperbaiki map.setStyle(styles[t]) menjadi map.setStyle(styles[t],{diff:false}) agar style dimuat ulang penuh dan event style.load menyala sehingga init menggambar ulang layer sekolah/SPPG (mode diff bawaan menghapus layer kita tanpa memicu style.load) =================

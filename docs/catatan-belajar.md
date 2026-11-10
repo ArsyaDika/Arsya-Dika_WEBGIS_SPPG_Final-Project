@@ -854,3 +854,23 @@ Dari 43 sekolah yang diproses: 23 ditemukan lewat Nominatim (1 nama sekolah, 22 
 
 **Pelajaran**
 Selalu catat tingkat kepastian tiap koordinat (resmi, jalan, kelurahan) agar pengguna tahu mana yang bisa dipercaya penuh.
+
+---
+
+## 34. Toggle layer ringkas per jenjang setara dan tab Analisis terpisah
+
+**Masalah / permintaan**
+Daftar layer terlalu panjang (tujuh jenjang) dan mencampur titik data dengan hasil perhitungan (heatmap, kandidat, cakupan, beban berlebih). Pengguna meminta titik tetap dibedakan per bentuk (SD, MI, SMP, MTs, SMA, SMK, MA) tetapi toggle diringkas per jenjang setara, dan hasil analisis dipisah dari layer titik.
+
+**Perubahan**
+- `Index.html`: tab Layer kini hanya berisi basemap dan toggle titik: "SD / MI", "SMP / MTs", "SMA / SMK / MA", "SPPG"; legenda titik. Tab baru **Analisis** (rel ikon ke-3) berisi toggle Cakupan isochrone, Beban berlebih, Heatmap siswa, Kandidat SPPG baru, beserta legenda analisis.
+- `src/app.js`: `toggleLayer()` menerima beberapa id dipisah koma (mis. `'sd-layer,mi-layer'`); status ditentukan dari layer pertama yang ada.
+
+**Alasan**
+Titik dan nama tiap bentuk tetap terpisah di peta dan popup (data lebih akurat), sedangkan toggle per jenjang setara cukup untuk mengatur tampilan. Memisahkan "titik data" dari "hasil perhitungan" membuat pengguna tahu mana fakta dan mana penilaian.
+
+**Hasil**
+Diuji di browser: rel berisi Dash, Layer, Analisis, Param, Kandidat, Data; tab Layer berisi Street, Dark, Satellite, SD / MI, SMP / MTs, SMA / SMK / MA, SPPG; tab Analisis berisi empat toggle; satu klik "SD / MI" menyembunyikan titik SD dan MI sekaligus (diperiksa pada tangkapan layar). Console bersih (hanya 404 favicon).
+
+**Pelajaran**
+Satu tombol bisa mengendalikan beberapa layer bila fungsi toggle menerima daftar id. Pisahkan fakta (titik) dari penilaian (hasil model) di antarmuka.

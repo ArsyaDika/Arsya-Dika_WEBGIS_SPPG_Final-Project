@@ -58,6 +58,8 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <nav id="rail">
 <button data-tab="dash" class="on"><i>▦</i>Dash</button>
 <button data-tab="layer"><i>☰</i>Layer</button>
+<!-- ================= pembuatan tab Analisis: hasil perhitungan/penilaian (cakupan, beban berlebih, heatmap, kandidat) dipisah dari tab Layer yang hanya berisi titik ================= -->
+<button data-tab="analisis"><i>◎</i>Analisis</button>
 <button data-tab="param"><i>⚙</i>Param</button>
 <button data-tab="kandidat"><i>★</i>Kandidat</button>
 <button data-tab="data"><i>ⓘ</i>Data</button>
@@ -75,37 +77,45 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 </div>
 
 <div class="panel">
-<h3 class="font-bold">Layer</h3>
-<!-- ================= memperbaiki tiga tombol jenjang (SD, SMP, SMA) menjadi tujuh (SD, MI, SMP, MTs, SMA, SMK, MA) sesuai data sekolah resmi ================= -->
-<button onclick="toggleLayer('sd-layer')" class="btn">SD</button>
-<button onclick="toggleLayer('mi-layer')" class="btn">MI</button>
-<button onclick="toggleLayer('smp-layer')" class="btn">SMP</button>
-<button onclick="toggleLayer('mts-layer')" class="btn">MTs</button>
-<button onclick="toggleLayer('sma-layer')" class="btn">SMA</button>
-<button onclick="toggleLayer('smk-layer')" class="btn">SMK</button>
-<button onclick="toggleLayer('ma-layer')" class="btn">MA</button>
+<h3 class="font-bold">Layer titik</h3>
+<!-- ================= memperbaiki tujuh tombol jenjang menjadi tiga tombol ringkas per jenjang setara (SD/MI, SMP/MTs, SMA/SMK/MA) agar daftar layer pendek; titik dan nama tiap bentuk (SD, MI, SMP, MTs, SMA, SMK, MA) tetap dibedakan di peta dan popup ================= -->
+<button onclick="toggleLayer('sd-layer,mi-layer')" class="btn">SD / MI</button>
+<button onclick="toggleLayer('smp-layer,mts-layer')" class="btn">SMP / MTs</button>
+<button onclick="toggleLayer('sma-layer,smk-layer,ma-layer')" class="btn">SMA / SMK / MA</button>
 <button onclick="toggleLayer('sppg-layer')" class="btn">SPPG</button>
-<button onclick="toggleLayer('candidate-layer')" class="btn">Candidate</button>
-<button onclick="toggleLayer('heatmap-layer')" class="btn">Heatmap</button>
-<!-- ================= pembuatan tombol toggle untuk area cakupan 10 menit dan halo SPPG kelebihan beban ================= -->
-<button onclick="toggleLayer('cover-layer')" class="btn">Cakupan 10 menit</button>
-<button onclick="toggleLayer('beban-layer')" class="btn">Beban Berlebih</button>
+<p class="text-xs text-slate-500">Hasil perhitungan (cakupan, beban, heatmap, kandidat) ada di tab Analisis.</p>
 </div>
 
 <div class="panel">
-<h3 class="font-bold">Legend</h3>
+<h3 class="font-bold">Legenda titik</h3>
 <ul class="text-sm">
 <li><span style="color:#3b82f6">●</span> SD &nbsp; <span style="color:#06b6d4">●</span> MI</li>
 <li><span style="color:#f59e0b">●</span> SMP &nbsp; <span style="color:#ea580c">●</span> MTs</li>
 <li><span style="color:#8b5cf6">●</span> SMA &nbsp; <span style="color:#14b8a6">●</span> SMK &nbsp; <span style="color:#a21caf">●</span> MA</li>
-<li>⚫ SPPG</li>
-<li>🔴 SPPG berdekatan</li>
+<li>⚫ SPPG &nbsp; 🔴 SPPG berdekatan (lihat tab Param)</li>
+<li><span style="color:#0ea5e9">●</span> Biru: area layanan SPPG yang diklik</li>
+</ul>
+</div>
+</section>
+
+<section data-panel="analisis">
+<!-- ================= pembuatan panel hasil analisis: tombol tampil/sembunyi untuk cakupan isochrone, beban berlebih, heatmap, dan kandidat (hasil perhitungan, bukan titik data) ================= -->
+<div class="panel">
+<h3 class="font-bold">Hasil analisis</h3>
+<button onclick="toggleLayer('cover-layer')" class="btn">Cakupan isochrone</button>
+<button onclick="toggleLayer('beban-layer')" class="btn">Beban berlebih</button>
+<button onclick="toggleLayer('heatmap-layer')" class="btn">Heatmap siswa</button>
+<button onclick="toggleLayer('candidate-layer')" class="btn">Kandidat SPPG baru</button>
+<p class="text-xs text-slate-500">Cakupan mengikuti waktu tempuh yang dipilih di tab Param. Kandidat dihitung di tab Kandidat; heatmap muncul setelah Run Isochrone atau Run Global.</p>
+</div>
+<div class="panel">
+<h3 class="font-bold">Legenda analisis</h3>
+<ul class="text-sm">
+<li><span style="color:#16a34a">▮</span> Area hijau: cakupan isochrone semua SPPG</li>
 <li><span style="color:#92400e">●</span> Halo coklat: SPPG melebihi kapasitas</li>
-<li><span style="color:#16a34a">▮</span> Area hijau: jangkauan 10 menit</li>
-<li><span style="color:#0ea5e9">●</span> Biru: area layanan SPPG terpilih</li>
-<li><span style="color:#ec4899">●</span> Kandidat</li>
-<li>🟡 Heatmap</li>
-<li>🟢 Isochrone</li>
+<li><span style="color:#ec4899">●</span> Kandidat SPPG baru</li>
+<li>🟡 Heatmap sebaran siswa</li>
+<li>🟢 Isochrone satu SPPG / gabungan (Run)</li>
 </ul>
 </div>
 </section>
