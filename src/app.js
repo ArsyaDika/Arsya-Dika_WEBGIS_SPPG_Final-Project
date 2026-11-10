@@ -75,12 +75,13 @@ terapkanSppgBerdekatan();
 // ================= memperbaiki init yang hanya menggambar layer dasar menjadi juga menggambar ulang isochrone, kandidat, dan heatmap dari lastIso agar hasil analisis tidak hilang saat ganti basemap =================
 if(lastIso){
 drawIso(lastIso);
-generateCandidate(lastIso);
 generateHeatmap();
 }
 
 // ================= penghitungan cakupan dan beban setelah semua layer dasar ada (juga saat ganti basemap) =================
 await terapkanBebanDasar();
+// ================= memperbaiki generateCandidate(lastIso) menjadi menggambar ulang kandidat tersimpan agar kandidat tidak hilang saat ganti basemap =================
+gambarKandidat(kandidatTerakhir);
 }
 
 // ================= LAYER =================
@@ -429,7 +430,15 @@ set('kpiKelebihan',fmt(beban.kelebihan)+' siswa');
 
 // ================= pembuatan pendengar input kapasitas agar KPI dan halo beban langsung diperbarui =================
 const inputKapasitas=document.getElementById('kapasitas');
-if(inputKapasitas) inputKapasitas.addEventListener('input',()=>{terapkanBebanDasar();});
+// ================= memperbaiki pendengar kapasitas agar juga menghapus kandidat lama (hasilnya tidak berlaku lagi untuk kapasitas baru) =================
+if(inputKapasitas) inputKapasitas.addEventListener('input',()=>{
+kandidatTerakhir=null;
+safeRemove('candidate');
+const ring=document.getElementById('hasilKandidat'),daftar=document.getElementById('listKandidat');
+if(ring) ring.innerText='Kapasitas berubah. Jalankan ulang pencarian.';
+if(daftar) daftar.innerHTML='';
+terapkanBebanDasar();
+});
 
 // ================= HEATMAP =================
 function generateHeatmap(){
@@ -462,143 +471,121 @@ paint:{
 });
 }
 
-// ================= CANDIDATE =================
+// ================= KANDIDAT SPPG BARU (BERBASIS BEBAN) =================
+// ================= memperbaiki generateCandidate lama (grid 1 km dari satu isochrone, urut jumlah siswa) menjadi pencarian greedy berbasis beban per SPPG berkapasitas tetap agar kandidat benar-benar meringankan SPPG yang kelebihan permintaan =================
+let kandidatTerakhir=null;   // {daftar,sebelum,sesudah} hasil pencarian terakhir
 let candidatePopupBound=false;
-function generateCandidate(geo){
 
-safeRemove('candidate');
+// ================= pembuatan pencarian kandidat: tiap putaran pilih satu lokasi sekolah yang paling banyak mengurangi kelebihan beban dan menjangkau sekolah yang belum tercakup 10 menit =================
+function cariKandidat(K){
+const {grup,kap,beban}=analisisDasar;
+const N=sekolahData.length;
+const xy=sekolahData.map(s=>s.geometry.coordinates.slice(0,2));
+const siswa=sekolahData.map(s=>getSiswa(s));
+const D=xy.map(a=>xy.map(b=>jarakM(a,b)));                 // jarak antar sekolah (meter), dihitung sekali
+const g=beban.dekat.map(d=>d.idx);                          // penugasan: indeks titik SPPG, atau indeks kandidat (>= grup.length)
+const jarakKini=beban.dekat.map(d=>d.d);                    // jarak tiap sekolah ke pemberi layanan terdekat saat ini
+const kapAll=grup.map(x=>x.n*kap);
+const muatan=beban.muatan.slice();
+const belum=new Set(sekolahTdkTercakup);                    // sekolah yang belum tercakup isochrone 10 menit
+const RADIUS_COV=2000, JARAK_MIN_SPPG=300, JARAK_MIN_KANDIDAT=1000;   // meter
+const kelebihanAwal=beban.kelebihan;
+const belumAwal=[...belum].reduce((a,i)=>a+siswa[i],0);
+const dipilih=[];
 
-// ===============================
-// 1. AMBIL SEKOLAH YANG TIDAK TERLAYANI
-// ===============================
-const gapSekolah = sekolahData.filter(s=>{
-try{
-return !turf.booleanPointInPolygon(
-turf.point(s.geometry.coordinates),
-geo
-);
-}catch{
-return false;
+for(let r=0;r<K;r++){
+let best=null;
+for(let c=0;c<N;c++){
+if(jarakKini[c]<JARAK_MIN_SPPG) continue;                       // terlalu dekat dengan SPPG/kandidat yang ada
+if(dipilih.some(p=>D[c][p.c]<JARAK_MIN_KANDIDAT)) continue;     // terlalu dekat dengan kandidat lain
+let muatC=0;
+const lepas=new Map();                                          // titik asal -> siswa yang pindah ke kandidat
+for(let s=0;s<N;s++){
+if(D[c][s]<jarakKini[s]){muatC+=siswa[s];lepas.set(g[s],(lepas.get(g[s])||0)+siswa[s]);}
 }
+let gain=0;                                                     // pengurangan kelebihan beban di titik asal
+lepas.forEach((v,idx)=>{
+gain+=Math.max(0,muatan[idx]-kapAll[idx])-Math.max(0,muatan[idx]-v-kapAll[idx]);
 });
-
-if(gapSekolah.length === 0){
-console.log("Tidak ada gap layanan");
-return;
+const exC=Math.max(0,muatC-kap);                                // kelebihan baru jika kandidat sendiri melebihi kapasitas
+let cov=0;
+belum.forEach(s=>{if(D[c][s]<=RADIUS_COV) cov+=siswa[s];});     // siswa belum tercakup yang terjangkau (perkiraan radius 2 km)
+const skor=gain-exC+cov;
+if(!best||skor>best.skor) best={c,skor,gain,cov,muatC,lepas};
 }
+if(!best||best.skor<=0) break;                                  // tidak ada lokasi yang masih memberi manfaat
 
-// ===============================
-// 2. BUAT GRID (REPRESENTASI AREA)
-// ===============================
-const grid = turf.squareGrid(
-// ================= memperbaiki turf.bbox(geo) menjadi turf.bbox(turf.featureCollection(sekolahData)) agar grid menutupi seluruh sekolah (termasuk yang di luar isochrone), bukan hanya area isochrone =================
-turf.bbox(turf.featureCollection(sekolahData)),
-1, // 1 km grid (realistis)
-{units:'kilometers'}
-);
-
-let kandidat=[];
-
-// ===============================
-// 3. HITUNG DEMAND PER GRID
-// ===============================
-grid.features.forEach(cell=>{
-
-let totalSiswa = 0;
-let jumlahSekolah = 0;
-
-gapSekolah.forEach(s=>{
-try{
-
-if(turf.booleanPointInPolygon(
-turf.point(s.geometry.coordinates),
-cell
-)){
-
-jumlahSekolah++;
-
-// ambil siswa (real atau fallback)
-const j = s.properties.jenjang;
-// ================= memperbaiki fallback siswa lokal (200/300/400) menjadi getSiswa(s) agar sama dengan dashboard dan heatmap =================
-const siswa = getSiswa(s);
-
-totalSiswa += siswa;
-
-}
-
-}catch{}
+const c=best.c;
+const idxBaru=kapAll.length;
+kapAll.push(kap);muatan.push(best.muatC);
+const dariSppg=[];
+best.lepas.forEach((v,idx)=>{muatan[idx]-=v;if(idx<grup.length) dariSppg.push({nama:grup[idx].nama[0],siswa:v});});
+let nSek=0;
+for(let s=0;s<N;s++){if(D[c][s]<jarakKini[s]){g[s]=idxBaru;jarakKini[s]=D[c][s];nSek++;}}
+[...belum].filter(s=>D[c][s]<=RADIUS_COV).forEach(s=>belum.delete(s));
+const p=sekolahData[c].properties;
+dipilih.push({
+c,rank:r+1,xy:xy[c],
+host:{nama:p.NAMA,jenjang:p.jenjang,kel:p.DESA,kec:p.KECAMATAN},
+gainBeban:best.gain,gainBelum:best.cov,sekolah:nSek,siswa:best.muatC,util:best.muatC/kap,
+dariSppg:dariSppg.sort((a,b)=>b.siswa-a.siswa).slice(0,3),
+sisaKelebihan:kapAll.reduce((a,k,i)=>a+Math.max(0,muatan[i]-k),0),
+sisaBelum:[...belum].reduce((a,i)=>a+siswa[i],0)
 });
-
-// hanya ambil cell yang ada demand
-if(jumlahSekolah > 0){
-
-const center = turf.centroid(cell);
-
-center.properties = {
-sekolah: jumlahSekolah,
-siswa: totalSiswa
+}
+const akhir=dipilih[dipilih.length-1];
+return {
+daftar:dipilih,
+sebelum:{kelebihan:kelebihanAwal,belum:belumAwal},
+sesudah:{kelebihan:akhir?akhir.sisaKelebihan:kelebihanAwal,belum:akhir?akhir.sisaBelum:belumAwal}
 };
-
-kandidat.push(center);
-
 }
 
-});
-
-// ===============================
-// 4. SORT BERDASARKAN DEMAND (REALISTIS)
-// ===============================
-kandidat.sort((a,b)=> b.properties.siswa - a.properties.siswa);
-
-// ambil top 5 lokasi terbaik
-const topKandidat = kandidat.slice(0,5);
-
-// ===============================
-// 5. DRAW KE MAP
-// ===============================
-map.addSource('candidate',{
-type:'geojson',
-data:{
-type:'FeatureCollection',
-features: topKandidat
+// ================= pembuatan teks popup kandidat: lokasi acuan, sekolah yang diambil alih, beban, dan SPPG yang diringankan =================
+function teksKandidat(k){
+return `<b>Kandidat SPPG baru #${k.rank}</b><br>Lokasi acuan: ${esc(k.host.nama)} (${esc(k.host.jenjang)}), ${esc(k.host.kel)}, ${esc(k.host.kec)}`
++`<br>Mengambil alih ${k.sekolah} sekolah (${fmt(k.siswa)} siswa, ${Math.round(k.util*100)}% dari kapasitas)`
++`<br>Mengurangi kelebihan beban: ${fmt(k.gainBeban)} siswa`
++(k.gainBelum?`<br>Menjangkau sekolah belum tercakup: ~${fmt(k.gainBelum)} siswa`:'')
++(k.dariSppg.length?`<br>Meringankan: ${k.dariSppg.map(d=>esc(d.nama)+' ('+fmt(d.siswa)+')').join(', ')}`:'');
 }
-});
 
-map.addLayer({
-id:'candidate-layer',
-type:'circle',
-source:'candidate',
-paint:{
-// ================= memperbaiki warna kandidat #ef4444 (merah) menjadi #ec4899 (pink) agar tidak sama dengan SPPG berdekatan yang kini merah =================
-'circle-color':'#ec4899',
-'circle-radius':10
-}
-});
-
-// ===============================
-// 6. POPUP (BIAR INFORMATIVE)
-// ===============================
-// ================= memperbaiki map.on('click','candidate-layer') yang didaftarkan setiap generateCandidate menjadi hanya sekali lewat flag candidatePopupBound agar popup kandidat tidak ganda =================
+// ================= pembuatan gambar titik kandidat (pink) beserta popup yang terdaftar sekali saja =================
+function gambarKandidat(hasil){
+safeRemove('candidate');
+if(!hasil||!hasil.daftar.length) return;
+map.addSource('candidate',{type:'geojson',data:{type:'FeatureCollection',features:hasil.daftar.map(k=>({type:'Feature',geometry:{type:'Point',coordinates:k.xy},properties:{rank:k.rank,teks:teksKandidat(k)}}))}});
+map.addLayer({id:'candidate-layer',type:'circle',source:'candidate',paint:{'circle-color':'#ec4899','circle-radius':10,'circle-stroke-color':'#ffffff','circle-stroke-width':2}});
 if(!candidatePopupBound){
 candidatePopupBound=true;
 map.on('click','candidate-layer',(e)=>{
-
-const p = e.features[0].properties;
-
-new maplibregl.Popup()
-.setLngLat(e.lngLat)
-.setHTML(`
-<b>Kandidat SPPG Baru</b><br>
-Sekolah belum terlayani: ${p.sekolah}<br>
-Total siswa: ${p.siswa}
-`)
-.addTo(map);
-
+new maplibregl.Popup().setLngLat(e.lngLat).setHTML(e.features[0].properties.teks).addTo(map);
 });
 }
-
 }
 
+// ================= pembuatan tampilan hasil kandidat di panel (ringkasan sebelum/sesudah dan daftar lokasi) =================
+function tampilkanHasilKandidat(h){
+const ring=document.getElementById('hasilKandidat');
+const daftar=document.getElementById('listKandidat');
+if(!ring||!daftar) return;
+if(!h||!h.daftar.length){
+ring.innerText='Tidak ada lokasi baru yang memberi manfaat (beban sudah tertangani dan tidak ada sekolah yang belum tercakup).';
+daftar.innerHTML='';
+return;
+}
+ring.innerHTML=`Kelebihan beban: <b>${fmt(h.sebelum.kelebihan)}</b> &rarr; <b>${fmt(h.sesudah.kelebihan)}</b> siswa.<br>Belum tercakup 10 menit: <b>${fmt(h.sebelum.belum)}</b> &rarr; <b>${fmt(h.sesudah.belum)}</b> siswa.`;
+daftar.innerHTML=h.daftar.map(k=>`<li>${esc(k.host.kel)}, ${esc(k.host.kec)}: ambil alih ${k.sekolah} sekolah (${fmt(k.siswa)} siswa)${k.gainBeban>0?`, kelebihan &minus;${fmt(k.gainBeban)}`:''}${k.gainBelum?`, jangkau ~${fmt(k.gainBelum)} siswa belum tercakup`:''}</li>`).join('');
+}
+
+// ================= pembuatan tombol Cari Lokasi SPPG Baru dan pendengar kapasitas (hasil lama dihapus jika kapasitas berubah) =================
+document.getElementById('run-kandidat').onclick=()=>{
+if(!analisisDasar) return alert('Data belum siap, coba lagi sebentar.');
+const K=Math.max(1,Math.min(20,Math.round(Number(document.getElementById('jumlahKandidat').value)||5)));
+kandidatTerakhir=cariKandidat(K);
+gambarKandidat(kandidatTerakhir);
+tampilkanHasilKandidat(kandidatTerakhir);
+};
 
 // ================= EVENT =================
 // ================= memperbaiki Run Isochrone yang tanpa penanganan error menjadi dibungkus try/catch dengan alert agar pengguna tahu penyebab jika isochrone tidak ada =================
@@ -608,7 +595,6 @@ try{
 const iso=await getIso(selectedSPPG);
 drawIso(iso);
 analyze(iso);
-generateCandidate(iso);
 generateHeatmap();
 }catch(e){
 alert(e.message);
@@ -621,7 +607,6 @@ try{
 const iso=await gabungIsochrone();
 drawIso(iso);
 analyze(iso);
-generateCandidate(iso);
 generateHeatmap();
 }catch(e){
 alert(e.message);

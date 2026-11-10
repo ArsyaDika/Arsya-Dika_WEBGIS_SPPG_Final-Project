@@ -614,3 +614,35 @@ Diuji di browser dan dicocokkan dengan hitungan offline (node): cakupan 10 menit
 
 **Pelajaran**
 Saat satu ukuran (cakupan) sudah jenuh, cari ukuran lain yang masih membedakan (beban/kapasitas). Dan cocokkan hasil di browser dengan hitungan terpisah di Node agar kesalahan rumus ketahuan.
+
+---
+
+## 24. Kandidat SPPG baru berbasis beban (greedy, kapasitas 3.000)
+
+**Masalah**
+Rekomendasi lokasi lama (`generateCandidate`) membagi area satu isochrone menjadi grid 1 km dan mengambil 5 sel dengan siswa terbanyak. Hasilnya tidak mempertimbangkan SPPG yang sudah ada, kapasitas, atau jalan, dan ditumpuk di satu area. Karena cakupan 10 menit sudah 99,4%, kandidat berbasis cakupan nyaris tidak berguna.
+
+**Perubahan**
+`src/app.js`, sesi baru `// ===== KANDIDAT SPPG BARU (BERBASIS BEBAN) =====` (fungsi lama dihapus, 139 baris):
+- `cariKandidat(K)`: metode greedy. Calon lokasi = titik sekolah. Tiap putaran, untuk setiap calon: semua sekolah yang lebih dekat ke calon daripada ke pemberi layanan saat ini berpindah ke calon; skor = pengurangan kelebihan beban di titik asal - kelebihan baru di calon (kapasitas 3.000) + siswa sekolah belum tercakup dalam radius 2 km. Dipilih skor tertinggi, penugasan diperbarui, lalu putaran berikutnya. Berhenti jika skor tidak positif.
+- Aturan jarak: calon minimal 300 m dari SPPG ada/kandidat lain dan 1 km dari kandidat lain.
+- `gambarKandidat()` (titik pink dengan popup), `teksKandidat()`, `tampilkanHasilKandidat()` (ringkasan sebelum/sesudah dan daftar), tombol "Cari Lokasi SPPG Baru" dan input jumlah (1 sampai 20).
+- Kandidat disimpan di `kandidatTerakhir` dan digambar ulang setelah ganti basemap; dihapus jika kapasitas diubah.
+`Index.html`: panel "Kandidat SPPG Baru".
+
+**Alasan**
+- Ukuran yang membedakan di kota ini adalah beban terhadap kapasitas, bukan cakupan waktu tempuh. Greedy memilih lokasi yang paling banyak mengurangi kelebihan beban, cepat, dan hasilnya mudah dijelaskan.
+- Titik sekolah dipakai sebagai calon karena pasti berada di jalan yang bisa dilalui.
+- Kandidat tidak dibatasi jumlah sekolah, hanya kapasitas 3.000 siswa (kelebihan di atasnya dihitung sebagai biaya), sesuai permintaan.
+- Alokasi ke terdekat memakai jarak garis lurus, bukan waktu tempuh; isochrone kandidat belum dihitung.
+
+**Hasil**
+Diuji di browser (waktu sekitar 0,45 detik): 5 kandidat menurunkan kelebihan beban 13.400 -> 3.400 siswa (Tambakrejo, Jatisari, Sekayu, Srondol Wetan, Kaligawe); 10 kandidat menurunkannya menjadi 500 siswa dan siswa belum tercakup 1.200 -> 200. Kandidat tetap tampil setelah ganti basemap. Satu cacat tampilan ("kelebihan -0") ditemukan dan diperbaiki. Console bersih.
+
+**Keterbatasan**
+- Siswa per sekolah masih estimasi (SD 200, SMP 300, SMA 400).
+- Lokasi kandidat adalah titik sekolah acuan, belum dicek lahan, harga, atau akses.
+- Kandidat berikut tidak memperhitungkan waktu tempuh nyata dan isochrone-nya belum dihitung.
+
+**Pelajaran**
+Algoritma greedy cocok untuk masalah "pilih k lokasi terbaik": ulangi (pilih yang manfaat tambahannya terbesar, perbarui keadaan). Pastikan skor mengukur manfaat tambahan, bukan manfaat total.
