@@ -58,19 +58,14 @@ async function init(){
 clear();
 
 // ================= memperbaiki fetch data tanpa opsi cache menjadi cache:'no-cache' agar browser selalu memeriksa versi terbaru berkas data (data sering diperbarui oleh skrip) =================
-const sd=await fetch('./data/SD.geojson',{cache:'no-cache'}).then(r=>r.json());
-const smp=await fetch('./data/SMP.geojson',{cache:'no-cache'}).then(r=>r.json());
-const sma=await fetch('./data/SMA.geojson',{cache:'no-cache'}).then(r=>r.json());
+// ================= memperbaiki pembacaan tiga berkas lama (SD, SMP, SMA; tanpa data siswa, tanpa SMK/madrasah) menjadi satu berkas sekolah.geojson (sekolah resmi Kemendikdasmen + murid BPS 2025/2026) agar jumlah siswa dan jenjang sesuai data resmi =================
+const sekolahBerkas=await fetch('./data/sekolah.geojson',{cache:'no-cache'}).then(r=>r.json());
 // ================= memperbaiki fetch SPPG.geojson (koordinat salah, 128 SPPG) menjadi SPPG_geocoded.geojson yang disaring dipakai_analisis (123 SPPG) agar peta dan analisis memakai koordinat yang sudah diperbaiki =================
 const sppgSemua=await fetch('./data/SPPG_geocoded.geojson',{cache:'no-cache'}).then(r=>r.json());
 sppgSemuaData=sppgSemua.features;   // disimpan untuk panel kualitas data (jumlah dipakai vs tercatat)
 const sppg={type:'FeatureCollection',features:sppgSemua.features.filter(f=>f.properties.dipakai_analisis)};
 
-sekolahData=[
-...sd.features.map(f=>({...f,properties:{...f.properties,jenjang:'SD'}})),
-...smp.features.map(f=>({...f,properties:{...f.properties,jenjang:'SMP'}})),
-...sma.features.map(f=>({...f,properties:{...f.properties,jenjang:'SMA'}}))
-];
+sekolahData=sekolahBerkas.features;   // properti jenjang (SD, MI, SMP, MTs, SMA, SMK, MA) dan siswa sudah ada di berkas
 
 sppgData=sppg.features;
 
@@ -240,43 +235,39 @@ paint:{'fill-color':'#22c55e','fill-opacity':0.3}
 }
 
 // ================= memperbaiki tiga fallback siswa berbeda (200 / 1 / 200-300-400) menjadi satu fungsi getSiswa agar dashboard, heatmap, dan kandidat memakai angka yang sama (data GeoJSON tidak punya kolom siswa, jadi memakai estimasi per jenjang) =================
-const SISWA_DEFAULT={SD:200,SMP:300,SMA:400};
+// ================= memperbaiki SISWA_DEFAULT (tebakan 200/300/400) menjadi membaca properti siswa dari data BPS per sekolah; angka tebakan hanya cadangan jika sebuah sekolah tidak punya nilai =================
+const SISWA_DEFAULT={SD:200,MI:200,SMP:300,MTs:300,SMA:400,SMK:400,MA:300};
+const SISWA_REF=600;   // acuan normalisasi bobot heatmap
 function getSiswa(s){
-return s.properties.siswa || SISWA_DEFAULT[s.properties.jenjang] || 200;
+const v=Number(s.properties.siswa);
+return v>0?v:(SISWA_DEFAULT[s.properties.jenjang]||200);
 }
 
 // ================= ANALYSIS =================
+// ================= memperbaiki analyze yang menghitung tetap tiga jenjang (sd, smp, sma) menjadi per jenjang dari JENJANG (termasuk MI, MTs, SMK, MA) dengan jumlah siswa dari data BPS =================
 function analyze(geo){
-
-let sd=0,smp=0,sma=0;
-let siswaSD=0,siswaSMP=0,siswaSMA=0;
-
+const per={};
+let total=0,siswaTotal=0;
 sekolahData.forEach(s=>{
 try{
-if(turf.booleanPointInPolygon(turf.point(s.geometry.coordinates),geo)){
-const j=s.properties.jenjang;
-// ================= memperbaiki s.properties.siswa || 200 menjadi getSiswa(s) agar estimasi siswa sesuai jenjang =================
-const siswa=getSiswa(s);
-
-if(j==='SD'){sd++;siswaSD+=siswa;}
-if(j==='SMP'){smp++;siswaSMP+=siswa;}
-if(j==='SMA'){sma++;siswaSMA+=siswa;}
+if(turf.booleanPointInPolygon(turf.point(s.geometry.coordinates.slice(0,2)),geo)){
+const j=s.properties.jenjang,siswa=getSiswa(s);
+if(!per[j]) per[j]={n:0,siswa:0};
+per[j].n++;per[j].siswa+=siswa;total++;siswaTotal+=siswa;
 }
 }catch{}
 });
-
-document.getElementById('served').innerText=sd+smp+sma;
-document.getElementById('coverage').innerText=(siswaSD+siswaSMP+siswaSMA)+" siswa";
-
-document.getElementById('sdCount').innerText=sd;
-document.getElementById('smpCount').innerText=smp;
-document.getElementById('smaCount').innerText=sma;
-
-drawChart(sd,smp,sma,siswaSD,siswaSMP,siswaSMA);
+document.getElementById('served').innerText=total;
+document.getElementById('coverage').innerText=fmt(siswaTotal)+' siswa';
+const ada=JENJANG.filter(j=>per[j.k]);
+const wadah=document.getElementById('hasilJenjang');
+if(wadah) wadah.innerHTML=ada.map(j=>`<p>${j.k}: <b>${per[j.k].n}</b> sekolah &middot; ${fmt(per[j.k].siswa)} siswa</p>`).join('')||'<p>-</p>';
+drawChart(ada.map(j=>j.k),ada.map(j=>per[j.k].n),ada.map(j=>per[j.k].siswa),ada.map(j=>j.warna));
 }
 
 // ================= CHART =================
-function drawChart(sd,smp,sma,siswaSD,siswaSMP,siswaSMA){
+// ================= memperbaiki drawChart yang tetap tiga label (SD, SMP, SMA) menjadi menerima label, jumlah sekolah, jumlah siswa, dan warna per jenjang agar semua jenjang tergambar =================
+function drawChart(label,jumlah,siswa,warna){
 
 if(chartSekolah) chartSekolah.destroy();
 if(chartSiswa) chartSiswa.destroy();
@@ -284,17 +275,19 @@ if(chartPie) chartPie.destroy();
 
 chartSekolah=new Chart(document.getElementById('chartSekolah'),{
 type:'bar',
-data:{labels:['SD','SMP','SMA'],datasets:[{data:[sd,smp,sma]}]}
+data:{labels:label,datasets:[{data:jumlah,backgroundColor:warna}]},
+options:{plugins:{legend:{display:false},title:{display:true,text:'Jumlah sekolah'}}}
 });
 
 chartSiswa=new Chart(document.getElementById('chartSiswa'),{
 type:'bar',
-data:{labels:['SD','SMP','SMA'],datasets:[{data:[siswaSD,siswaSMP,siswaSMA]}]}
+data:{labels:label,datasets:[{data:siswa,backgroundColor:warna}]},
+options:{plugins:{legend:{display:false},title:{display:true,text:'Jumlah siswa (BPS, dibagi rata per sekolah)'}}}
 });
 
 chartPie=new Chart(document.getElementById('chartPie'),{
 type:'doughnut',
-data:{labels:['SD','SMP','SMA'],datasets:[{data:[siswaSD,siswaSMP,siswaSMA]}]}
+data:{labels:label,datasets:[{data:siswa,backgroundColor:warna}]}
 });
 }
 
@@ -432,12 +425,16 @@ const {grup,kap,beban,tot}=analisisDasar;
 const set=(id,v)=>{const el=document.getElementById(id);if(el) el.innerText=v;};
 if(tot){
 let belumS=0,belumN=0;
-['SD','SMP','SMA'].forEach(j=>{
-const t=tot[j];
+// ================= memperbaiki daftar cakupan tetap SD/SMP/SMA menjadi satu baris per jenjang yang ada di data (SD, MI, SMP, MTs, SMA, SMK, MA) =================
+const wadahCov=document.getElementById('kpiCovList');
+let teksCov='';
+JENJANG.forEach(jj=>{
+const t=tot[jj.k];
 if(!t) return;
-set('kpiCov'+j,`${(100*t.sok/t.s).toFixed(1)}% siswa (${t.ok}/${t.n} sekolah)`);
+teksCov+=`<p class="text-sm">${jj.k}: <b>${(100*t.sok/t.s).toFixed(1)}% siswa (${t.ok}/${t.n} sekolah)</b></p>`;
 belumN+=t.n-t.ok;belumS+=t.s-t.sok;
 });
+if(wadahCov) wadahCov.innerHTML=teksCov;
 set('kpiBelum',`${belumN} sekolah (~${fmt(belumS)} siswa)`);
 }
 const kapTotal=grup.reduce((a,g)=>a+g.n*kap,0);
@@ -546,7 +543,7 @@ setKpi(1,'Cakupan 10 menit',(100*sok/s).toFixed(1)+'%',`${ok} dari ${n} sekolah`
 }
 setKpi(2,'Utilisasi kota',Math.round(100*minta/kapT)+'%',`${fmt(minta)} / ${fmt(kapT)}`,'');
 setKpi(3,'SPPG &gt; kapasitas',`${over} / ${grup.length}`,'titik SPPG','bad');
-setKpi(4,'Kelebihan permintaan',fmt(beban.kelebihan),'siswa (estimasi)','bad');
+setKpi(4,'Kelebihan permintaan',fmt(beban.kelebihan),'siswa (BPS 2025/2026)','bad');
 
 // SPPG terpadat (bar + garis kapasitas 100%)
 const arr=grup.map((g,i)=>({nama:namaPendek(g.nama[0]),u:beban.muatan[i]/(g.n*kap)})).sort((a,b)=>b.u-a.u).slice(0,6);
@@ -618,11 +615,11 @@ const terdekat=grup.map((x,k)=>({k,d:jarakM(xy,x.xy)})).sort((a,b)=>a.d-b.d).sli
 let dijangkau=0;
 try{if(isoSppg){const pt=turf.point(xy);dijangkau=isoSppg.features.filter(ft=>turf.booleanPointInPolygon(pt,ft)).length;}}catch{}
 const luar=sekolahTdkTercakup.has(idx);
-setKpi(1,'Jumlah siswa',fmt(siswa),'estimasi per sekolah','');
+setKpi(1,'Jumlah siswa',fmt(siswa),'BPS kecamatan, dibagi rata','');
 setKpi(2,'Jenjang',esc(p.jenjang),esc(p.STATUS||p.status||'&nbsp;'),'');
 setKpi(3,'Dilayani oleh',esc(namaPendek(g.nama[0])),`utilisasi ${Math.round(u*100)}%`,u>1?'bad':'ok');
 setKpi(4,'Jarak ke SPPG',(dk.d/1000).toFixed(1)+' km','garis lurus','');
-setCard(1,'Identitas sekolah',barisInfo('Nama',esc(p.NAMA||'-'))+barisInfo('Jenjang',esc(p.jenjang))+barisInfo('Kecamatan',esc(p.KECAMATAN||'-'))+barisInfo('Kelurahan',esc(p.DESA||'-'))+(p.ALAMAT?`<div class="cat" style="margin:2px 0">${esc(p.ALAMAT)}</div>`:'')+barisInfo('Siswa (estimasi)',fmt(siswa)));
+setCard(1,'Identitas sekolah',barisInfo('Nama',esc(p.NAMA||'-'))+barisInfo('Jenjang',esc(p.jenjang))+barisInfo('Kecamatan',esc(p.KECAMATAN||'-'))+barisInfo('Kelurahan',esc(p.DESA||'-'))+(p.ALAMAT?`<div class="cat" style="margin:2px 0">${esc(p.ALAMAT)}</div>`:'')+barisInfo('Siswa (BPS, dibagi rata)',fmt(siswa)));
 setCard(2,'SPPG yang melayani',barisInfo('SPPG',esc(namaPendek(g.nama[0])))+barisBar('Beban',muatan,Math.max(kapT,muatan),fmt(muatan),warnaUtil(u),kapT)+barisInfo('Kapasitas',fmt(kapT))+(g.n>1?barisInfo('SPPG di titik ini',g.n):''));
 const dMaks=terdekat[terdekat.length-1].d;
 setCard(3,'SPPG terdekat (garis lurus)',terdekat.map(t=>barisBar(namaPendek(grup[t.k].nama[0]),Math.max(0.08,1-t.d/Math.max(1,dMaks)*0.9),1,(t.d/1000).toFixed(1)+' km',jenjang?jenjang.warna:'#6366f1',null)).join(''));
@@ -703,7 +700,7 @@ features:sekolahData.map(s=>({
 type:'Feature',
 geometry:s.geometry,
 // ================= memperbaiki weight s.properties.siswa || 1 menjadi getSiswa(s)/SISWA_DEFAULT.SMA agar bobot heatmap mengikuti jumlah siswa dan tetap bernilai 0-1 (tidak jenuh) =================
-properties:{weight:getSiswa(s)/SISWA_DEFAULT.SMA}
+properties:{weight:Math.min(1,getSiswa(s)/SISWA_REF)}
 }))
 }
 });

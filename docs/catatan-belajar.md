@@ -810,3 +810,26 @@ Diuji di browser: ringkasan kota (cakupan 99,5%, utilisasi 54%, 13 dari 113 SPPG
 
 **Pelajaran**
 Pisahkan "data yang dipilih" dari "cara menampilkannya": satu variabel `pilihan` dan satu penyaji yang memilih tampilan membuat dashboard mudah diperluas.
+
+---
+
+## 32. Aplikasi memakai sekolah resmi dan murid BPS (tujuh jenjang)
+
+**Masalah**
+Data murid BPS sudah dibaca (entri 30), tetapi aplikasi masih membaca tiga berkas lama (SD, SMP, SMA tanpa data siswa) dan memakai tebakan 200/300/400, sehingga angka siswa di dashboard tidak berubah. Pengguna menanyakan hal ini. Penyebabnya langkah penyambungan ke aplikasi belum dikerjakan.
+
+**Perubahan**
+- `scripts/ambil-sekolah-kemendikdasmen.mjs`: mengambil 1.072 sekolah resmi Kota Semarang (NPSN, nama, bentuk, status, alamat, kelurahan, kecamatan, koordinat) dari halaman referensi Kemendikdasmen ke `data/sekolah_resmi.json`.
+- `scripts/bangun-data-sekolah.mjs`: menggabungkan sekolah resmi dengan murid BPS menjadi `data/sekolah.geojson` (+ `data/sekolah_laporan.json`). Murid BPS per (jenjang, kecamatan, negeri/swasta) dibagi rata ke sekolah resmi di kelompok itu. Koordinat dengan tanda lintang terbalik diperbaiki (1), koordinat hilang diselamatkan dari data lama lewat nama (5).
+- `src/app.js`: membaca `data/sekolah.geojson`; `getSiswa` memakai properti `siswa` (tebakan hanya cadangan); `analyze` dan `drawChart` kini per jenjang untuk SD, MI, SMP, MTs, SMA, SMK, MA; panel cakupan dan hasil Run dibuat dinamis; bobot heatmap dinormalisasi dengan acuan 600 siswa; label diganti "BPS 2025/2026, dibagi rata".
+- `Index.html`: tombol layer dan legenda untuk tujuh jenjang.
+
+**Alasan**
+Jenjang ditulis apa adanya (tidak digabung) sesuai permintaan pengguna. Pembagian rata per kelompok membuat total per kecamatan dan status persis sama dengan BPS, satu-satunya cara jujur tanpa data per sekolah.
+
+**Hasil**
+Diverifikasi: murid yang dialokasikan = total BPS untuk ketujuh jenjang (SD 124.968, MI 19.469, SMP 64.306, MTs 9.298, SMA 30.742, SMK 36.100, MA 6.842). Di peta: 1.004 dari 1.042 sekolah (38 tanpa koordinat, sekitar 3,6%). Dampak di aplikasi: sekolah 823 -> 1.004; murid 198.600 -> 285.338; utilisasi 54% -> 77%; SPPG di atas kapasitas 13 -> 40 dari 113; kelebihan 14.700 -> 48.327 siswa; cakupan 10 menit 99,1% (992 dari 1.004). Kandidat: 10 lokasi menurunkan kelebihan menjadi 23.759 dan 20 lokasi menjadi 9.021. Run Global menampilkan ketujuh jenjang. Console bersih.
+**Keterbatasan:** jumlah murid per sekolah tetap hasil bagi rata, bukan data per sekolah; satu sekolah tanpa bagian (0) memakai nilai cadangan 300; 38 sekolah belum terpetakan; batas jumlah kandidat 20 belum cukup untuk menutup kelebihan.
+
+**Pelajaran**
+Memperbarui data tidak selesai saat berkas data dibuat; ia selesai saat aplikasi benar-benar memakainya dan angkanya terbukti berubah. Jangan hanya melaporkan "data sudah masuk".

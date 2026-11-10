@@ -1,0 +1,97 @@
+{
+ "diperbaiki_tanda": 1,
+ "diselamatkan_dari_data_lama": 5,
+ "tanpa_koordinat": [
+  "MI MI AN NUR (Mijen)",
+  "MTs MTSS DARUL HIKAM (Mijen)",
+  "MTs MTSS Roudlotus Syifa (Mijen)",
+  "MTs MTSS Qur`an Annuriyah (Mijen)",
+  "SD SD Mutiara Harapan Islamic School (Mijen)",
+  "MI MI AL MUSYAFFA` (Mijen)",
+  "MTs MTs AL MUSYAFFA` (Mijen)",
+  "MTs Nu Darussalam (Mijen)",
+  "MI MI QOSIM AL HADI (Mijen)",
+  "MA MAS AL MUSYAFFA` (Mijen)",
+  "MA MA MIFTAHUSSA`ADAH (Mijen)",
+  "MI MI TAHFIDH AL-QUR`AN SYATIBI SHOLIH (Gunung Pati)",
+  "MI MIS TAHFIDZUL QUR`AN AL ASROR (Gunung Pati)",
+  "MI MIS ZAM ZAM (Gunung Pati)",
+  "SMP SMP Hikma International Boarding School (Gunung Pati)",
+  "MI MI Roudlotus Saidiyyah (Gunung Pati)",
+  "SMP SMP AL-WILDAN ISLAMIC SCHOOL 23 SEMARANG (Banyumanik)",
+  "SMP SMP IT BUNAYYA SEMARANG (Banyumanik)",
+  "SMA SMAN KEBERBAKATAN OLAHRAGA JATENG DI SEMARANG (Gajah Mungkur)",
+  "SD SD NEGERI JOMBLANG 05 (Candisari)",
+  "MI MIS AL BIDAYAH (Tembalang)",
+  "MI MI AL FITHRAH SEMARANG (Tembalang)",
+  "SD SD Bina Anak Sholeh (Tembalang)",
+  "SMP SMP ISLAM TUNAS HARAPAN (Tembalang)",
+  "SD SD Ciputra Kasih (Tembalang)",
+  "SMP SMP CIPUTRA KASIH (Tembalang)",
+  "SD SD ISLAM BAITUSSALAM (Tembalang)",
+  "MA MAS AL FITHRAH SEMARANG (Tembalang)",
+  "MA MA AL FIKRI (Tembalang)",
+  "SMA SMA CIPUTRA KASIH (Tembalang)",
+  "MI MI NURUL FALAH KALICARI (Pedurungan)",
+  "MTs MTSS AL IKHLAS (Pedurungan)",
+  "SD Sekolah Rakyat Dasar Terintegrasi 45 Semarang (Pedurungan)",
+  "SD SD ISLAM TAKHASSUS MUTIARA BUNDA ARAFAH (Genuk)",
+  "MTs MTS ASSHODIQIYAH (Gayamsari)",
+  "MA MA ASSHODIQIYAH (Gayamsari)",
+  "MTs MTS NURUL ISLAM (Ngaliyan)",
+  "MI MI TAKHASUS DARUL ULUM (Ngaliyan)"
+ ],
+ "di_luar_kota": [],
+ "tidak_tertampung": [],
+ "ringkas": {
+  "SD": {
+   "sekolah_resmi": 515,
+   "di_peta": 508,
+   "murid_bps": 124968,
+   "murid_teralokasi_semua": 124968,
+   "murid_di_peta": 122997
+  },
+  "MI": {
+   "sekolah_resmi": 96,
+   "di_peta": 85,
+   "murid_bps": 19469,
+   "murid_teralokasi_semua": 19469,
+   "murid_di_peta": 17402
+  },
+  "SMP": {
+   "sekolah_resmi": 188,
+   "di_peta": 183,
+   "murid_bps": 64306,
+   "murid_teralokasi_semua": 64306,
+   "murid_di_peta": 63483
+  },
+  "MTs": {
+   "sekolah_resmi": 50,
+   "di_peta": 42,
+   "murid_bps": 9298,
+   "murid_teralokasi_semua": 9298,
+   "murid_di_peta": 8176
+  },
+  "SMA": {
+   "sekolah_resmi": 73,
+   "di_peta": 71,
+   "murid_bps": 30742,
+   "murid_teralokasi_semua": 30742,
+   "murid_di_peta": 30696
+  },
+  "SMK": {
+   "sekolah_resmi": 86,
+   "di_peta": 86,
+   "murid_bps": 36100,
+   "murid_teralokasi_semua": 36100,
+   "murid_di_peta": 36100
+  },
+  "MA": {
+   "sekolah_resmi": 34,
+   "di_peta": 29,
+   "murid_bps": 6842,
+   "murid_teralokasi_semua": 6842,
+   "murid_di_peta": 6184
+  }
+ }
+}

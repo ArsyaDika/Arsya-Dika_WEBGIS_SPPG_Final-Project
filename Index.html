@@ -76,9 +76,14 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 
 <div class="panel">
 <h3 class="font-bold">Layer</h3>
+<!-- ================= memperbaiki tiga tombol jenjang (SD, SMP, SMA) menjadi tujuh (SD, MI, SMP, MTs, SMA, SMK, MA) sesuai data sekolah resmi ================= -->
 <button onclick="toggleLayer('sd-layer')" class="btn">SD</button>
+<button onclick="toggleLayer('mi-layer')" class="btn">MI</button>
 <button onclick="toggleLayer('smp-layer')" class="btn">SMP</button>
+<button onclick="toggleLayer('mts-layer')" class="btn">MTs</button>
 <button onclick="toggleLayer('sma-layer')" class="btn">SMA</button>
+<button onclick="toggleLayer('smk-layer')" class="btn">SMK</button>
+<button onclick="toggleLayer('ma-layer')" class="btn">MA</button>
 <button onclick="toggleLayer('sppg-layer')" class="btn">SPPG</button>
 <button onclick="toggleLayer('candidate-layer')" class="btn">Candidate</button>
 <button onclick="toggleLayer('heatmap-layer')" class="btn">Heatmap</button>
@@ -90,9 +95,9 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <div class="panel">
 <h3 class="font-bold">Legend</h3>
 <ul class="text-sm">
-<li>🔵 SD</li>
-<li>🟠 SMP</li>
-<li>🟣 SMA</li>
+<li><span style="color:#3b82f6">●</span> SD &nbsp; <span style="color:#06b6d4">●</span> MI</li>
+<li><span style="color:#f59e0b">●</span> SMP &nbsp; <span style="color:#ea580c">●</span> MTs</li>
+<li><span style="color:#8b5cf6">●</span> SMA &nbsp; <span style="color:#14b8a6">●</span> SMK &nbsp; <span style="color:#a21caf">●</span> MA</li>
 <li>⚫ SPPG</li>
 <li>🔴 SPPG berdekatan</li>
 <li><span style="color:#92400e">●</span> Halo coklat: SPPG melebihi kapasitas</li>
@@ -130,16 +135,14 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <label for="kapasitas" class="text-sm">Kapasitas per SPPG (penerima/hari)</label>
 <input id="kapasitas" type="number" min="1" step="100" value="3000" class="w-full border p-2 rounded mb-2"/>
 <p class="text-sm font-semibold">Cakupan 10 menit</p>
-<p class="text-sm">SD: <b id="kpiCovSD">-</b></p>
-<p class="text-sm">SMP: <b id="kpiCovSMP">-</b></p>
-<p class="text-sm">SMA: <b id="kpiCovSMA">-</b></p>
+<div id="kpiCovList"></div>
 <p class="text-sm">Belum terjangkau: <b id="kpiBelum">-</b></p>
 <p class="text-sm font-semibold mt-2">Beban per SPPG</p>
 <p class="text-sm">Kapasitas total: <b id="kpiKapasitas">-</b></p>
 <p class="text-sm">Permintaan (estimasi): <b id="kpiPermintaan">-</b> (<b id="kpiUtil">-</b>)</p>
 <p class="text-sm">Titik melebihi kapasitas: <b id="kpiOver">-</b> dari <b id="kpiGrup">-</b></p>
 <p class="text-sm">Kelebihan permintaan: <b id="kpiKelebihan">-</b></p>
-<p class="text-xs text-slate-500 mt-1">Tiap sekolah dialokasikan ke SPPG terdekat. Jumlah siswa per sekolah masih estimasi (SD 200, SMP 300, SMA 400).</p>
+<p class="text-xs text-slate-500 mt-1">Tiap sekolah dialokasikan ke SPPG terdekat. Jumlah siswa dari BPS tahun ajaran 2025/2026 per kecamatan dan status (negeri/swasta), dibagi rata ke sekolah di kelompok itu.</p>
 </div>
 
 <div class="panel">
@@ -151,9 +154,7 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <h3 class="font-bold">Hasil Run (isochrone terpilih)</h3>
 <p>Total Fasilitas Terlayani: <b id="served">0</b></p>
 <p>Total Siswa Terlayani: <b id="coverage">0</b></p>
-<p>SD: <b id="sdCount">0</b></p>
-<p>SMP: <b id="smpCount">0</b></p>
-<p>SMA: <b id="smaCount">0</b></p>
+<div id="hasilJenjang"></div>
 <canvas id="chartSekolah"></canvas>
 <canvas id="chartSiswa" class="mt-3"></canvas>
 <canvas id="chartPie" class="mt-3"></canvas>
