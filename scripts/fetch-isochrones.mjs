@@ -54,7 +54,8 @@ console.log(`Titik unik yang dipanggil ke API: ${kelompok.size}`);
 
 // ================= pembacaan hasil yang sudah ada (agar bisa dilanjutkan) =================
 let hasil = { type: 'FeatureCollection', features: [] };
-if (fs.existsSync(OUT_FILE)) {
+// ================= memperbaiki pembacaan hasil lama menjadi bisa diabaikan lewat --ulang agar isochrone dihitung ulang saat koordinat SPPG berubah (hasil lama tidak lagi sesuai titik baru) =================
+if (!argv.includes('--ulang') && fs.existsSync(OUT_FILE)) {
   hasil = JSON.parse(fs.readFileSync(OUT_FILE, 'utf8'));
   console.log(`Melanjutkan: ${hasil.features.length} isochrone sudah ada di ${OUT_FILE}`);
 }

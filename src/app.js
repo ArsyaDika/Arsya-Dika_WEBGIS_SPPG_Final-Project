@@ -45,11 +45,12 @@ async function init(){
 
 clear();
 
-const sd=await fetch('./data/SD.geojson').then(r=>r.json());
-const smp=await fetch('./data/SMP.geojson').then(r=>r.json());
-const sma=await fetch('./data/SMA.geojson').then(r=>r.json());
+// ================= memperbaiki fetch data tanpa opsi cache menjadi cache:'no-cache' agar browser selalu memeriksa versi terbaru berkas data (data sering diperbarui oleh skrip) =================
+const sd=await fetch('./data/SD.geojson',{cache:'no-cache'}).then(r=>r.json());
+const smp=await fetch('./data/SMP.geojson',{cache:'no-cache'}).then(r=>r.json());
+const sma=await fetch('./data/SMA.geojson',{cache:'no-cache'}).then(r=>r.json());
 // ================= memperbaiki fetch SPPG.geojson (koordinat salah, 128 SPPG) menjadi SPPG_geocoded.geojson yang disaring dipakai_analisis (123 SPPG) agar peta dan analisis memakai koordinat yang sudah diperbaiki =================
-const sppgSemua=await fetch('./data/SPPG_geocoded.geojson').then(r=>r.json());
+const sppgSemua=await fetch('./data/SPPG_geocoded.geojson',{cache:'no-cache'}).then(r=>r.json());
 sppgSemuaData=sppgSemua.features;   // disimpan untuk panel kualitas data (jumlah dipakai vs tercatat)
 const sppg={type:'FeatureCollection',features:sppgSemua.features.filter(f=>f.properties.dipakai_analisis)};
 
@@ -173,7 +174,7 @@ if(inputJarak) inputJarak.addEventListener('input',terapkanSppgBerdekatan);
 let isoSppg=null; // FeatureCollection: satu poligon isochrone per SPPG (properti sppg_no, sppg_nama, waktu_detik)
 async function muatIsochrone(){
 if(isoSppg) return isoSppg;
-const res=await fetch('./data/isochrone-sppg-600.geojson');
+const res=await fetch('./data/isochrone-sppg-600.geojson',{cache:'no-cache'});
 if(!res.ok) throw new Error('data/isochrone-sppg-600.geojson tidak ditemukan (jalankan scripts/fetch-isochrones.mjs)');
 isoSppg=await res.json();
 return isoSppg;

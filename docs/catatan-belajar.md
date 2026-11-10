@@ -739,3 +739,24 @@ Dari 123 SPPG yang dipakai: 77 berkoordinat jalan, 44 tetap titik kelurahan, 2 p
 
 **Pelajaran**
 Gunakan sumber paling spesifik yang tersedia, tetapi periksa kewajarannya (jarak ke titik yang sudah diketahui) dan simpan nilai lama agar perubahan bisa diaudit.
+
+---
+
+## 29. Isochrone dihitung ulang dari titik jalan; perbaikan cache data
+
+**Masalah**
+Isochrone di entri 19-21 dihitung dari titik kelurahan, padahal koordinat SPPG sudah diperhalus ke titik jalan (entri 28). Setelah berkas data diperbarui, aplikasi juga masih menampilkan angka lama (titik unik 88, koordinat jalan 0).
+
+**Perubahan**
+- `scripts/fetch-isochrones.mjs`: opsi `--ulang` mengabaikan hasil lama; keluaran diperbarui di `data/isochrone-sppg-600.geojson` (113 titik unik -> 123 isochrone).
+- `src/app.js`: semua `fetch` data memakai `{cache:'no-cache'}` (SD, SMP, SMA, SPPG_geocoded, isochrone).
+
+**Alasan**
+- Isochrone harus dihitung dari titik SPPG yang sama dengan yang tampil di peta.
+- Tanpa opsi cache, browser menyajikan berkas lama dari cache heuristik sehingga data baru tidak terlihat. `no-cache` membuat browser memeriksa versi terbaru ke server sebelum memakai cache.
+
+**Hasil**
+Diverifikasi: 123/123 isochrone, 0 cincin tidak valid, 0 poligon di bawah 10 km2, 2 titik dialihkan otomatis (luas 16 sampai 131 km2, median 76 km2). Satu titik sempat gagal (kegagalan jaringan sesaat) lalu berhasil lewat fitur resume. Dampak di aplikasi: titik SPPG unik 88 -> 113, cakupan 10 menit 99,4% -> 99,5% (820 dari 823 sekolah; belum terjangkau 3 sekolah), titik melebihi kapasitas 12 dari 88 -> 13 dari 113, kelebihan 13.400 -> 14.700 siswa, SPPG berdekatan (500 m) 66 -> 54, kurva kandidat menjadi nol di 16 lokasi. Console tanpa error selain 404 favicon.
+
+**Pelajaran**
+Saat data dihasilkan skrip dan sering berubah, jangan lupa lapisan cache: periksa bahwa aplikasi benar-benar memakai berkas terbaru, bukan hanya bahwa berkasnya sudah berubah di disk.
