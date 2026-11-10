@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SPPG Smart Dashboard</title>
 
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet"/>
@@ -14,34 +15,58 @@
 <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
 
 <style>
-#map{height:100vh;}
-/* ================= pembuatan lebar popup yang lebih besar agar daftar sekolah yang dilayani SPPG terbaca ================= */
+/* ================= memperbaiki tata letak sidebar panjang menjadi rel ikon + laci kontrol + KPI melayang + dock grafik (Opsi 3) agar dashboard tidak memanjang ke bawah dan area bawah peta terisi ================= */
+html,body{margin:0;height:100%;overflow:hidden;}
+#map{position:absolute;top:0;bottom:0;left:64px;right:0;}
 .maplibregl-popup{max-width:380px!important;}
-.panel{
-background:white;
-border-radius:16px;
-padding:12px;
-box-shadow:0 4px 12px rgba(0,0,0,0.1);
-}
-.btn{
-width:100%;
-padding:8px;
-margin-bottom:6px;
-border-radius:10px;
-background:linear-gradient(135deg,#6366f1,#22c55e);
-color:white;
-font-weight:600;
-}
+.panel{background:white;border-radius:16px;padding:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+.btn{width:100%;padding:8px;margin-bottom:6px;border-radius:10px;background:linear-gradient(135deg,#6366f1,#22c55e);color:white;font-weight:600;}
+
+/* rel ikon di kiri */
+#rail{position:absolute;top:0;bottom:0;left:0;width:64px;background:#0f172a;z-index:30;display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:12px;}
+#rail button{width:52px;padding:6px 0;border-radius:10px;color:#cbd5e1;font-size:10px;text-align:center;background:transparent;}
+#rail button i{display:block;font-style:normal;font-size:20px;margin-bottom:1px;}
+#rail button.on{color:#fff;background:#334155;}
+/* laci kontrol di samping rel */
+#drawer{position:absolute;top:0;bottom:0;left:64px;width:380px;background:#f1f5f9;z-index:25;padding:12px;overflow-y:auto;box-shadow:2px 0 12px rgba(0,0,0,.2);display:none;}
+#drawer.buka{display:block;}
+#drawer section{display:none;}#drawer section.aktif{display:block;}
+#drawer section .panel{margin-bottom:12px;}
+/* kartu KPI melayang di atas peta */
+#kpiStrip{position:absolute;top:12px;left:84px;z-index:20;display:grid;grid-template-columns:repeat(4,160px);gap:8px;transition:left .15s;}
+body.drawer-on #kpiStrip{left:464px;}
+.kpi{background:rgba(255,255,255,.96);border-radius:12px;padding:8px 11px;box-shadow:0 2px 8px rgba(0,0,0,.18);}
+.kpi small{display:block;color:#64748b;font-size:11px;}.kpi b{font-size:21px;}.kpi .ok{color:#15803d;}.kpi .bad{color:#b45309;}
+/* dock grafik di bawah peta */
+#dock{position:absolute;left:64px;right:0;bottom:0;height:238px;background:rgba(248,250,252,.97);box-shadow:0 -2px 10px rgba(0,0,0,.18);padding:10px 12px;display:grid;grid-template-columns:1.2fr 1fr 1fr 1.1fr;gap:10px;z-index:20;transition:left .15s;}
+body.drawer-on #dock{left:444px;}
+body.dock-off #dock,body.dock-off #kpiStrip{display:none;}
+body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-left{margin-bottom:240px;}
+.card{background:#fff;border-radius:12px;padding:10px 12px;box-shadow:0 1px 4px rgba(0,0,0,.1);overflow:hidden;}
+.card h4{margin:0 0 7px;font-size:12px;color:#334155;font-weight:700;}
+.row{display:flex;align-items:center;gap:6px;margin:4px 0;font-size:11px;}.row span.n{width:150px;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.trk{position:relative;flex:1;height:11px;}.trk i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:#22c55e;}
+.trk i.a{background:#eab308;}.trk i.r{background:#92400e;}.trk u{position:absolute;top:-3px;bottom:-3px;width:0;border-left:2px dashed #64748b;}
+.hist{display:flex;align-items:flex-end;gap:10px;height:96px;padding:0 6px;}.hist div{flex:1;border-radius:4px 4px 0 0;text-align:center;color:#fff;font-size:11px;padding-top:2px;min-height:14px;}
+.cat{font-size:11px;color:#64748b;margin-top:6px;}
 </style>
 </head>
 
-<body class="bg-slate-100">
+<body class="bg-slate-100 dock-on">
 
-<div class="flex">
+<!-- ================= pembuatan rel ikon kiri: tombol Dashboard (tampil/sembunyi KPI + dock) dan tombol laci Layer, Param, Kandidat, Data ================= -->
+<nav id="rail">
+<button data-tab="dash" class="on"><i>▦</i>Dash</button>
+<button data-tab="layer"><i>☰</i>Layer</button>
+<button data-tab="param"><i>⚙</i>Param</button>
+<button data-tab="kandidat"><i>★</i>Kandidat</button>
+<button data-tab="data"><i>ⓘ</i>Data</button>
+</nav>
 
-<!-- SIDEBAR -->
-<div class="w-[360px] p-3 space-y-3 overflow-y-auto">
+<!-- ================= pembuatan laci kontrol: setiap tab menampilkan satu kelompok panel agar tidak ada satu kolom panjang ================= -->
+<aside id="drawer">
 
+<section data-panel="layer">
 <div class="panel">
 <h3 class="font-bold">Basemap</h3>
 <button onclick="setStyle('street')" class="btn">Street</button>
@@ -63,6 +88,25 @@ font-weight:600;
 </div>
 
 <div class="panel">
+<h3 class="font-bold">Legend</h3>
+<ul class="text-sm">
+<li>🔵 SD</li>
+<li>🟠 SMP</li>
+<li>🟣 SMA</li>
+<li>⚫ SPPG</li>
+<li>🔴 SPPG berdekatan</li>
+<li><span style="color:#92400e">●</span> Halo coklat: SPPG melebihi kapasitas</li>
+<li><span style="color:#16a34a">▮</span> Area hijau: jangkauan 10 menit</li>
+<li><span style="color:#0ea5e9">●</span> Biru: area layanan SPPG terpilih</li>
+<li><span style="color:#ec4899">●</span> Kandidat</li>
+<li>🟡 Heatmap</li>
+<li>🟢 Isochrone</li>
+</ul>
+</div>
+</section>
+
+<section data-panel="param">
+<div class="panel">
 <h3 class="font-bold">Isochrone</h3>
 <!-- ================= memperbaiki input waktu yang bisa diubah (tetapi isochrone kini data statis) menjadi terkunci 600 detik (10 menit) agar tampilan jujur terhadap data ================= -->
 <label for="waktu" class="text-sm">Waktu tempuh berkendara (detik)</label>
@@ -77,7 +121,7 @@ font-weight:600;
 <label for="jarakDekat" class="text-sm">Dianggap berdekatan jika jarak &le; (meter)</label>
 <input id="jarakDekat" type="number" min="0" step="50" value="500" class="w-full border p-2 rounded mb-2"/>
 <p class="text-sm">SPPG merah: <b id="jumlahDekat">0</b> dari <b id="jumlahSppg">0</b></p>
-<p class="text-xs text-slate-500">Klik SPPG merah untuk melihat alasannya. Posisi SPPG setingkat kelurahan, jadi jarak di bawah sekitar 1 km hanya perkiraan.</p>
+<p class="text-xs text-slate-500">Klik SPPG merah untuk melihat alasannya.</p>
 </div>
 
 <!-- ================= pembuatan panel KPI cakupan 10 menit dan beban per SPPG (kapasitas per SPPG bisa diubah) ================= -->
@@ -98,6 +142,25 @@ font-weight:600;
 <p class="text-xs text-slate-500 mt-1">Tiap sekolah dialokasikan ke SPPG terdekat. Jumlah siswa per sekolah masih estimasi (SD 200, SMP 300, SMA 400).</p>
 </div>
 
+<div class="panel">
+<h3 class="font-bold">Global Analysis</h3>
+<button id="run-global" class="btn">Run Global</button>
+</div>
+
+<div class="panel">
+<h3 class="font-bold">Hasil Run (isochrone terpilih)</h3>
+<p>Total Fasilitas Terlayani: <b id="served">0</b></p>
+<p>Total Siswa Terlayani: <b id="coverage">0</b></p>
+<p>SD: <b id="sdCount">0</b></p>
+<p>SMP: <b id="smpCount">0</b></p>
+<p>SMA: <b id="smaCount">0</b></p>
+<canvas id="chartSekolah"></canvas>
+<canvas id="chartSiswa" class="mt-3"></canvas>
+<canvas id="chartPie" class="mt-3"></canvas>
+</div>
+</section>
+
+<section data-panel="kandidat">
 <!-- ================= pembuatan panel kandidat SPPG baru berbasis beban: jumlah lokasi, tombol cari, ringkasan sebelum/sesudah, dan daftar lokasi ================= -->
 <div class="panel">
 <h3 class="font-bold">Kandidat SPPG Baru</h3>
@@ -106,54 +169,38 @@ font-weight:600;
 <button id="run-kandidat" class="btn">Cari Lokasi SPPG Baru</button>
 <p class="text-sm" id="hasilKandidat">Belum dijalankan.</p>
 <ol class="text-sm list-decimal pl-5 space-y-1" id="listKandidat"></ol>
-<p class="text-xs text-slate-500 mt-1">Metode: tiap putaran memilih satu lokasi sekolah yang paling banyak mengurangi kelebihan beban SPPG (kapasitas sesuai kotak di atas) dan menjangkau sekolah yang belum tercakup. Kandidat tidak boleh lebih dekat dari 300 m ke SPPG ada dan 1 km ke kandidat lain. Lokasi masih berupa titik sekolah acuan, bukan lahan yang sudah dicek.</p>
+<p class="text-xs text-slate-500 mt-1">Metode: tiap putaran memilih satu lokasi sekolah yang paling banyak mengurangi kelebihan beban SPPG (kapasitas sesuai kotak di tab Param) dan menjangkau sekolah yang belum tercakup. Kandidat tidak boleh lebih dekat dari 300 m ke SPPG ada dan 1 km ke kandidat lain. Lokasi masih berupa titik sekolah acuan, bukan lahan yang sudah dicek.</p>
 </div>
+</section>
 
+<section data-panel="data">
+<!-- ================= pembuatan panel kualitas data dan catatan metode (diisi oleh renderDashboard) ================= -->
 <div class="panel">
-<h3 class="font-bold">Global Analysis</h3>
-<button id="run-global" class="btn">Run Global</button>
+<h3 class="font-bold">Kualitas Data &amp; Metode</h3>
+<div id="dataKualitas" class="text-sm space-y-1">Memuat...</div>
 </div>
+</section>
 
-<div class="panel">
-<h3 class="font-bold">Dashboard</h3>
+</aside>
 
-<p>Total Fasilitas Terlayani: <b id="served">0</b></p>
-<p>Total Siswa Terlayani: <b id="coverage">0</b></p>
-
-<p>SD: <b id="sdCount">0</b></p>
-<p>SMP: <b id="smpCount">0</b></p>
-<p>SMA: <b id="smaCount">0</b></p>
-
-<canvas id="chartSekolah"></canvas>
-<canvas id="chartSiswa" class="mt-3"></canvas>
-<canvas id="chartPie" class="mt-3"></canvas>
-
-</div>
-
-<div class="panel">
-<h3 class="font-bold">Legend</h3>
-<ul class="text-sm">
-<li>🔵 SD</li>
-<li>🟠 SMP</li>
-<li>🟣 SMA</li>
-<li>⚫ SPPG</li>
-<li>🔴 SPPG berdekatan</li>
-<li><span style="color:#92400e">●</span> Halo coklat: SPPG melebihi kapasitas</li>
-<li><span style="color:#16a34a">▮</span> Area hijau: jangkauan 10 menit</li>
-<li><span style="color:#ec4899">●</span> Kandidat</li>
-<li>🟡 Heatmap</li>
-<li>🟢 Isochrone</li>
-</ul>
-</div>
-
+<!-- ================= pembuatan kartu KPI melayang di atas peta (cakupan, utilisasi, titik melebihi kapasitas, kelebihan permintaan) ================= -->
+<div id="kpiStrip">
+<div class="kpi"><small>Cakupan 10 menit</small><b class="ok" id="sKpiCov">-</b><small id="sKpiCovSub">&nbsp;</small></div>
+<div class="kpi"><small>Utilisasi kota</small><b id="sKpiUtil">-</b><small id="sKpiUtilSub">&nbsp;</small></div>
+<div class="kpi"><small>SPPG &gt; kapasitas</small><b class="bad" id="sKpiOver">-</b><small>titik SPPG</small></div>
+<div class="kpi"><small>Kelebihan permintaan</small><b class="bad" id="sKpiLebih">-</b><small>siswa (estimasi)</small></div>
 </div>
 
 <!-- MAP -->
-<div class="flex-1">
 <div id="map"></div>
-</div>
 
-</div>
+<!-- ================= pembuatan dock grafik di bawah peta: SPPG terpadat, sebaran utilisasi, kurva manfaat kandidat, dan kualitas data ================= -->
+<section id="dock">
+<div class="card"><h4>SPPG terpadat (garis putus = kapasitas 100%)</h4><div id="dockTerpadat"></div></div>
+<div class="card"><h4>Sebaran utilisasi (titik SPPG)</h4><div id="dockHist"></div></div>
+<div class="card"><h4>Kurva manfaat kandidat</h4><div id="dockKurva"></div></div>
+<div class="card"><h4>Kualitas data</h4><div id="dockData" class="text-xs space-y-1"></div></div>
+</section>
 
 <script type="module" src="src/app.js"></script>
 </body>

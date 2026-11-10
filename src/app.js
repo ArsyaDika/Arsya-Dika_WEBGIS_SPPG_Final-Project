@@ -50,6 +50,7 @@ const smp=await fetch('./data/SMP.geojson').then(r=>r.json());
 const sma=await fetch('./data/SMA.geojson').then(r=>r.json());
 // ================= memperbaiki fetch SPPG.geojson (koordinat salah, 128 SPPG) menjadi SPPG_geocoded.geojson yang disaring dipakai_analisis (123 SPPG) agar peta dan analisis memakai koordinat yang sudah diperbaiki =================
 const sppgSemua=await fetch('./data/SPPG_geocoded.geojson').then(r=>r.json());
+sppgSemuaData=sppgSemua.features;   // disimpan untuk panel kualitas data (jumlah dipakai vs tercatat)
 const sppg={type:'FeatureCollection',features:sppgSemua.features.filter(f=>f.properties.dipakai_analisis)};
 
 sekolahData=[
@@ -435,6 +436,8 @@ set('kpiUtil',Math.round(100*minta/kapTotal)+'% dari kapasitas');
 set('kpiOver',over);
 set('kpiGrup',grup.length);
 set('kpiKelebihan',fmt(beban.kelebihan)+' siswa');
+// ================= memperbaiki perbaruiKpi yang hanya mengisi panel Param menjadi juga memperbarui dashboard (KPI melayang + dock grafik) agar tampilan utama selalu sinkron =================
+renderDashboard();
 }
 
 // ================= pembuatan pendengar input kapasitas agar KPI dan halo beban langsung diperbarui =================
@@ -448,6 +451,88 @@ if(ring) ring.innerText='Kapasitas berubah. Jalankan ulang pencarian.';
 if(daftar) daftar.innerHTML='';
 terapkanBebanDasar();
 });
+
+// ================= DASHBOARD (REL IKON, KPI MELAYANG, DOCK GRAFIK) =================
+// ================= pembuatan tombol rel ikon: Dash menampilkan/menyembunyikan KPI dan dock; tab lain membuka laci kontrol sesuai panelnya =================
+let sppgSemuaData=[];   // semua SPPG di berkas (termasuk yang tidak dipakai analisis), untuk panel kualitas data
+const rel=document.getElementById('rail');
+const laci=document.getElementById('drawer');
+let tabAktif=null;
+function pilihTab(tab){
+if(tab==='dash'){
+const off=document.body.classList.toggle('dock-off');
+document.body.classList.toggle('dock-on',!off);
+rel.querySelector('[data-tab=dash]').classList.toggle('on',!off);
+return;
+}
+const tutup=(tabAktif===tab);          // klik tab yang sama menutup laci
+tabAktif=tutup?null:tab;
+laci.classList.toggle('buka',!tutup);
+document.body.classList.toggle('drawer-on',!tutup);
+laci.querySelectorAll('section').forEach(s=>s.classList.toggle('aktif',s.dataset.panel===tabAktif));
+rel.querySelectorAll('button').forEach(b=>{if(b.dataset.tab!=='dash') b.classList.toggle('on',b.dataset.tab===tabAktif);});
+}
+if(rel) rel.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>pilihTab(b.dataset.tab)));
+
+// ================= pembuatan tampilan dashboard: kartu KPI, SPPG terpadat, sebaran utilisasi, kurva manfaat kandidat, dan kualitas data =================
+let kurvaTimer=null;
+function renderDashboard(){
+if(!analisisDasar) return;
+const {grup,kap,beban,tot}=analisisDasar;
+const set=(id,v)=>{const el=document.getElementById(id);if(el) el.innerHTML=v;};
+
+// kartu KPI melayang
+const minta=beban.muatan.reduce((a,b)=>a+b,0);
+const kapT=grup.reduce((a,g)=>a+g.n*kap,0);
+const over=grup.filter((g,i)=>beban.muatan[i]>g.n*kap).length;
+if(tot){
+const J=['SD','SMP','SMA'];
+const ok=J.reduce((a,j)=>a+tot[j].ok,0),n=J.reduce((a,j)=>a+tot[j].n,0);
+const sok=J.reduce((a,j)=>a+tot[j].sok,0),s=J.reduce((a,j)=>a+tot[j].s,0);
+set('sKpiCov',(100*sok/s).toFixed(1)+'%');
+set('sKpiCovSub',`${ok} dari ${n} sekolah`);
+}
+set('sKpiUtil',Math.round(100*minta/kapT)+'%');
+set('sKpiUtilSub',`${fmt(minta)} / ${fmt(kapT)}`);
+set('sKpiOver',`${over} / ${grup.length}`);
+set('sKpiLebih',fmt(beban.kelebihan));
+
+// SPPG terpadat (bar + garis kapasitas 100%)
+const arr=grup.map((g,i)=>({nama:g.nama[0].replace(/^SPPG\s+(Kota\s+)?Semarang\s+/i,''),u:beban.muatan[i]/(g.n*kap)})).sort((a,b)=>b.u-a.u).slice(0,6);
+const maks=Math.max(1,...arr.map(a=>a.u));
+set('dockTerpadat',arr.map(a=>`<div class="row"><span class="n" title="${esc(a.nama)}">${esc(a.nama)}</span><div class="trk"><i class="${a.u>1?'r':(a.u>0.7?'a':'')}" style="width:${100*a.u/maks}%"></i><u style="left:${100/maks}%"></u></div><b>${Math.round(a.u*100)}%</b></div>`).join(''));
+
+// sebaran utilisasi (tiga kelompok)
+const u=grup.map((g,i)=>beban.muatan[i]/(g.n*kap));
+const b1=u.filter(x=>x<=0.5).length,b2=u.filter(x=>x>0.5&&x<=1).length,b3=u.filter(x=>x>1).length;
+const mb=Math.max(b1,b2,b3,1);
+set('dockHist',`<div class="hist"><div style="height:${100*b1/mb}%;background:#22c55e">${b1}</div><div style="height:${100*b2/mb}%;background:#eab308">${b2}</div><div style="height:${100*b3/mb}%;background:#92400e">${b3}</div></div><div class="cat">&le;50% &nbsp; 50&ndash;100% &nbsp; &gt;100%</div>`);
+
+// kurva manfaat kandidat (dihitung tertunda agar tidak berat saat kapasitas diketik)
+clearTimeout(kurvaTimer);
+kurvaTimer=setTimeout(()=>{
+let nilai=[beban.kelebihan];
+try{cariKandidat(20).daftar.forEach(d=>nilai.push(d.sisaKelebihan));}catch(e){console.error(e);}
+const mx=Math.max(1,nilai[0]),W=120,H=80;
+const pts=nilai.map((v,i)=>`${6+(W-12)*i/Math.max(1,nilai.length-1)},${8+(H-16)*(1-v/mx)}`).join(' ');
+const idx=(k)=>nilai[Math.min(k,nilai.length-1)];
+set('dockKurva',`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:96px"><polyline fill="none" stroke="#6366f1" stroke-width="2.5" points="${pts}"/></svg><div class="cat">${fmt(nilai[0])} &rarr; ${fmt(idx(5))} (5 lokasi) &rarr; ${fmt(idx(10))} (10) &rarr; ${fmt(nilai[nilai.length-1])} (${nilai.length-1})</div>`);
+},60);
+
+// kualitas data: ringkasan di dock dan rincian di tab Data
+const semua=sppgSemuaData,dipakai=semua.filter(f=>f.properties.dipakai_analisis);
+const jalan=dipakai.filter(f=>f.properties.geo_akurasi==='jalan').length;
+const asli=sekolahData.filter(s=>s.properties.siswa).length;
+const baris=(k,v)=>`<div class="row" style="justify-content:space-between"><span style="width:auto;color:#475569">${k}</span><b>${v}</b></div>`;
+set('dockData',baris('SPPG dipakai / tercatat',`${dipakai.length} / ${semua.length}`)+baris('Koordinat SPPG: jalan / kelurahan',`${jalan} / ${dipakai.length-jalan}`)+baris('Titik SPPG unik',grup.length)+baris('Siswa dari data asli',Math.round(100*asli/Math.max(1,sekolahData.length))+'%'));
+set('dataKualitas',baris('SPPG tercatat / dipakai analisis',`${semua.length} / ${dipakai.length}`)
++baris('Koordinat SPPG berasal dari alamat jalan',`${jalan}`)
++baris('Koordinat SPPG berupa titik kelurahan',`${dipakai.length-jalan}`)
++baris('Titik SPPG unik (SPPG kembar digabung)',grup.length)
++baris('Sekolah di peta (SD / SMP / SMA)',`${sekolahData.length} (${tot?tot.SD.n:'-'} / ${tot?tot.SMP.n:'-'} / ${tot?tot.SMA.n:'-'})`)
++baris('Sekolah dengan jumlah siswa asli',`${asli} dari ${sekolahData.length}`)
++`<p class="text-xs text-slate-500 mt-2">Metode: tiap sekolah dialokasikan ke titik SPPG terdekat; beban = jumlah siswa (estimasi SD 200, SMP 300, SMA 400) dibanding kapasitas (${fmt(kap)} per SPPG). Cakupan 10 menit = gabungan isochrone berkendara semua SPPG (OpenRouteService). SPPG yang dikeluarkan: koordinat tidak ditemukan atau terlalu jauh dari kota.</p>`);
+}
 
 // ================= LAYANAN SPPG (AREA & SEKOLAH YANG DILAYANI) =================
 // ================= pembuatan pencarian sekolah yang dilayani satu titik SPPG (hasil alokasi ke SPPG terdekat, konsisten dengan hitungan beban) =================

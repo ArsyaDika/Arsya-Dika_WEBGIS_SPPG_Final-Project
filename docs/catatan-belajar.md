@@ -690,3 +690,31 @@ Tiga gambar 1440x810 dibuat dari halaman `mockup.html` dan diperiksa secara visu
 
 **Pelajaran**
 Memutuskan tata letak dari gambar lebih murah daripada dari kode. Perubahan tata letak yang sudah dikodekan lebih mahal diubah.
+
+---
+
+## 27. Dashboard Opsi 3: rel ikon, KPI melayang, dock grafik, laci kontrol
+
+**Masalah / permintaan**
+Sidebar kiri yang memanjang ke bawah membuat bagian bawah peta kosong dan sulit dibaca. Pengguna memilih tata letak Opsi 3 (gambar di `docs/ide-dashboard/`).
+
+**Perubahan**
+`Index.html` disusun ulang (semua `id` lama dipertahankan):
+- Rel ikon kiri (`#rail`): Dash, Layer, Param, Kandidat, Data.
+- Laci kontrol (`#drawer`): panel lama dikelompokkan per tab (Layer: basemap/layer/legenda; Param: isochrone, SPPG berdekatan, kapasitas, Run Global, hasil Run; Kandidat; Data: kualitas data).
+- Kartu KPI melayang (`#kpiStrip`) dan dock grafik (`#dock`) di bawah peta.
+- Peta memenuhi layar (`position:absolute`); atribusi peta digeser di atas dock.
+`src/app.js`, sesi `// ===== DASHBOARD (REL IKON, KPI MELAYANG, DOCK GRAFIK) =====`:
+- `pilihTab()`: tombol Dash menampilkan/menyembunyikan KPI dan dock; tab lain membuka laci dan menggeser KPI/dock; klik tab yang sama menutup laci.
+- `renderDashboard()`: kartu KPI, 6 SPPG terpadat (bar dengan garis kapasitas 100%), sebaran utilisasi (3 kelompok), kurva manfaat kandidat (SVG, dihitung tertunda 60 ms), dan kartu kualitas data. Dipanggil dari `perbaruiKpi()`.
+
+**Alasan**
+- Isi per tab dan dock horizontal membuat semua informasi utama terlihat tanpa scroll panjang, dan area bawah peta terpakai.
+- Kurva manfaat memakai `cariKandidat(20)` untuk melihat kelebihan beban setelah 0 sampai N lokasi; dihitung dengan jeda agar tidak berat saat kapasitas diketik.
+- Panel Kualitas Data memperlihatkan keterbatasan (koordinat SPPG, siswa asli 0%) langsung di dashboard.
+
+**Hasil**
+Diuji di browser (port 5510): KPI 99,4% / 54% / 12 dari 88 / 13.400; 6 bar SPPG terpadat, histogram 45/31/12 (3 kelompok), kurva 13.400 -> 3.400 (5 lokasi) -> 500 (10) -> 0 (14); semua tab laci dan tombol Dash bekerja; Console tanpa pesan.
+
+**Pelajaran**
+Kelompokkan kontrol menurut tugas (lihat peta, atur parameter, cari kandidat) dan tampilkan ringkasan di tempat yang selalu terlihat (dock). Itu lebih terbaca daripada satu kolom panjang.
