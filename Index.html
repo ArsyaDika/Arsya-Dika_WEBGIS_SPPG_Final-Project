@@ -124,9 +124,10 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <div class="panel">
 <h3 class="font-bold">Isochrone</h3>
 <!-- ================= memperbaiki input waktu yang bisa diubah (tetapi isochrone kini data statis) menjadi terkunci 600 detik (10 menit) agar tampilan jujur terhadap data ================= -->
-<label for="waktu" class="text-sm">Waktu tempuh berkendara (detik)</label>
-<input id="waktu" value="600" readonly class="w-full border p-2 rounded mb-2 bg-slate-100"/>
-<p class="text-xs text-slate-500 mb-2">Tetap 10 menit (600 detik). Klik SPPG lalu Run Isochrone untuk area 1 SPPG.</p>
+<!-- ================= memperbaiki input waktu terkunci 600 detik menjadi slider 1-10 menit (isochrone sudah dihitung per menit) agar pengguna bisa memilih waktu tempuh <= 600 detik ================= -->
+<label for="waktuMenit" class="text-sm">Waktu tempuh berkendara: <b id="waktuLabel">10 menit (600 detik)</b></label>
+<input id="waktuMenit" type="range" min="1" max="10" step="1" value="10" class="w-full mb-2"/>
+<p class="text-xs text-slate-500 mb-2">Geser untuk mengubah waktu tempuh (maksimum 10 menit). Area cakupan, KPI cakupan, dan Run Isochrone mengikuti. Klik SPPG lalu Run Isochrone untuk area 1 SPPG.</p>
 <button id="run-local" class="btn">Run Isochrone</button>
 </div>
 

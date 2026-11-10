@@ -188,11 +188,13 @@ if(inputJarak) inputJarak.addEventListener('input',terapkanSppgBerdekatan);
 
 // ================= ISOCHRONE =================
 // ================= penarikan data isochrone statis 10 menit (hasil scripts/fetch-isochrones.mjs) agar aplikasi tidak butuh API/key saat dipakai =================
-let isoSppg=null; // FeatureCollection: satu poligon isochrone per SPPG (properti sppg_no, sppg_nama, waktu_detik)
+// ================= memperbaiki isochrone satu waktu (600 detik, isochrone-sppg-600.geojson) menjadi multi-waktu (60 sampai 600 detik, isochrone-multi.geojson) agar pengguna bisa memilih waktu tempuh <= 600 detik lewat slider tanpa memanggil API =================
+let isoSppg=null;      // FeatureCollection: poligon per titik SPPG per waktu (properti titik "lng,lat" dan waktu_detik)
+let waktuIso=600;      // waktu tempuh (detik) yang dipilih pengguna; maksimum 600
 async function muatIsochrone(){
 if(isoSppg) return isoSppg;
-const res=await fetch('./data/isochrone-sppg-600.geojson',{cache:'no-cache'});
-if(!res.ok) throw new Error('data/isochrone-sppg-600.geojson tidak ditemukan (jalankan scripts/fetch-isochrones.mjs)');
+const res=await fetch('./data/isochrone-multi.geojson',{cache:'no-cache'});
+if(!res.ok) throw new Error('data/isochrone-multi.geojson tidak ditemukan (jalankan scripts/fetch-isochrones-multi.mjs)');
 isoSppg=await res.json();
 return isoSppg;
 }
@@ -200,26 +202,26 @@ return isoSppg;
 // ================= memperbaiki getIso yang memanggil API MapID tiap klik (satu SPPG, butuh key berbayar) menjadi mencari isochrone SPPG terpilih di data statis agar tidak butuh API/key dan hasilnya sama untuk semua pengguna =================
 async function getIso(point){
 const data=await muatIsochrone();
-const no=point.properties['No SPPG'];
-const iso=data.features.find(f=>String(f.properties.sppg_no)===String(no));
-if(!iso) throw new Error('Isochrone untuk SPPG ini tidak ada (SPPG tidak dipakai dalam analisis).');
+// ================= memperbaiki pencarian isochrone lewat sppg_no (satu waktu) menjadi lewat titik SPPG dan waktu yang dipilih (waktuIso) =================
+const i=idxGrupFitur(point);
+if(i<0) throw new Error('Isochrone untuk SPPG ini tidak ada (SPPG tidak dipakai dalam analisis).');
+const kunci=analisisDasar.grup[i].xy.join(',');
+const iso=data.features.find(f=>f.properties.titik===kunci&&f.properties.waktu_detik===waktuIso);
+if(!iso) throw new Error('Isochrone untuk SPPG ini pada waktu terpilih tidak ada.');
 return iso;
 }
 
 // ================= pembuatan cakupan gabungan (union) seluruh isochrone SPPG agar analisis memakai area yang benar-benar terlayani oleh semua SPPG, bukan satu SPPG =================
-let cakupanGabungan=null;
-async function gabungIsochrone(){
-if(cakupanGabungan) return cakupanGabungan;
+// ================= memperbaiki gabungIsochrone satu waktu menjadi per waktu terpilih dengan penyimpanan sementara (cache) per waktu agar slider cepat setelah pemakaian pertama =================
+const cakupanCache=new Map();
+async function gabungIsochrone(waktu=waktuIso){
+if(cakupanCache.has(waktu)) return cakupanCache.get(waktu);
 const data=await muatIsochrone();
-// SPPG di titik yang sama punya isochrone identik; ambil satu poligon per bentuk unik agar union lebih cepat
-const unik=new Map();
-data.features.forEach(f=>{
-const ring=f.geometry.coordinates[0];
-const kunci=ring.length+'|'+ring[0].join(',')+'|'+ring[Math.floor(ring.length/2)].join(',');
-if(!unik.has(kunci)) unik.set(kunci,f);
-});
-cakupanGabungan=turf.union(turf.featureCollection([...unik.values()]));
-return cakupanGabungan;
+const poli=data.features.filter(f=>f.properties.waktu_detik===waktu);   // satu poligon per titik SPPG unik
+if(!poli.length) throw new Error(`Tidak ada isochrone untuk waktu ${waktu} detik.`);
+const gab=poli.length===1?poli[0]:turf.union(turf.featureCollection(poli));
+cakupanCache.set(waktu,gab);
+return gab;
 }
 
 function drawIso(geo){
@@ -502,6 +504,25 @@ renderDashboard();
 
 // ================= pembuatan pendengar input kapasitas agar KPI dan halo beban langsung diperbarui =================
 const inputKapasitas=document.getElementById('kapasitas');
+// ================= pembuatan penerapan ulang cakupan saat waktu tempuh diubah: hitung ulang cakupan gabungan pada waktu terpilih, gambar ulang layer cakupan, dan perbarui KPI/dashboard (alokasi dan beban tidak dihitung ulang) =================
+async function terapkanCakupan(){
+if(!analisisDasar) return;
+try{
+const cak=await hitungCakupan();
+analisisDasar.tot=cak.tot;
+gambarCakupan(cak.gab);
+perbaruiKpi();
+}catch(e){console.error(e);}
+}
+// ================= pembuatan slider waktu tempuh isochrone (1 sampai 10 menit, maksimum 600 detik) =================
+const sliderWaktu=document.getElementById('waktuMenit');
+if(sliderWaktu) sliderWaktu.addEventListener('input',()=>{
+const m=Number(sliderWaktu.value);
+waktuIso=m*60;
+const lab=document.getElementById('waktuLabel');
+if(lab) lab.innerText=`${m} menit (${waktuIso} detik)`;
+terapkanCakupan();
+});
 // ================= pembuatan tombol skenario kapasitas (2.000 / 2.500 / 3.000) yang mengisi kotak kapasitas dan memicu perhitungan ulang =================
 window.setKapasitas=(v)=>{const el=document.getElementById('kapasitas');if(el){el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}));}};
 // ================= memperbaiki pendengar kapasitas agar juga menghapus kandidat lama (hasilnya tidak berlaku lagi untuk kapasitas baru) =================
@@ -591,7 +612,7 @@ if(tot){
 const J=Object.keys(tot);
 const ok=J.reduce((a,j)=>a+tot[j].ok,0),n=J.reduce((a,j)=>a+tot[j].n,0);
 const sok=J.reduce((a,j)=>a+tot[j].sok,0),s=J.reduce((a,j)=>a+tot[j].s,0);
-setKpi(1,'Cakupan 10 menit',(100*sok/s).toFixed(1)+'%',`${ok} dari ${n} sekolah`,'ok');
+setKpi(1,`Cakupan ${waktuIso/60} menit`,(100*sok/s).toFixed(1)+'%',`${ok} dari ${n} sekolah`,'ok');
 }
 setKpi(2,'Utilisasi kota',Math.round(100*minta/kapT)+'%',`${fmt(minta)} / ${fmt(kapT)}`,'');
 setKpi(3,'SPPG &gt; kapasitas',`${over} / ${grup.length}`,'titik SPPG','bad');
@@ -667,7 +688,7 @@ const jenjang=JENJANG.find(j=>j.k===p.jenjang);
 const iw=analisisDasar.iw;
 const terdekat=grup.map((x,k)=>({k,d:jarakM(xy,x.xy),t:waktuDetik(iw,k,idx)})).sort((a,b)=>(a.t!=null&&b.t!=null)?a.t-b.t:a.d-b.d).slice(0,5);
 let dijangkau=0;
-try{if(isoSppg){const pt=turf.point(xy);dijangkau=isoSppg.features.filter(ft=>turf.booleanPointInPolygon(pt,ft)).length;}}catch{}
+try{if(isoSppg){const pt=turf.point(xy);dijangkau=isoSppg.features.filter(ft=>ft.properties.waktu_detik===waktuIso&&turf.booleanPointInPolygon(pt,ft)).length;}}catch{}
 const luar=sekolahTdkTercakup.has(idx);
 setKpi(1,'Jumlah siswa',fmt(siswa),'BPS kecamatan, dibagi rata','');
 setKpi(2,'Jenjang',esc(p.jenjang),esc(p.STATUS||p.status||'&nbsp;'),'');
@@ -677,7 +698,7 @@ setCard(1,'Identitas sekolah',barisInfo('Nama',esc(p.NAMA||'-'))+barisInfo('Jenj
 setCard(2,'SPPG yang melayani',barisInfo('SPPG',esc(namaPendek(g.nama[0])))+barisBar('Beban',muatan,Math.max(kapT,muatan),fmt(muatan),warnaUtil(u),kapT)+barisInfo('Kapasitas',fmt(kapT))+(g.n>1?barisInfo('SPPG di titik ini',g.n):''));
 const wMaks=Math.max(60,...terdekat.map(t=>t.t!=null?t.t:t.d/6));   // jarak/6 m/s sebagai perkiraan kasar jika tanpa waktu tempuh
 setCard(3,'SPPG tercepat (waktu tempuh)',terdekat.map(t=>barisBar(namaPendek(grup[t.k].nama[0]),t.t!=null?t.t:t.d/6,wMaks,t.t!=null?(t.t/60).toFixed(1)+' mnt':(t.d/1000).toFixed(1)+' km',t.t!=null&&t.t>600?'#b45309':(jenjang?jenjang.warna:'#6366f1'),600)).join('')+'<div class="cat">Garis putus = batas 10 menit.</div>');
-setCard(4,'Jangkauan 10 menit',barisInfo('Dijangkau SPPG',dijangkau+' SPPG')+(dk.t!=null&&dk.t>600?`<div style="color:#b45309;margin-top:4px">&#9888; SPPG pelayan berjarak ${(dk.t/60).toFixed(1)} menit: di luar isochrone 10 menit (masih dalam batas BGN 30 menit).</div>`:'')+(luar?'<div style="color:#b45309;margin-top:4px">&#9888; Di luar isochrone 10 menit dari semua SPPG.</div>':'<div class="cat" style="margin-top:4px">Berada di dalam isochrone 10 menit.</div>'));
+setCard(4,`Jangkauan ${waktuIso/60} menit`,barisInfo('Dijangkau titik SPPG',dijangkau)+(dk.t!=null&&dk.t>600?`<div style="color:#b45309;margin-top:4px">&#9888; SPPG pelayan berjarak ${(dk.t/60).toFixed(1)} menit: di luar isochrone 10 menit (masih dalam batas BGN 30 menit).</div>`:'')+(luar?'<div style="color:#b45309;margin-top:4px">&#9888; Di luar isochrone 10 menit dari semua SPPG.</div>':'<div class="cat" style="margin-top:4px">Berada di dalam isochrone 10 menit.</div>'));
 }
 
 // ================= pembuatan rincian kualitas data dan metode di tab Data (selalu diperbarui) =================

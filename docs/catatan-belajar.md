@@ -926,3 +926,25 @@ Tekanan permintaan (alokasi ke SPPG tercepat tanpa batas kapasitas): 37 dari 113
 
 **Pelajaran**
 Uji sensitivitas: dua definisi "terdekat" menghasilkan beban yang sangat berbeda. Itu sebabnya hasil model harus disertai keterbatasannya, dan keputusan penting sebaiknya diperiksa dengan lebih dari satu cara.
+
+---
+
+## 37. Isochrone dinamis: slider waktu tempuh 1 sampai 10 menit
+
+**Masalah / permintaan**
+Isochrone statis di 600 detik. Pengguna ingin bisa memilih waktu tempuh, dengan batas maksimum 600 detik, agar dashboard lebih interaktif.
+
+**Perubahan**
+- `scripts/fetch-isochrones-multi.mjs`: menarik isochrone untuk 113 titik SPPG pada sepuluh waktu sekaligus (60, 120, ..., 600 detik) dalam satu permintaan per titik, dengan perbaikan otomatis untuk isochrone terlalu kecil. Keluaran `data/isochrone-multi.geojson` (1.130 poligon, 1,9 MB; properti `titik` dan `waktu_detik`).
+- `src/app.js`: `waktuIso` (detik) menyimpan pilihan pengguna; `gabungIsochrone(waktu)` menggabungkan poligon pada waktu itu dengan cache per waktu; `getIso()` mencari poligon SPPG terpilih pada `waktuIso`; `terapkanCakupan()` menghitung ulang cakupan, layer, dan KPI tanpa menghitung ulang alokasi; label KPI dan kartu dashboard mengikuti waktu terpilih.
+- `Index.html`: slider `#waktuMenit` (1 sampai 10 menit) menggantikan kotak waktu terkunci.
+
+**Alasan**
+Waktu tempuh yang berbeda tidak bisa diturunkan dari satu poligon 600 detik, tetapi satu permintaan ORS dapat memuat banyak interval, sehingga cukup 113 permintaan. Dengan data statis per menit, slider bekerja cepat tanpa memanggil API dan tanpa menaruh API key di browser. Alokasi dan beban tidak diulang saat slider digeser karena tidak bergantung pada waktu yang dipilih.
+
+**Hasil**
+Diverifikasi: 113/113 titik, 10 waktu, 1.130 poligon valid. Di browser, cakupan gabungan: 1 menit 29,4% (270 dari 1.042 sekolah), 3 menit 81,4% (814), 5 menit 94,5% (974), 10 menit 99,3% (1.032); pertama kali sekitar 4,5 detik per waktu, berikutnya lebih cepat karena cache. Run Isochrone untuk SPPG Karangayu: 3 menit = 15 sekolah (5.693 siswa), 10 menit = 425 sekolah (124.611 siswa). Console bersih.
+**Catatan:** berkas lama `data/isochrone-sppg-600.geojson` kini tidak dipakai aplikasi.
+
+**Pelajaran**
+Hitung sekali di belakang (offline) hal yang berat dan berulang, lalu sajikan secara interaktif di depan. Interaktivitas tidak harus berarti perhitungan langsung.
