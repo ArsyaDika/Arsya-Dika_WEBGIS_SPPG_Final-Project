@@ -544,3 +544,26 @@ Diuji di browser: Run Global menghasilkan 818 dari 823 sekolah (SD 549/553, SMP 
 
 **Pelajaran**
 Pisahkan pekerjaan berat dan jarang berubah (menghitung isochrone) dari aplikasi yang dipakai berulang. Dan definisikan "terlayani" dari gabungan semua sumber layanan, bukan satu.
+
+---
+
+## 21. Isochrone terlalu kecil di 3 titik SPPG (ruas jalan terpencil)
+
+**Masalah**
+Klik SPPG Ngesrep lalu Run Isochrone menampilkan 0 sekolah. Pemeriksaan luas: dari 88 isochrone unik, median 76 km², tetapi Randugarut (0,7 km²), Ngesrep (0,9 km²), dan Jangli (5,3 km²) hanya beberapa km². Titik pusat kelurahan mereka jatuh di ruas jalan kecil yang tidak terhubung ke jaringan jalan utama, sehingga 10 menit berkendara hanya mencakup beberapa ratus meter.
+
+**Perubahan**
+`scripts/fetch-isochrones.mjs`:
+- Fungsi `luasKm2` dan `jarakKm`.
+- Jika isochrone < 10 km² (`LUAS_MIN_KM2`), dicoba ulang dari sampai 3 sekolah terdekat (<= 3 km) dan dipilih yang terluas; diberi tanda `isochrone_dialihkan`.
+- Opsi `--perbaiki-kecil`: membuang isochrone kecil dari hasil lama agar dihitung ulang; kolom `luas_km2` ditambahkan ke setiap fitur.
+- `data/isochrone-sppg-600.geojson` diperbarui.
+
+**Alasan**
+Titik pusat kelurahan hanyalah perkiraan. Sekolah selalu berada di jalan yang bisa dilalui, sehingga titik sekolah terdekat lebih mungkin terhubung ke jaringan jalan. Pemeriksaan luas minimum menangkap kasus ini otomatis, tidak hanya tiga yang kebetulan ditemukan.
+
+**Hasil**
+Diverifikasi: Ngesrep 0,9 -> 67,1 km², Randugarut 0,7 -> 85,6 km², Jangli 5,3 -> 24,4 km² (sekitar 9 permintaan API tambahan). Diuji di browser: Run Isochrone Ngesrep kini mencakup 275 sekolah (SD 182, SMP 63, SMA 30; estimasi 67.300 siswa), Run Global tetap 818 dari 823 sekolah.
+
+**Pelajaran**
+Setelah menghasilkan data dari layanan eksternal, periksa sebaran nilainya (di sini luas poligon) untuk menemukan hasil janggal, jangan hanya memeriksa jumlahnya.
