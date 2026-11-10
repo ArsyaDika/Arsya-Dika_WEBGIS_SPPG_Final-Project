@@ -171,8 +171,10 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 
 <div class="panel">
 <h3 class="font-bold">Hasil Run (isochrone terpilih)</h3>
-<p>Total Fasilitas Terlayani: <b id="served">0</b></p>
-<p>Total Siswa Terlayani: <b id="coverage">0</b></p>
+<!-- ================= memperbaiki istilah "Terlayani" (sebenarnya jangkauan yang tumpang tindih) menjadi "dijangkau", dan menambah ringkasan dijangkau vs dilayani vs tumpang tindih (Opsi D) ================= -->
+<div id="hasilD" class="mb-2"></div>
+<p class="text-sm">Sekolah dijangkau (rincian): <b id="served">0</b></p>
+<p class="text-sm">Siswa dijangkau (rincian): <b id="coverage">0</b></p>
 <div id="hasilJenjang"></div>
 <canvas id="chartSekolah"></canvas>
 <canvas id="chartSiswa" class="mt-3"></canvas>

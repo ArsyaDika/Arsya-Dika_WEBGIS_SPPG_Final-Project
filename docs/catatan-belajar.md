@@ -948,3 +948,27 @@ Diverifikasi: 113/113 titik, 10 waktu, 1.130 poligon valid. Di browser, cakupan 
 
 **Pelajaran**
 Hitung sekali di belakang (offline) hal yang berat dan berulang, lalu sajikan secara interaktif di depan. Interaktivitas tidak harus berarti perhitungan langsung.
+
+---
+
+## 38. Opsi D: dijangkau vs dilayani vs tumpang tindih pada hasil Run
+
+**Masalah / permintaan**
+Hasil Run Isochrone menyebut sekolah "terlayani" padahal itu jangkauan isochrone yang tumpang tindih antar SPPG; menjumlahkannya antar SPPG akan menghitung ganda. Pengguna menyetujui Opsi D: tampilkan dijangkau dan dilayani sekaligus beserta ukuran tumpang tindih.
+
+**Perubahan**
+`src/app.js`, sesi `// ===== OPSI D =====`:
+- `jumlahPenjangkau(waktu)`: jumlah titik SPPG yang menjangkau tiap sekolah pada waktu terpilih (cache per waktu).
+- `sekolahDalam(poligon)` dan `ringkasanD(f,iso)` (Run Isochrone): **dijangkau** (tidak eksklusif), **dilayani** (alokasi waktu tempuh, eksklusif) beserta berapa yang dilayani di luar isochrone, dan **tumpang tindih** (persen sekolah yang juga dijangkau SPPG lain dan rata-rata titik SPPG per sekolah).
+- `ringkasanGlobal()` (Run Global): sekolah dijangkau minimal satu SPPG (dihitung sekali) dan tumpang tindihnya.
+`Index.html`: istilah "Terlayani" diganti "dijangkau" dan ditambah wadah `#hasilD`.
+
+**Alasan**
+"Dijangkau" dan "dilayani" adalah dua pertanyaan berbeda. Jangkauan menjawab "siapa yang masuk waktu tempuh", alokasi menjawab "siapa yang benar-benar dilayani SPPG ini". Memisahkannya mencegah penghitungan ganda dan memperlihatkan redundansi.
+
+**Hasil**
+Diuji di browser (waktu 10 menit): SPPG Karangayu dijangkau 425 sekolah (124.611 siswa) tetapi dilayani 3 sekolah (831 siswa); 100% sekolah yang dijangkau juga dijangkau SPPG lain, rata-rata 49,2 titik per sekolah. Global: 1.032 dari 1.042 sekolah dijangkau (290.355 siswa, dihitung sekali), 99% dijangkau lebih dari satu titik SPPG, rata-rata 34,0 titik per sekolah. Console bersih.
+**Makna:** isochrone 10 menit terlalu longgar untuk menjadi ukuran kecukupan SPPG; hampir setiap sekolah dijangkau puluhan titik SPPG. Ukuran yang lebih bermakna adalah alokasi berkapasitas dan waktu tempuh ke SPPG pelayan.
+
+**Pelajaran**
+Satu kata ("terlayani") yang dipakai untuk dua konsep menyesatkan. Beri nama berbeda, dan sertakan ukuran tumpang tindih agar pembaca tahu angka mana yang boleh dijumlahkan.

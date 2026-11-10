@@ -267,6 +267,68 @@ if(wadah) wadah.innerHTML=ada.map(j=>`<p>${j.k}: <b>${per[j.k].n}</b> sekolah &m
 drawChart(ada.map(j=>j.k),ada.map(j=>per[j.k].n),ada.map(j=>per[j.k].siswa),ada.map(j=>j.warna));
 }
 
+// ================= OPSI D: DIJANGKAU vs DILAYANI + TUMPANG TINDIH =================
+// ================= pembuatan penghitungan jumlah SPPG yang menjangkau tiap sekolah pada waktu tertentu (cache per waktu) agar tumpang tindih jangkauan bisa diukur =================
+const jangkauCache=new Map();
+async function jumlahPenjangkau(waktu){
+if(jangkauCache.has(waktu)) return jangkauCache.get(waktu);
+const data=await muatIsochrone();
+const cnt=new Uint16Array(sekolahData.length);
+const titikSek=sekolahData.map(s=>turf.point(s.geometry.coordinates.slice(0,2)));
+data.features.filter(f=>f.properties.waktu_detik===waktu).forEach(ft=>{
+const b=turf.bbox(ft);
+sekolahData.forEach((s,i)=>{
+const [x,y]=s.geometry.coordinates;
+if(x<b[0]||x>b[2]||y<b[1]||y>b[3]) return;
+try{if(turf.booleanPointInPolygon(titikSek[i],ft)) cnt[i]++;}catch{}
+});
+});
+jangkauCache.set(waktu,cnt);
+return cnt;
+}
+// indeks sekolah yang berada di dalam satu poligon isochrone
+function sekolahDalam(poligon){
+const b=turf.bbox(poligon),idx=[];
+sekolahData.forEach((s,i)=>{
+const [x,y]=s.geometry.coordinates;
+if(x<b[0]||x>b[2]||y<b[1]||y>b[3]) return;
+try{if(turf.booleanPointInPolygon(turf.point([x,y]),poligon)) idx.push(i);}catch{}
+});
+return idx;
+}
+const jumlahSiswa=(idx)=>idx.reduce((a,i)=>a+getSiswa(sekolahData[i]),0);
+
+// ================= memperbaiki hasil Run yang hanya menyebut "terlayani" (padahal itu jangkauan yang tumpang tindih antar SPPG) menjadi tiga angka terpisah untuk SPPG terpilih: dijangkau (tidak eksklusif), dilayani (eksklusif, alokasi waktu tempuh), dan tumpang tindih =================
+async function ringkasanD(f,iso){
+const wadah=document.getElementById('hasilD');
+if(!wadah) return;
+const menit=waktuIso/60;
+const cnt=await jumlahPenjangkau(waktuIso);
+const dijangkau=sekolahDalam(iso);
+const r=sekolahDilayani(f);
+const dilayani=r?r.idx:[];
+const himpDij=new Set(dijangkau);
+const tumpang=dijangkau.filter(i=>cnt[i]>1);
+const rata=dijangkau.length?dijangkau.reduce((a,i)=>a+cnt[i],0)/dijangkau.length:0;
+const luar=dilayani.filter(i=>!himpDij.has(i));
+const g=r?analisisDasar.grup[r.i]:null;
+wadah.innerHTML=`<p class="text-sm"><b>Dijangkau</b> dalam ${menit} menit: <b>${dijangkau.length}</b> sekolah &middot; ${fmt(jumlahSiswa(dijangkau))} siswa<br><span class="text-xs text-slate-500">Tidak eksklusif: sekolah yang sama juga dijangkau SPPG lain, jadi jangan dijumlahkan antar SPPG.</span></p>`
++`<p class="text-sm"><b>Dilayani</b> (alokasi waktu tempuh, eksklusif): <b>${dilayani.length}</b> sekolah &middot; ${fmt(jumlahSiswa(dilayani))} siswa${luar.length?`<br><span class="text-xs" style="color:#b45309">${luar.length} di antaranya di luar isochrone ${menit} menit.</span>`:''}${g&&g.n>1?`<br><span class="text-xs text-slate-500">Titik ini berisi ${g.n} SPPG; daftar dilayani dibagi di antara mereka.</span>`:''}</p>`
++`<p class="text-sm"><b>Tumpang tindih</b>: ${dijangkau.length?Math.round(100*tumpang.length/dijangkau.length):0}% (${tumpang.length} sekolah) juga dijangkau SPPG lain; rata-rata ${rata.toFixed(1)} titik SPPG menjangkau tiap sekolah di area ini.</p>`;
+}
+// ringkasan untuk Run Global (gabungan semua SPPG): berapa sekolah dijangkau dan seberapa tumpang tindih
+async function ringkasanGlobal(){
+const wadah=document.getElementById('hasilD');
+if(!wadah) return;
+const menit=waktuIso/60;
+const cnt=await jumlahPenjangkau(waktuIso);
+const ada=[];cnt.forEach((v,i)=>{if(v>0) ada.push(i);});
+const rata=ada.length?ada.reduce((a,i)=>a+cnt[i],0)/ada.length:0;
+const banyak=ada.filter(i=>cnt[i]>1).length;
+wadah.innerHTML=`<p class="text-sm"><b>Dijangkau</b> oleh minimal satu SPPG dalam ${menit} menit: <b>${ada.length}</b> dari ${sekolahData.length} sekolah &middot; ${fmt(jumlahSiswa(ada))} siswa (tiap sekolah dihitung sekali).</p>`
++`<p class="text-sm"><b>Tumpang tindih</b>: ${Math.round(100*banyak/Math.max(1,ada.length))}% sekolah dijangkau lebih dari satu titik SPPG; rata-rata ${rata.toFixed(1)} titik per sekolah.</p>`;
+}
+
 // ================= CHART =================
 // ================= memperbaiki drawChart yang tetap tiga label (SD, SMP, SMA) menjadi menerima label, jumlah sekolah, jumlah siswa, dan warna per jenjang agar semua jenjang tergambar =================
 function drawChart(label,jumlah,siswa,warna){
@@ -940,6 +1002,7 @@ try{
 const iso=await getIso(selectedSPPG);
 drawIso(iso);
 analyze(iso);
+await ringkasanD(selectedSPPG,iso);
 generateHeatmap();
 }catch(e){
 alert(e.message);
@@ -952,6 +1015,7 @@ try{
 const iso=await gabungIsochrone();
 drawIso(iso);
 analyze(iso);
+await ringkasanGlobal();
 generateHeatmap();
 }catch(e){
 alert(e.message);
