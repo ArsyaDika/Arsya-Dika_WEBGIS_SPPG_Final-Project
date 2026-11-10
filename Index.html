@@ -152,6 +152,14 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <p class="text-sm">Permintaan (estimasi): <b id="kpiPermintaan">-</b> (<b id="kpiUtil">-</b>)</p>
 <p class="text-sm">Titik melebihi kapasitas: <b id="kpiOver">-</b> dari <b id="kpiGrup">-</b></p>
 <p class="text-sm">Kelebihan permintaan: <b id="kpiKelebihan">-</b></p>
+<!-- ================= pembuatan KPI alokasi berkapasitas berbasis waktu tempuh (batas BGN 30 menit): berapa siswa tertampung dalam kapasitas, tidak tertampung, di luar 10 menit, dan rata-rata waktu tempuh ================= -->
+<p class="text-sm font-semibold mt-2">Alokasi berkapasitas (waktu tempuh, maks 30 menit)</p>
+<p class="text-sm">Tertampung: <b id="kpiTertampung">-</b></p>
+<p class="text-sm">Tidak tertampung: <b id="kpiTidakTertampung">-</b></p>
+<p class="text-sm">Dilayani di luar 10 menit: <b id="kpiLuar10">-</b></p>
+<p class="text-sm">Rata-rata waktu tempuh: <b id="kpiRataWaktu">-</b></p>
+<div class="flex gap-1 mt-2"><button class="btn" style="margin:0;padding:4px" onclick="setKapasitas(2000)">2.000</button><button class="btn" style="margin:0;padding:4px" onclick="setKapasitas(2500)">2.500</button><button class="btn" style="margin:0;padding:4px" onclick="setKapasitas(3000)">3.000</button></div>
+<p class="text-xs text-slate-500">Skenario kapasitas: 2.000 (hanya peserta didik), 2.500 (2.000 siswa + 500 kelompok 3B), 3.000 (juru masak bersertifikat). Acuan BGN dari berita dan salinan juknis; cek dokumen resmi.</p>
 <p class="text-xs text-slate-500 mt-1">Tiap sekolah dialokasikan ke SPPG terdekat. Jumlah siswa dari BPS tahun ajaran 2025/2026 per kecamatan dan status (negeri/swasta), dibagi rata ke sekolah di kelompok itu.</p>
 </div>
 

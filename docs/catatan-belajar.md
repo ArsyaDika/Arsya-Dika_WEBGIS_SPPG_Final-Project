@@ -896,3 +896,33 @@ Diuji di browser. Contoh kandidat #1 (Srondol Wetan, Banyumanik): meringankan 3 
 
 **Pelajaran**
 Hasil model sebaiknya selalu disertai bukti yang bisa diperiksa. Simpan fakta saat menghitung, bukan merangkai alasan sesudahnya.
+
+---
+
+## 36. Alokasi sekolah ke SPPG berdasarkan waktu tempuh; alokasi berkapasitas dan skenario kapasitas
+
+**Masalah / permintaan**
+Alokasi sekolah ke SPPG memakai jarak garis lurus. Pengguna meminta waktu tempuh, dengan catatan "di luar isochrone 10 menit", kriteria kelayakan BGN (30 menit) dan skenario kapasitas.
+
+**Perubahan**
+- `scripts/fetch-matriks-waktu.mjs`: menghitung matriks waktu tempuh berkendara (detik) dari 113 titik SPPG ke 1.042 sekolah lewat OpenRouteService Matrix API (45 permintaan, potongan 50 x 70 rute) ke `data/waktu-tempuh.json`.
+- `src/app.js`:
+  - `hitungBeban()` memilih SPPG tercepat menurut waktu tempuh (jarak garis lurus hanya cadangan).
+  - `alokasiBerkapasitas()`: sekolah diurut menurut regret (selisih waktu ke pilihan terbaik dan kedua), dilayani SPPG tercepat yang masih punya sisa kapasitas dan <= 30 menit; yang tidak tertampung dicatat; yang dilayani melewati 10 menit dicatat "di luar isochrone 10 menit".
+  - Dashboard sekolah: waktu tempuh ke SPPG pelayan, lima SPPG tercepat (waktu), dan peringatan jika SPPG pelayan lebih dari 10 menit.
+  - Panel Param: KPI alokasi berkapasitas (tertampung, tidak tertampung, di luar 10 menit, rata-rata waktu) dan tombol skenario kapasitas 2.000 / 2.500 / 3.000.
+
+**Alasan**
+Waktu tempuh mencerminkan jaringan jalan, sedangkan garis lurus mengabaikan sungai, jalan tol, dan jalan buntu. Aturan BGN yang ditemukan memakai ukuran waktu (maks 30 menit) dan radius, sehingga waktu lebih sahih. Alokasi berkapasitas menunjukkan kekurangan nyata: berapa siswa tidak tertampung saat kapasitas SPPG habis.
+
+**Hasil**
+Matriks: 45 permintaan, 0 pasangan tidak terhubung, semua 1.042 sekolah punya SPPG terjangkau; waktu ke SPPG tercepat median 2,6 menit, persentil 90 = 5,5 menit, maksimum 17,4 menit.
+Diuji di browser (alokasi berkapasitas, batas 30 menit):
+- kapasitas 3.000: tertampung 292.425 siswa (100%), tidak tertampung 0, di luar 10 menit 8.900 siswa, rata-rata 3,9 menit;
+- kapasitas 2.500: tertampung 292.183 (100%), tidak tertampung 242, di luar 10 menit 32.972, rata-rata 5,1 menit;
+- kapasitas 2.000: tertampung 242.431 (83%), tidak tertampung 49.994, di luar 10 menit 29.481, rata-rata 5,7 menit.
+Tekanan permintaan (alokasi ke SPPG tercepat tanpa batas kapasitas): 37 dari 113 titik melebihi kapasitas 3.000 dan kelebihan 103.716 siswa (dengan garis lurus: 41 titik, 52.372). Sekolah SD Negeri Gajahmungkur 02: dilayani SPPG Gajahmungkur 2 dalam 1,4 menit (0,9 km lurus). Console bersih.
+**Keterbatasan:** (1) SPPG yang koordinatnya titik kelurahan (46 dari 123) mungkin tersnap ke jalan yang kurang representatif sehingga memengaruhi waktu tempuhnya; (2) hasil tekanan permintaan sangat sensitif terhadap model (garis lurus vs waktu); (3) evaluasi kandidat masih memakai jarak garis lurus sebagai pendekatan dan belum memakai waktu tempuh dari titik kandidat.
+
+**Pelajaran**
+Uji sensitivitas: dua definisi "terdekat" menghasilkan beban yang sangat berbeda. Itu sebabnya hasil model harus disertai keterbatasannya, dan keputusan penting sebaiknya diperiksa dengan lebih dari satu cara.

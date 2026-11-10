@@ -328,17 +328,55 @@ return [...m.values()];
 }
 
 // ================= pembuatan alokasi tiap sekolah ke titik SPPG terdekat lalu hitung beban (jumlah siswa) tiap titik dan total kelebihan di atas kapasitas =================
-function hitungBeban(grup,kap){
+// ================= memperbaiki alokasi ke SPPG terdekat berdasarkan jarak garis lurus menjadi berdasarkan WAKTU TEMPUH berkendara (matriks ORS data/waktu-tempuh.json) agar sekolah dilayani SPPG yang benar-benar tercepat; jarak garis lurus hanya cadangan untuk pasangan yang tidak ada di matriks =================
+let matriksWaktu=null;   // {titik:["lng,lat"], npsn:[...], detik:[[...]]}
+function indeksWaktu(grup){
+if(!matriksWaktu) return null;
+const baris=grup.map(g=>matriksWaktu.titik.indexOf(g.xy.join(',')));
+const kolom=new Map(matriksWaktu.npsn.map((n,j)=>[String(n),j]));
+return {baris,kolom};
+}
+// waktu tempuh (detik) dari titik SPPG gi ke sekolah si; null jika tidak ada di matriks
+function waktuDetik(iw,gi,si){
+if(!iw) return null;
+const r=iw.baris[gi];
+if(r==null||r<0) return null;
+const c=iw.kolom.get(String(sekolahData[si].properties.NPSN));
+if(c==null) return null;
+const v=matriksWaktu.detik[r][c];
+return v==null?null:v;
+}
+function hitungBeban(grup,kap,iw){
 const muatan=grup.map(()=>0);
-const dekat=sekolahData.map(s=>{
+const dekat=sekolahData.map((s,si)=>{
 const xy=s.geometry.coordinates;
-let b=-1,bd=Infinity;
-grup.forEach((g,i)=>{const d=jarakM(xy,g.xy);if(d<bd){bd=d;b=i;}});
+let b=-1,bt=null;
+if(iw){grup.forEach((g,i)=>{const t=waktuDetik(iw,i,si);if(t!=null&&(bt==null||t<bt)){bt=t;b=i;}});}
+if(b<0){let bd=Infinity;grup.forEach((g,i)=>{const d=jarakM(xy,g.xy);if(d<bd){bd=d;b=i;}});}   // cadangan: jarak garis lurus
 muatan[b]+=getSiswa(s);
-return {idx:b,d:bd};
+return {idx:b,d:jarakM(xy,grup[b].xy),t:bt};
 });
 const kelebihan=grup.reduce((a,g,i)=>a+Math.max(0,muatan[i]-g.n*kap),0);
 return {muatan,dekat,kelebihan};
+}
+
+// ================= pembuatan alokasi berkapasitas: sekolah diurut dari yang paling sedikit pilihannya (regret), lalu dilayani SPPG tercepat yang masih punya sisa kapasitas dan berjarak <= batas waktu BGN (30 menit); sisanya dicatat tidak tertampung, dan yang melewati 10 menit dicatat "di luar isochrone 10 menit" =================
+function alokasiBerkapasitas(grup,kap,iw,batas){
+if(!iw) return null;
+const sisa=grup.map(g=>g.n*kap);
+const urut=sekolahData.map((s,si)=>{
+const opsi=grup.map((g,i)=>({i,t:waktuDetik(iw,i,si)})).filter(o=>o.t!=null&&o.t<=batas).sort((a,b)=>a.t-b.t);
+return {si,opsi,regret:opsi.length>1?opsi[1].t-opsi[0].t:1e9};
+}).sort((a,b)=>b.regret-a.regret);
+let tertampung=0,tidak=0,luar10=0,jumlahWaktu=0;
+const tidakSek=[];
+urut.forEach(o=>{
+const siswa=getSiswa(sekolahData[o.si]);
+const pilih=o.opsi.find(x=>sisa[x.i]>=siswa);
+if(pilih){sisa[pilih.i]-=siswa;tertampung+=siswa;jumlahWaktu+=pilih.t*siswa;if(pilih.t>600) luar10+=siswa;}
+else{tidak+=siswa;tidakSek.push(o.si);}
+});
+return {tertampung,tidak,luar10,rataDetik:tertampung?jumlahWaktu/tertampung:0,tidakSek,batas};
 }
 
 // ================= pembuatan hitungan cakupan: sekolah di dalam/luar gabungan isochrone 10 menit, dihitung per jenjang (jumlah sekolah dan estimasi siswa) =================
@@ -364,10 +402,14 @@ async function terapkanBebanDasar(){
 if(!sekolahData.length||!sppgData.length) return;
 const kap=nilaiKapasitas();
 const grup=kelompokSppg();
-const beban=hitungBeban(grup,kap);
+// ================= memperbaiki hitungBeban tanpa waktu tempuh menjadi memuat matriks waktu tempuh sekali lalu memakainya untuk alokasi, ditambah alokasi berkapasitas dengan batas 30 menit (kriteria BGN) =================
+if(!matriksWaktu){try{const r=await fetch('./data/waktu-tempuh.json',{cache:'no-cache'});if(r.ok) matriksWaktu=await r.json();}catch{}}
+const iw=indeksWaktu(grup);
+const beban=hitungBeban(grup,kap,iw);
+const kapasitasAlok=alokasiBerkapasitas(grup,kap,iw,1800);
 let cak=null;
 try{cak=await hitungCakupan();}catch(e){console.error(e);}
-analisisDasar={grup,kap,beban,tot:cak?cak.tot:null};
+analisisDasar={grup,kap,beban,tot:cak?cak.tot:null,iw,kapasitasAlok};
 gambarCakupan(cak?cak.gab:null);
 gambarBeban();
 perbaruiKpi();
@@ -446,12 +488,22 @@ set('kpiUtil',Math.round(100*minta/kapTotal)+'% dari kapasitas');
 set('kpiOver',over);
 set('kpiGrup',grup.length);
 set('kpiKelebihan',fmt(beban.kelebihan)+' siswa');
+// ================= pembuatan baris KPI alokasi berkapasitas (waktu tempuh, batas 30 menit): siswa tertampung, tidak tertampung, di luar 10 menit, dan rata-rata waktu tempuh =================
+const ak=analisisDasar.kapasitasAlok;
+if(ak){
+set('kpiTertampung',`${fmt(ak.tertampung)} siswa (${Math.round(100*ak.tertampung/(ak.tertampung+ak.tidak))}%)`);
+set('kpiTidakTertampung',`${fmt(ak.tidak)} siswa`);
+set('kpiLuar10',`${fmt(ak.luar10)} siswa`);
+set('kpiRataWaktu',`${(ak.rataDetik/60).toFixed(1)} menit`);
+}
 // ================= memperbaiki perbaruiKpi yang hanya mengisi panel Param menjadi juga memperbarui dashboard (KPI melayang + dock grafik) agar tampilan utama selalu sinkron =================
 renderDashboard();
 }
 
 // ================= pembuatan pendengar input kapasitas agar KPI dan halo beban langsung diperbarui =================
 const inputKapasitas=document.getElementById('kapasitas');
+// ================= pembuatan tombol skenario kapasitas (2.000 / 2.500 / 3.000) yang mengisi kotak kapasitas dan memicu perhitungan ulang =================
+window.setKapasitas=(v)=>{const el=document.getElementById('kapasitas');if(el){el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}));}};
 // ================= memperbaiki pendengar kapasitas agar juga menghapus kandidat lama (hasilnya tidak berlaku lagi untuk kapasitas baru) =================
 if(inputKapasitas) inputKapasitas.addEventListener('input',()=>{
 kandidatTerakhir=null;
@@ -611,19 +663,21 @@ const siswa=getSiswa(s);
 const dk=beban.dekat[idx],gi=dk.idx,g=grup[gi];
 const muatan=beban.muatan[gi],kapT=g.n*kap,u=muatan/kapT;
 const jenjang=JENJANG.find(j=>j.k===p.jenjang);
-const terdekat=grup.map((x,k)=>({k,d:jarakM(xy,x.xy)})).sort((a,b)=>a.d-b.d).slice(0,5);
+// ================= memperbaiki daftar SPPG terdekat berdasarkan jarak garis lurus menjadi berdasarkan waktu tempuh (jarak hanya cadangan) =================
+const iw=analisisDasar.iw;
+const terdekat=grup.map((x,k)=>({k,d:jarakM(xy,x.xy),t:waktuDetik(iw,k,idx)})).sort((a,b)=>(a.t!=null&&b.t!=null)?a.t-b.t:a.d-b.d).slice(0,5);
 let dijangkau=0;
 try{if(isoSppg){const pt=turf.point(xy);dijangkau=isoSppg.features.filter(ft=>turf.booleanPointInPolygon(pt,ft)).length;}}catch{}
 const luar=sekolahTdkTercakup.has(idx);
 setKpi(1,'Jumlah siswa',fmt(siswa),'BPS kecamatan, dibagi rata','');
 setKpi(2,'Jenjang',esc(p.jenjang),esc(p.STATUS||p.status||'&nbsp;'),'');
 setKpi(3,'Dilayani oleh',esc(namaPendek(g.nama[0])),`utilisasi ${Math.round(u*100)}%`,u>1?'bad':'ok');
-setKpi(4,'Jarak ke SPPG',(dk.d/1000).toFixed(1)+' km','garis lurus','');
+setKpi(4,dk.t!=null?'Waktu ke SPPG':'Jarak ke SPPG',dk.t!=null?(dk.t/60).toFixed(1)+' menit':(dk.d/1000).toFixed(1)+' km',dk.t!=null?`waktu tempuh, ${(dk.d/1000).toFixed(1)} km lurus`:'garis lurus',dk.t!=null&&dk.t>600?'bad':'');
 setCard(1,'Identitas sekolah',barisInfo('Nama',esc(p.NAMA||'-'))+barisInfo('Jenjang',esc(p.jenjang))+barisInfo('Kecamatan',esc(p.KECAMATAN||'-'))+barisInfo('Kelurahan',esc(p.DESA||'-'))+(p.ALAMAT?`<div class="cat" style="margin:2px 0">${esc(p.ALAMAT)}</div>`:'')+barisInfo('Siswa (BPS, dibagi rata)',fmt(siswa)));
 setCard(2,'SPPG yang melayani',barisInfo('SPPG',esc(namaPendek(g.nama[0])))+barisBar('Beban',muatan,Math.max(kapT,muatan),fmt(muatan),warnaUtil(u),kapT)+barisInfo('Kapasitas',fmt(kapT))+(g.n>1?barisInfo('SPPG di titik ini',g.n):''));
-const dMaks=terdekat[terdekat.length-1].d;
-setCard(3,'SPPG terdekat (garis lurus)',terdekat.map(t=>barisBar(namaPendek(grup[t.k].nama[0]),Math.max(0.08,1-t.d/Math.max(1,dMaks)*0.9),1,(t.d/1000).toFixed(1)+' km',jenjang?jenjang.warna:'#6366f1',null)).join(''));
-setCard(4,'Jangkauan 10 menit',barisInfo('Dijangkau SPPG',dijangkau+' SPPG')+(luar?'<div style="color:#b45309;margin-top:4px">&#9888; Di luar isochrone 10 menit dari semua SPPG.</div>':'<div class="cat" style="margin-top:4px">Berada di dalam isochrone 10 menit.</div>'));
+const wMaks=Math.max(60,...terdekat.map(t=>t.t!=null?t.t:t.d/6));   // jarak/6 m/s sebagai perkiraan kasar jika tanpa waktu tempuh
+setCard(3,'SPPG tercepat (waktu tempuh)',terdekat.map(t=>barisBar(namaPendek(grup[t.k].nama[0]),t.t!=null?t.t:t.d/6,wMaks,t.t!=null?(t.t/60).toFixed(1)+' mnt':(t.d/1000).toFixed(1)+' km',t.t!=null&&t.t>600?'#b45309':(jenjang?jenjang.warna:'#6366f1'),600)).join('')+'<div class="cat">Garis putus = batas 10 menit.</div>');
+setCard(4,'Jangkauan 10 menit',barisInfo('Dijangkau SPPG',dijangkau+' SPPG')+(dk.t!=null&&dk.t>600?`<div style="color:#b45309;margin-top:4px">&#9888; SPPG pelayan berjarak ${(dk.t/60).toFixed(1)} menit: di luar isochrone 10 menit (masih dalam batas BGN 30 menit).</div>`:'')+(luar?'<div style="color:#b45309;margin-top:4px">&#9888; Di luar isochrone 10 menit dari semua SPPG.</div>':'<div class="cat" style="margin-top:4px">Berada di dalam isochrone 10 menit.</div>'));
 }
 
 // ================= pembuatan rincian kualitas data dan metode di tab Data (selalu diperbarui) =================
