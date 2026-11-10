@@ -59,7 +59,10 @@ font-weight:600;
 
 <div class="panel">
 <h3 class="font-bold">Isochrone</h3>
-<input id="waktu" value="600" class="w-full border p-2 rounded mb-2"/>
+<!-- ================= memperbaiki input waktu yang bisa diubah (tetapi isochrone kini data statis) menjadi terkunci 600 detik (10 menit) agar tampilan jujur terhadap data ================= -->
+<label for="waktu" class="text-sm">Waktu tempuh berkendara (detik)</label>
+<input id="waktu" value="600" readonly class="w-full border p-2 rounded mb-2 bg-slate-100"/>
+<p class="text-xs text-slate-500 mb-2">Tetap 10 menit (600 detik). Klik SPPG lalu Run Isochrone untuk area 1 SPPG.</p>
 <button id="run-local" class="btn">Run Isochrone</button>
 </div>
 

@@ -517,3 +517,30 @@ Diverifikasi: 123/123 isochrone, 0 gagal, tipe semuanya `Polygon`, cincin tertut
 
 **Pelajaran**
 Saat menghitung ulang data turunan karena data induknya diperbaiki, beri nama keluaran baru supaya hasil lama tidak tercampur dengan yang baru.
+
+---
+
+## 20. Aplikasi memakai isochrone statis; Run Global = gabungan semua SPPG
+
+**Masalah**
+`getIso` memanggil API MapID tiap klik (berbayar, langganan sudah berhenti) dan hanya untuk satu SPPG. Tombol Run Global memakai `sppgData[0]`, bukan semua SPPG.
+
+**Perubahan**
+`src/app.js`:
+- Konstanta `MAPID_ROUTING_KEY` dihapus; kode sekarang tidak memuat API key apa pun.
+- Sesi baru `muatIsochrone()`: memuat `data/isochrone-sppg-600.geojson` sekali.
+- `getIso(point)` kini mencari isochrone SPPG terpilih berdasarkan `No SPPG` (= `sppg_no`) di data statis.
+- Sesi baru `gabungIsochrone()`: `turf.union` isochrone semua SPPG (satu poligon per bentuk unik agar cepat).
+- Run Isochrone memakai isochrone satu SPPG; Run Global memakai gabungan semua; keduanya dibungkus `try/catch` dengan `alert`.
+`Index.html`: kotak waktu dikunci (`readonly`) di 600 detik dengan keterangan.
+
+**Alasan**
+- Isochrone dihitung sekali (offline) dan dibaca seperti data biasa; tidak ada key, kuota, atau biaya saat aplikasi dipakai.
+- Cakupan sebenarnya adalah gabungan area semua SPPG. Memakai satu SPPG membuat hampir semua sekolah terlihat "belum terlayani".
+- Kotak waktu dikunci agar tidak menipu: mengubah angka tidak akan mengubah data.
+
+**Hasil**
+Diuji di browser: Run Global menghasilkan 818 dari 823 sekolah (SD 549/553, SMP 200/200, SMA 69/70), estimasi 197.400 siswa; tidak ada alert error dan Console hanya berisi 404 `favicon.ico`.
+
+**Pelajaran**
+Pisahkan pekerjaan berat dan jarang berubah (menghitung isochrone) dari aplikasi yang dipakai berulang. Dan definisikan "terlayani" dari gabungan semua sumber layanan, bukan satu.

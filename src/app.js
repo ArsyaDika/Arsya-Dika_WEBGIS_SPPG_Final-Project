@@ -1,7 +1,5 @@
 // ================= KUNCI API =================
-// ================= memperbaiki API key yang tertulis langsung di 4 URL menjadi dua konstanta di satu tempat agar kunci mudah diganti/dirotasi tanpa mencari di banyak baris =================
-// ================= memperbaiki MAPID_BASEMAP_KEY menjadi dihapus agar tidak ada lagi key MapID basemap di kode (langganan MapID sudah berhenti; basemap pindah ke penyedia gratis tanpa key) =================
-const MAPID_ROUTING_KEY='68da7e7d06823ed3f510cc48';
+// ================= memperbaiki MAPID_ROUTING_KEY (dan MAPID_BASEMAP_KEY) menjadi dihapus agar kode tidak lagi memuat API key apa pun: basemap memakai penyedia tanpa key, isochrone dibaca dari data statis data/isochrone-sppg-600.geojson =================
 
 // ================= BASEMAP =================
 // ================= pembuatan daftar basemap gratis tanpa API key (pengganti MapID) agar peta tetap tampil setelah langganan berhenti =================
@@ -162,15 +160,39 @@ const inputJarak=document.getElementById('jarakDekat');
 if(inputJarak) inputJarak.addEventListener('input',terapkanSppgBerdekatan);
 
 // ================= ISOCHRONE =================
-async function getIso(point,waktu){
-const [lng,lat]=point.geometry.coordinates;
-const url=`https://routing.mapid.io/isochrone?key=${MAPID_ROUTING_KEY}&time_limit=${waktu}&point=${lat},${lng}&profile=car`;
-const res=await fetch(url);
-// ================= memperbaiki getIso yang langsung res.json() dan data.polygons[0] menjadi dicek res.ok dan data.polygons dulu agar error API tampil jelas, bukan TypeError tanpa pesan =================
-if(!res.ok) throw new Error('API isochrone gagal: HTTP '+res.status);
-const data=await res.json();
-if(!data.polygons || data.polygons.length===0) throw new Error('API isochrone tidak mengembalikan polygon');
-return data.polygons[0];
+// ================= penarikan data isochrone statis 10 menit (hasil scripts/fetch-isochrones.mjs) agar aplikasi tidak butuh API/key saat dipakai =================
+let isoSppg=null; // FeatureCollection: satu poligon isochrone per SPPG (properti sppg_no, sppg_nama, waktu_detik)
+async function muatIsochrone(){
+if(isoSppg) return isoSppg;
+const res=await fetch('./data/isochrone-sppg-600.geojson');
+if(!res.ok) throw new Error('data/isochrone-sppg-600.geojson tidak ditemukan (jalankan scripts/fetch-isochrones.mjs)');
+isoSppg=await res.json();
+return isoSppg;
+}
+
+// ================= memperbaiki getIso yang memanggil API MapID tiap klik (satu SPPG, butuh key berbayar) menjadi mencari isochrone SPPG terpilih di data statis agar tidak butuh API/key dan hasilnya sama untuk semua pengguna =================
+async function getIso(point){
+const data=await muatIsochrone();
+const no=point.properties['No SPPG'];
+const iso=data.features.find(f=>String(f.properties.sppg_no)===String(no));
+if(!iso) throw new Error('Isochrone untuk SPPG ini tidak ada (SPPG tidak dipakai dalam analisis).');
+return iso;
+}
+
+// ================= pembuatan cakupan gabungan (union) seluruh isochrone SPPG agar analisis memakai area yang benar-benar terlayani oleh semua SPPG, bukan satu SPPG =================
+let cakupanGabungan=null;
+async function gabungIsochrone(){
+if(cakupanGabungan) return cakupanGabungan;
+const data=await muatIsochrone();
+// SPPG di titik yang sama punya isochrone identik; ambil satu poligon per bentuk unik agar union lebih cepat
+const unik=new Map();
+data.features.forEach(f=>{
+const ring=f.geometry.coordinates[0];
+const kunci=ring.length+'|'+ring[0].join(',')+'|'+ring[Math.floor(ring.length/2)].join(',');
+if(!unik.has(kunci)) unik.set(kunci,f);
+});
+cakupanGabungan=turf.union(turf.featureCollection([...unik.values()]));
+return cakupanGabungan;
 }
 
 function drawIso(geo){
@@ -414,24 +436,31 @@ Total siswa: ${p.siswa}
 
 
 // ================= EVENT =================
+// ================= memperbaiki Run Isochrone yang tanpa penanganan error menjadi dibungkus try/catch dengan alert agar pengguna tahu penyebab jika isochrone tidak ada =================
 document.getElementById('run-local').onclick=async()=>{
 if(!selectedSPPG) return alert("Klik SPPG dulu");
-
-const iso=await getIso(selectedSPPG,document.getElementById('waktu').value);
-
+try{
+const iso=await getIso(selectedSPPG);
 drawIso(iso);
 analyze(iso);
 generateCandidate(iso);
 generateHeatmap();
+}catch(e){
+alert(e.message);
+}
 };
 
+// ================= memperbaiki Run Global yang hanya memakai satu SPPG (sppgData[0]) menjadi memakai gabungan isochrone semua SPPG agar "Global" benar-benar mencerminkan seluruh SPPG =================
 document.getElementById('run-global').onclick=async()=>{
-// ================= memperbaiki getIso(sppgData[0],600) menjadi memakai nilai input #waktu agar tombol Global mengikuti waktu yang diisi pengguna =================
-const iso=await getIso(sppgData[0],document.getElementById('waktu').value);
+try{
+const iso=await gabungIsochrone();
 drawIso(iso);
 analyze(iso);
 generateCandidate(iso);
 generateHeatmap();
+}catch(e){
+alert(e.message);
+}
 };
 
 
