@@ -671,3 +671,22 @@ Diuji di browser (server statis sementara di port 5510 karena Live Server di 550
 
 **Pelajaran**
 Jangan mencocokkan fitur peta dengan data asli lewat koordinat; pakai properti pengenal (id/nomor) yang tetap utuh. Dan uji setiap bagian popup, jangan hanya angka KPI.
+
+---
+
+## 26. Gambar usulan tata letak dashboard (hanya rancangan, belum diterapkan)
+
+**Masalah / permintaan**
+Panel di sisi kiri yang memanjang ke bawah membuat area bawah peta terasa kosong, kurang interaktif, dan sulit dibaca. Pengguna meminta ide tata letak dashboard dalam bentuk gambar.
+
+**Perubahan**
+Folder baru `docs/ide-dashboard/`: tiga gambar PNG (`opsi-1-sidebar-bertab.png`, `opsi-2-panel-lebar-dua-kolom.png`, `opsi-3-dock-bawah-peta.png`), halaman sumber `mockup.html` (buka dengan `?opsi=1`, `2`, atau `3`), dan `peta.png` (tangkapan peta yang dipakai sebagai latar). Tidak ada perubahan pada aplikasi.
+
+**Alasan**
+Mockup memakai angka nyata dari data (cakupan 99,4%, utilisasi 54%, 12 dari 88 SPPG melebihi kapasitas, kelebihan 13.400 siswa) agar pengguna bisa menilai keterbacaan sebelum kode ditulis. Dua angka tidak nyata ditandai: tabel kecamatan di Opsi 2 hanya contoh tata letak.
+
+**Hasil**
+Tiga gambar 1440x810 dibuat dari halaman `mockup.html` dan diperiksa secara visual.
+
+**Pelajaran**
+Memutuskan tata letak dari gambar lebih murah daripada dari kode. Perubahan tata letak yang sudah dikodekan lebih mahal diubah.

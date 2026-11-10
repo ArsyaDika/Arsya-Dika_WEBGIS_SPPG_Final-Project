@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><title>Mockup tata letak dashboard SPPG</title>
+<style>
+/* Mockup statis (bukan aplikasi): tiga usulan tata letak dashboard. Pilih dengan ?opsi=1, 2, atau 3. */
+*{box-sizing:border-box}body{margin:0;font:13px/1.35 system-ui,Segoe UI,Arial;color:#0f172a;background:#e2e8f0}
+.opsi{display:none;position:relative;width:1440px;height:810px;overflow:hidden;background:#e2e8f0}
+.peta{position:absolute;top:0;bottom:0;right:0;background:url(peta.png) -360px 0/1920px 889px no-repeat;filter:saturate(.9)}
+.judul{position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:20;background:#0f172a;color:#fff;padding:6px 14px;border-radius:999px;font-weight:700;font-size:13px;white-space:nowrap}
+.panel{position:absolute;top:0;bottom:0;left:0;background:#f8fafc;box-shadow:2px 0 10px rgba(0,0,0,.18);padding:50px 12px 12px;z-index:10}
+.tabs{display:flex;gap:4px;margin-bottom:10px}.tab{flex:1;text-align:center;padding:7px 4px;border-radius:8px;background:#e2e8f0;font-weight:600;color:#475569}
+.tab.on{background:linear-gradient(135deg,#6366f1,#22c55e);color:#fff}
+.grid{display:grid;gap:8px}.g2{grid-template-columns:1fr 1fr}.g4{grid-template-columns:repeat(4,1fr)}
+.k{background:#fff;border-radius:12px;padding:9px 11px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.k small{display:block;color:#64748b;font-size:11px}.k b{font-size:21px}.k .ok{color:#15803d}.k .bad{color:#b45309}
+.card{background:#fff;border-radius:12px;padding:10px 12px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.card h4{margin:0 0 7px;font-size:12px;color:#334155}
+.row{display:flex;align-items:center;gap:6px;margin:4px 0;font-size:11px}.row span.n{width:92px;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar{height:11px;border-radius:3px;background:#22c55e}.bar.a{background:#eab308}.bar.r{background:#92400e}
+.trk{position:relative;flex:1;height:11px}.trk i{position:absolute;left:0;top:0;bottom:0;border-radius:3px}.trk u{position:absolute;top:-3px;bottom:-3px;width:0;border-left:2px dashed #64748b}
+.hist{display:flex;align-items:flex-end;gap:10px;height:78px;padding:0 6px}.hist div{flex:1;border-radius:4px 4px 0 0;text-align:center;color:#fff;font-size:11px;padding-top:2px}
+.line{height:80px;position:relative}.line svg{width:100%;height:100%}
+.cat{font-size:11px;color:#64748b;margin-top:6px}
+table{width:100%;border-collapse:collapse;font-size:11px}th,td{padding:3px 5px;text-align:right;border-bottom:1px solid #e2e8f0}th:first-child,td:first-child{text-align:left}th{color:#64748b;font-weight:600}
+.rail{position:absolute;top:0;bottom:0;left:0;width:64px;background:#0f172a;z-index:12;padding-top:50px;display:flex;flex-direction:column;gap:10px;align-items:center}
+.rail div{width:48px;text-align:center;color:#cbd5e1;font-size:10px}.rail div i{display:block;font-style:normal;font-size:20px;margin-bottom:1px}.rail .on{color:#fff;background:#334155;border-radius:10px;padding:4px 0}
+.melayang{position:absolute;z-index:11}.dock{position:absolute;left:64px;right:0;bottom:0;height:238px;background:rgba(248,250,252,.97);box-shadow:0 -2px 10px rgba(0,0,0,.18);padding:10px 12px;display:grid;grid-template-columns:1.2fr 1fr 1fr 1.1fr;gap:10px;z-index:11}
+.cat2{position:absolute;right:10px;top:10px;z-index:11;background:rgba(255,255,255,.95);padding:6px 9px;border-radius:8px;font-size:11px}
+.cat2 b{color:#92400e}
+</style></head><body>
+
+<!-- ================= OPSI 1: sidebar kiri bertab (satu panel aktif, tanpa scroll panjang) ================= -->
+<section class="opsi" id="o1">
+ <div class="judul">Opsi 1 · Sidebar kiri bertab (tab Dashboard aktif, semua muat satu layar)</div>
+ <div class="peta" style="left:430px"></div>
+ <div class="panel" style="width:430px">
+  <div class="tabs"><div class="tab">Kontrol</div><div class="tab on">Dashboard</div><div class="tab">Kandidat</div><div class="tab">Data</div></div>
+  <div class="grid g2">
+   <div class="k"><small>Cakupan 10 menit</small><b class="ok">99,4%</b><small>818 dari 823 sekolah</small></div>
+   <div class="k"><small>Utilisasi kota</small><b>54%</b><small>198.600 / 369.000 penerima</small></div>
+   <div class="k"><small>SPPG melebihi kapasitas</small><b class="bad">12 / 88</b><small>titik SPPG</small></div>
+   <div class="k"><small>Kelebihan permintaan</small><b class="bad">13.400</b><small>siswa (estimasi)</small></div>
+  </div>
+  <div class="card" style="margin-top:8px"><h4>SPPG terpadat (garis putus = kapasitas 100%)</h4>
+   <div class="row"><span class="n">Sawah Besar</span><div class="trk"><i class="bar r" style="width:100%"></i><u style="left:41%"></u></div><b>243%</b></div>
+   <div class="row"><span class="n">Pindrikan Lor</span><div class="trk"><i class="bar r" style="width:67%"></i><u style="left:41%"></u></div><b>163%</b></div>
+   <div class="row"><span class="n">Srondol Wetan</span><div class="trk"><i class="bar r" style="width:67%"></i><u style="left:41%"></u></div><b>163%</b></div>
+   <div class="row"><span class="n">Purwosari</span><div class="trk"><i class="bar r" style="width:56%"></i><u style="left:41%"></u></div><b>137%</b></div>
+   <div class="row"><span class="n">Bangetayu Kulon</span><div class="trk"><i class="bar r" style="width:55%"></i><u style="left:41%"></u></div><b>133%</b></div>
+   <div class="row"><span class="n">Wonolopo</span><div class="trk"><i class="bar r" style="width:53%"></i><u style="left:41%"></u></div><b>130%</b></div>
+  </div>
+  <div class="grid g2" style="margin-top:8px">
+   <div class="card"><h4>Sebaran utilisasi (titik SPPG)</h4><div class="hist"><div style="height:100%;background:#22c55e">44</div><div style="height:73%;background:#eab308">32</div><div style="height:27%;background:#92400e">12</div></div><div class="cat">≤50% &nbsp; 50–100% &nbsp; &gt;100%</div></div>
+   <div class="card"><h4>Kurva manfaat kandidat</h4><div class="line"><svg viewBox="0 0 120 80"><polyline fill="none" stroke="#6366f1" stroke-width="3" points="6,8 60,56 114,74"/><circle cx="6" cy="8" r="3.5" fill="#6366f1"/><circle cx="60" cy="56" r="3.5" fill="#6366f1"/><circle cx="114" cy="74" r="3.5" fill="#6366f1"/></svg></div><div class="cat">13.400 → 3.400 (5) → 500 (10)</div></div>
+  </div>
+  <div class="cat" style="margin-top:8px">Angka siswa masih estimasi (SD 200, SMP 300, SMA 400).</div>
+ </div>
+</section>
+
+<!-- ================= OPSI 2: panel kiri lebar dua kolom + rel ikon tipis ================= -->
+<section class="opsi" id="o2">
+ <div class="judul">Opsi 2 · Panel kiri lebar dua kolom (lebih banyak grafik sekaligus)</div>
+ <div class="peta" style="left:640px"></div>
+ <div class="rail"><div class="on"><i>▦</i>Dash</div><div><i>☰</i>Layer</div><div><i>⚙</i>Param</div><div><i>★</i>Kandidat</div><div><i>ⓘ</i>Data</div></div>
+ <div class="panel" style="left:64px;width:576px">
+  <div class="grid g4">
+   <div class="k"><small>Cakupan</small><b class="ok">99,4%</b></div><div class="k"><small>Utilisasi</small><b>54%</b></div>
+   <div class="k"><small>Titik &gt;100%</small><b class="bad">12/88</b></div><div class="k"><small>Kelebihan</small><b class="bad">13.400</b></div>
+  </div>
+  <div class="grid g2" style="margin-top:8px">
+   <div class="card"><h4>SPPG terpadat</h4>
+    <div class="row"><span class="n">Sawah Besar</span><div class="trk"><i class="bar r" style="width:100%"></i></div><b>243%</b></div>
+    <div class="row"><span class="n">Pindrikan Lor</span><div class="trk"><i class="bar r" style="width:67%"></i></div><b>163%</b></div>
+    <div class="row"><span class="n">Srondol Wetan</span><div class="trk"><i class="bar r" style="width:67%"></i></div><b>163%</b></div>
+    <div class="row"><span class="n">Purwosari</span><div class="trk"><i class="bar r" style="width:56%"></i></div><b>137%</b></div>
+    <div class="row"><span class="n">Bangetayu K.</span><div class="trk"><i class="bar r" style="width:55%"></i></div><b>133%</b></div>
+   </div>
+   <div class="card"><h4>Sebaran utilisasi</h4><div class="hist"><div style="height:100%;background:#22c55e">44</div><div style="height:73%;background:#eab308">32</div><div style="height:27%;background:#92400e">12</div></div><div class="cat">≤50% · 50–100% · &gt;100%</div>
+    <h4 style="margin-top:8px">Kurva manfaat kandidat</h4><div class="line" style="height:52px"><svg viewBox="0 0 120 52" preserveAspectRatio="none"><polyline fill="none" stroke="#6366f1" stroke-width="3" points="6,6 60,34 114,48"/></svg></div></div>
+  </div>
+  <div class="card" style="margin-top:8px"><h4>Per kecamatan (urut kelebihan beban)</h4>
+   <table><tr><th>Kecamatan</th><th>Sekolah</th><th>Siswa*</th><th>SPPG</th><th>Kapasitas</th><th>Kelebihan</th></tr>
+   <tr><td>Semarang Tengah</td><td>54</td><td>14.500</td><td>6</td><td>18.000</td><td>3.100</td></tr>
+   <tr><td>Gayamsari</td><td>37</td><td>9.100</td><td>3</td><td>9.000</td><td>2.800</td></tr>
+   <tr><td>Banyumanik</td><td>58</td><td>14.900</td><td>9</td><td>27.000</td><td>1.900</td></tr>
+   <tr><td>Genuk</td><td>47</td><td>11.800</td><td>5</td><td>15.000</td><td>1.300</td></tr></table>
+   <div class="cat">*estimasi · angka tabel hanya contoh tata letak</div></div>
+ </div>
+</section>
+
+<!-- ================= OPSI 3: rel ikon kiri + kartu KPI melayang di atas peta + dock grafik di bawah peta ================= -->
+<section class="opsi" id="o3">
+ <div class="judul">Opsi 3 · Rel ikon kiri + KPI melayang + dock grafik di bawah peta (mengisi area bawah)</div>
+ <div class="peta" style="left:64px"></div>
+ <div class="rail"><div class="on"><i>▦</i>Dash</div><div><i>☰</i>Layer</div><div><i>⚙</i>Param</div><div><i>★</i>Kandidat</div><div><i>ⓘ</i>Data</div></div>
+ <div class="melayang" style="left:84px;top:50px;width:640px"><div class="grid g4">
+   <div class="k"><small>Cakupan 10 menit</small><b class="ok">99,4%</b></div><div class="k"><small>Utilisasi kota</small><b>54%</b></div>
+   <div class="k"><small>SPPG &gt;100%</small><b class="bad">12 / 88</b></div><div class="k"><small>Kelebihan</small><b class="bad">13.400</b></div></div></div>
+ <div class="cat2">Legenda: <b>●</b> halo coklat = SPPG kelebihan beban</div>
+ <div class="dock">
+  <div class="card"><h4>SPPG terpadat</h4>
+   <div class="row"><span class="n">Sawah Besar</span><div class="trk"><i class="bar r" style="width:100%"></i></div><b>243%</b></div>
+   <div class="row"><span class="n">Pindrikan Lor</span><div class="trk"><i class="bar r" style="width:67%"></i></div><b>163%</b></div>
+   <div class="row"><span class="n">Srondol Wetan</span><div class="trk"><i class="bar r" style="width:67%"></i></div><b>163%</b></div>
+   <div class="row"><span class="n">Purwosari</span><div class="trk"><i class="bar r" style="width:56%"></i></div><b>137%</b></div></div>
+  <div class="card"><h4>Sebaran utilisasi</h4><div class="hist"><div style="height:100%;background:#22c55e">44</div><div style="height:73%;background:#eab308">32</div><div style="height:27%;background:#92400e">12</div></div><div class="cat">≤50% · 50–100% · &gt;100%</div></div>
+  <div class="card"><h4>Kurva manfaat kandidat</h4><div class="line"><svg viewBox="0 0 120 80"><polyline fill="none" stroke="#6366f1" stroke-width="3" points="6,8 60,56 114,74"/></svg></div><div class="cat">13.400 → 3.400 (5) → 500 (10)</div></div>
+  <div class="card"><h4>Kualitas data</h4><div class="row"><span class="n" style="width:130px">SPPG koordinat kelurahan</span><b>122/128</b></div><div class="row"><span class="n" style="width:130px">SPPG dikeluarkan</span><b>5</b></div><div class="row"><span class="n" style="width:130px">Siswa asli</span><b>0%</b></div></div>
+ </div>
+</section>
+
+<script>
+const o=new URLSearchParams(location.search).get('opsi')||'1';
+document.getElementById('o'+o).style.display='block';
+</script>
+</body></html>
