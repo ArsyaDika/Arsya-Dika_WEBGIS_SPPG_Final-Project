@@ -567,3 +567,22 @@ Diverifikasi: Ngesrep 0,9 -> 67,1 km², Randugarut 0,7 -> 85,6 km², Jangli 5,3 
 
 **Pelajaran**
 Setelah menghasilkan data dari layanan eksternal, periksa sebaran nilainya (di sini luas poligon) untuk menemukan hasil janggal, jangan hanya memeriksa jumlahnya.
+
+---
+
+## 22. Hapus berkas isochrone lama (koordinat salah)
+
+**Masalah**
+`data/isochrone-600.geojson` berasal dari koordinat SPPG yang salah (entri 15) dan sudah digantikan `data/isochrone-sppg-600.geojson` (entri 19-21). Berkas lama tidak dipakai kode mana pun tetapi bisa menyesatkan.
+
+**Perubahan**
+Berkas `data/isochrone-600.geojson` dihapus dari repo (dengan izin pemilik repo). Riwayatnya tetap ada di commit `391f526` bila perlu dilihat.
+
+**Alasan**
+Data turunan yang usang sebaiknya dihapus setelah ada penggantinya, supaya tidak ada yang memakainya tanpa sengaja. Git menyimpan riwayat, jadi tidak ada informasi yang benar-benar hilang.
+
+**Hasil**
+Berkas hilang dari folder `data/`. Aplikasi hanya membaca `isochrone-sppg-600.geojson`, jadi tidak ada yang berubah di tampilan.
+
+**Pelajaran**
+Saat memberi nama baru pada hasil perhitungan ulang, catat berkas lama yang perlu dibersihkan, lalu hapus setelah ada konfirmasi.
