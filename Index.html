@@ -184,22 +184,25 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 </aside>
 
 <!-- ================= pembuatan kartu KPI melayang di atas peta (cakupan, utilisasi, titik melebihi kapasitas, kelebihan permintaan) ================= -->
+<!-- ================= memperbaiki kartu KPI statis (id tetap per ukuran) menjadi kartu generik kL/kV/kS 1-4 agar isinya bisa berganti menurut titik yang diklik (ringkasan kota, SPPG, atau sekolah) ================= -->
 <div id="kpiStrip">
-<div class="kpi"><small>Cakupan 10 menit</small><b class="ok" id="sKpiCov">-</b><small id="sKpiCovSub">&nbsp;</small></div>
-<div class="kpi"><small>Utilisasi kota</small><b id="sKpiUtil">-</b><small id="sKpiUtilSub">&nbsp;</small></div>
-<div class="kpi"><small>SPPG &gt; kapasitas</small><b class="bad" id="sKpiOver">-</b><small>titik SPPG</small></div>
-<div class="kpi"><small>Kelebihan permintaan</small><b class="bad" id="sKpiLebih">-</b><small>siswa (estimasi)</small></div>
+<div class="kpi"><small id="kL1">&nbsp;</small><b id="kV1">-</b><small id="kS1">&nbsp;</small></div>
+<div class="kpi"><small id="kL2">&nbsp;</small><b id="kV2">-</b><small id="kS2">&nbsp;</small></div>
+<div class="kpi"><small id="kL3">&nbsp;</small><b id="kV3">-</b><small id="kS3">&nbsp;</small></div>
+<div class="kpi"><small id="kL4">&nbsp;</small><b id="kV4">-</b><small id="kS4">&nbsp;</small></div>
+<button id="btnKota" style="display:none;grid-column:1/-1;padding:5px 10px;border-radius:10px;background:#0f172a;color:#fff;font-size:12px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.25)">&larr; Kembali ke ringkasan kota</button>
 </div>
 
 <!-- MAP -->
 <div id="map"></div>
 
 <!-- ================= pembuatan dock grafik di bawah peta: SPPG terpadat, sebaran utilisasi, kurva manfaat kandidat, dan kualitas data ================= -->
+<!-- ================= memperbaiki kartu dock statis (judul dan isi tetap) menjadi kartu generik dJ/dC 1-4 agar judul dan grafiknya berganti menurut titik yang diklik ================= -->
 <section id="dock">
-<div class="card"><h4>SPPG terpadat (garis putus = kapasitas 100%)</h4><div id="dockTerpadat"></div></div>
-<div class="card"><h4>Sebaran utilisasi (titik SPPG)</h4><div id="dockHist"></div></div>
-<div class="card"><h4>Kurva manfaat kandidat</h4><div id="dockKurva"></div></div>
-<div class="card"><h4>Kualitas data</h4><div id="dockData" class="text-xs space-y-1"></div></div>
+<div class="card"><h4 id="dJ1"></h4><div id="dC1"></div></div>
+<div class="card"><h4 id="dJ2"></h4><div id="dC2"></div></div>
+<div class="card"><h4 id="dJ3"></h4><div id="dC3"></div></div>
+<div class="card"><h4 id="dJ4"></h4><div id="dC4" class="text-xs"></div></div>
 </section>
 
 <script type="module" src="src/app.js"></script>

@@ -782,3 +782,31 @@ Pemeriksaan otomatis lolos untuk ketujuh jenjang: 16 kecamatan, jumlah kecamatan
 
 **Pelajaran**
 Cek total hasil parsing terhadap baris total sumber (jumlah kecamatan = total kota). Itu cara murah untuk menangkap salah baca kolom atau baris yang hilang.
+
+---
+
+## 31. Dashboard dinamis (menurut titik yang diklik) dan popup disederhanakan
+
+**Masalah / permintaan**
+KPI melayang dan grafik dock selalu menampilkan ringkasan kota. Pengguna ingin keduanya berubah sesuai titik yang diklik (sekolah atau SPPG). Popup juga disederhanakan: sekolah hanya nama dan jumlah siswa; SPPG hanya jumlah porsi dan jumlah sekolah per jenjang (daftar menurun, tanpa nama sekolah).
+
+**Perubahan**
+- `Index.html`: kartu KPI dan dock dibuat generik (`kL/kV/kS 1-4` dan `dJ/dC 1-4`), ditambah tombol `#btnKota` "Kembali ke ringkasan kota".
+- `src/app.js`:
+  - `JENJANG`: daftar tujuh jenjang (SD, MI, SMP, MTs, SMA, SMK, MA) dengan id layer dan warna; layer, popup, dan `clear()` memakainya.
+  - Tiap sekolah diberi nomor `sidx` sebelum menjadi sumber layer, sehingga klik titik langsung menunjuk data sekolahnya (tanpa mencocokkan koordinat).
+  - `popupSekolah()` dan `popupSppg()`: isi popup sesuai permintaan. Alasan SPPG berdekatan dipindah ke kartu "Catatan SPPG" di dashboard.
+  - Penyaji dashboard: `renderDashboard()` memilih `renderDashKota()` (ringkasan), `renderDashSppg(f)`, atau `renderDashSekolah(idx)` menurut variabel `pilihan`; klik peta kosong atau tombol mengembalikannya ke kota.
+  - `hitungCakupan()` kini membuat hitungan per jenjang secara dinamis (tidak lagi tetap SD/SMP/SMA).
+
+**Alasan**
+- Satu daftar `JENJANG` menghindari tiga daftar tetap yang tersebar di banyak tempat; menambah jenjang (data sekolah resmi) tinggal menambah data.
+- Dashboard yang berganti menurut pilihan menjawab pertanyaan pengguna saat itu (mis. "SPPG ini melayani siapa?") tanpa panel tambahan.
+- Satu bug ditemukan saat uji: deklarasi `kurvaTimer` ikut terhapus bersama blok lama sehingga muncul `ReferenceError`; dikembalikan.
+
+**Hasil**
+Diuji di browser: ringkasan kota (cakupan 99,5%, utilisasi 54%, 13 dari 113 SPPG di atas kapasitas); klik SMP -> popup "SMP PUTRA NUSANTARA / Jumlah siswa: 300", dashboard berisi siswa, jenjang, SPPG pelayan (utilisasi 123%), jarak 1,8 km; klik SPPG Karangayu -> popup "Jumlah porsi: 2.800 / hari" dengan daftar SD: 7, SMP: 2, SMA: 2, dashboard berisi sekolah dan siswa per jenjang (SD 1.400, SMP 600, SMA 800), beban 2.800 dari 3.000; tombol kembali dan klik peta kosong mengembalikan ringkasan kota. Console bersih (hanya 404 favicon).
+**Keterbatasan:** jumlah siswa per sekolah masih estimasi lama (SD 200, SMP 300, SMA 400) sampai data sekolah resmi dan murid BPS digabung.
+
+**Pelajaran**
+Pisahkan "data yang dipilih" dari "cara menampilkannya": satu variabel `pilihan` dan satu penyaji yang memilih tampilan membuat dashboard mudah diperluas.
