@@ -765,17 +765,29 @@ if(!best||best.skor<=0) break;                                  // tidak ada lok
 const c=best.c;
 const idxBaru=kapAll.length;
 kapAll.push(kap);muatan.push(best.muatC);
+// ================= pembuatan fakta pendukung alasan kandidat: jarak ke pemberi layanan terdekat sebelum dibangun, utilisasi SPPG yang diringankan (sebelum -> sesudah), rincian sekolah per jenjang yang diambil alih, dan kepadatan siswa vs kapasitas SPPG dalam radius 2 km =================
+const jarakTerdekat=jarakKini[c];
 const dariSppg=[];
-best.lepas.forEach((v,idx)=>{muatan[idx]-=v;if(idx<grup.length) dariSppg.push({nama:grup[idx].nama[0],siswa:v});});
+best.lepas.forEach((v,idx)=>{
+const sebelum=muatan[idx]/kapAll[idx];
+muatan[idx]-=v;
+if(idx<grup.length) dariSppg.push({nama:grup[idx].nama[0],siswa:v,sebelum,sesudah:muatan[idx]/kapAll[idx]});
+});
 let nSek=0;
-for(let s=0;s<N;s++){if(D[c][s]<jarakKini[s]){g[s]=idxBaru;jarakKini[s]=D[c][s];nSek++;}}
-[...belum].filter(s=>D[c][s]<=RADIUS_COV).forEach(s=>belum.delete(s));
+const perJ={};
+for(let s=0;s<N;s++){if(D[c][s]<jarakKini[s]){g[s]=idxBaru;jarakKini[s]=D[c][s];nSek++;const jj=sekolahData[s].properties.jenjang;perJ[jj]=(perJ[jj]||0)+1;}}
+let siswa2km=0;for(let s=0;s<N;s++){if(D[c][s]<=2000) siswa2km+=siswa[s];}
+const dekat2=grup.filter(x=>jarakM(xy[c],x.xy)<=2000);
+const sppg2km=dekat2.reduce((a,x)=>a+x.n,0);
+const dicakup=[...belum].filter(s=>D[c][s]<=RADIUS_COV);
+dicakup.forEach(s=>belum.delete(s));
 const p=sekolahData[c].properties;
 dipilih.push({
 c,rank:r+1,xy:xy[c],
 host:{nama:p.NAMA,jenjang:p.jenjang,kel:p.DESA,kec:p.KECAMATAN},
 gainBeban:best.gain,gainBelum:best.cov,sekolah:nSek,siswa:best.muatC,util:best.muatC/kap,
 dariSppg:dariSppg.sort((a,b)=>b.siswa-a.siswa).slice(0,3),
+fakta:{jarakTerdekat,perJ,siswa2km,sppg2km,kap2km:sppg2km*kap,nBelum:dicakup.length,kap},
 sisaKelebihan:kapAll.reduce((a,k,i)=>a+Math.max(0,muatan[i]-k),0),
 sisaBelum:[...belum].reduce((a,i)=>a+siswa[i],0)
 });
@@ -789,12 +801,22 @@ sesudah:{kelebihan:akhir?akhir.sisaKelebihan:kelebihanAwal,belum:akhir?akhir.sis
 }
 
 // ================= pembuatan teks popup kandidat: lokasi acuan, sekolah yang diambil alih, beban, dan SPPG yang diringankan =================
+// ================= pembuatan daftar alasan pemilihan lokasi kandidat berdasarkan fakta dan data yang dihitung (bukan asumsi): SPPG yang diringankan, sekolah per jenjang yang diambil alih, kepadatan siswa vs kapasitas dalam 2 km, jarak ke SPPG terdekat, dan sekolah yang belum tercakup =================
+function alasanKandidat(k){
+const f=k.fakta,a=[];
+const berlebih=k.dariSppg.filter(d=>d.sebelum>1);
+if(berlebih.length) a.push(`Meringankan ${berlebih.length} SPPG di sekitarnya yang melebihi kapasitas: ${berlebih.map(d=>`${esc(namaPendek(d.nama))} ${Math.round(d.sebelum*100)}% &rarr; ${Math.round(d.sesudah*100)}%`).join('; ')}.`);
+const j=JENJANG.filter(x=>f.perJ[x.k]).map(x=>`${x.k} ${f.perJ[x.k]}`).join(', ');
+a.push(`Mengambil alih ${k.sekolah} sekolah (${j}) dengan ${fmt(k.siswa)} siswa, setara ${Math.round(k.util*100)}% dari kapasitas ${fmt(f.kap)}.`);
+a.push(`Dalam radius 2 km ada ${fmt(f.siswa2km)} siswa, sedangkan SPPG yang ada ${f.sppg2km?`${f.sppg2km} dengan kapasitas ${fmt(f.kap2km)} (permintaan ${Math.round(100*f.siswa2km/f.kap2km)}% dari kapasitas)`:'tidak ada'}.`);
+a.push(`Jarak ke SPPG terdekat ${(f.jarakTerdekat/1000).toFixed(1)} km (garis lurus), memenuhi syarat minimal 300 m.`);
+if(f.nBelum) a.push(`Menjangkau ${f.nBelum} sekolah (~${fmt(k.gainBelum)} siswa) yang berada di luar isochrone.`);
+a.push(`Dasar data: murid BPS 2025/2026 per sekolah, alokasi ke SPPG terdekat, kapasitas ${fmt(f.kap)} per SPPG.`);
+return a;
+}
 function teksKandidat(k){
 return `<b>Kandidat SPPG baru #${k.rank}</b><br>Lokasi acuan: ${esc(k.host.nama)} (${esc(k.host.jenjang)}), ${esc(k.host.kel)}, ${esc(k.host.kec)}`
-+`<br>Mengambil alih ${k.sekolah} sekolah (${fmt(k.siswa)} siswa, ${Math.round(k.util*100)}% dari kapasitas)`
-+`<br>Mengurangi kelebihan beban: ${fmt(k.gainBeban)} siswa`
-+(k.gainBelum?`<br>Menjangkau sekolah belum tercakup: ~${fmt(k.gainBelum)} siswa`:'')
-+(k.dariSppg.length?`<br>Meringankan: ${k.dariSppg.map(d=>esc(d.nama)+' ('+fmt(d.siswa)+')').join(', ')}`:'');
++`<div style="margin-top:6px"><b>Mengapa di sini:</b></div><ul style="margin:2px 0 0 16px;padding:0;list-style:disc;font-size:12px">${alasanKandidat(k).map(t=>`<li>${t}</li>`).join('')}</ul>`;
 }
 
 // ================= pembuatan gambar titik kandidat (pink) beserta popup yang terdaftar sekali saja =================
@@ -822,7 +844,8 @@ daftar.innerHTML='';
 return;
 }
 ring.innerHTML=`Kelebihan beban: <b>${fmt(h.sebelum.kelebihan)}</b> &rarr; <b>${fmt(h.sesudah.kelebihan)}</b> siswa.<br>Belum tercakup 10 menit: <b>${fmt(h.sebelum.belum)}</b> &rarr; <b>${fmt(h.sesudah.belum)}</b> siswa.`;
-daftar.innerHTML=h.daftar.map(k=>`<li>${esc(k.host.kel)}, ${esc(k.host.kec)}: ambil alih ${k.sekolah} sekolah (${fmt(k.siswa)} siswa)${k.gainBeban>0?`, kelebihan &minus;${fmt(k.gainBeban)}`:''}${k.gainBelum?`, jangkau ~${fmt(k.gainBelum)} siswa belum tercakup`:''}</li>`).join('');
+// ================= memperbaiki daftar kandidat yang hanya satu baris menjadi bisa dibuka (details) berisi alasan pemilihan lokasi berdasarkan data =================
+daftar.innerHTML=h.daftar.map(k=>`<li><b>${esc(k.host.kel)}, ${esc(k.host.kec)}</b>: ambil alih ${k.sekolah} sekolah (${fmt(k.siswa)} siswa)${k.gainBeban>0?`, kelebihan &minus;${fmt(k.gainBeban)}`:''}<details><summary style="cursor:pointer;color:#4f46e5">Mengapa di sini?</summary><ul style="margin:2px 0 4px 14px;padding:0;list-style:disc;font-size:12px">${alasanKandidat(k).map(t=>`<li>${t}</li>`).join('')}</ul></details></li>`).join('');
 }
 
 // ================= pembuatan tombol Cari Lokasi SPPG Baru dan pendengar kapasitas (hasil lama dihapus jika kapasitas berubah) =================

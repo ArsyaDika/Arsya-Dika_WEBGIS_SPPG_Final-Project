@@ -874,3 +874,25 @@ Diuji di browser: rel berisi Dash, Layer, Analisis, Param, Kandidat, Data; tab L
 
 **Pelajaran**
 Satu tombol bisa mengendalikan beberapa layer bila fungsi toggle menerima daftar id. Pisahkan fakta (titik) dari penilaian (hasil model) di antarmuka.
+
+---
+
+## 35. Alasan pemilihan lokasi kandidat berbasis fakta dan data
+
+**Masalah / permintaan**
+Kandidat SPPG baru hanya menampilkan angka hasil (sekolah diambil alih, siswa). Pengguna meminta penjelasan "mengapa di titik ini" yang harus berdasarkan fakta dan data.
+
+**Perubahan**
+`src/app.js`:
+- `cariKandidat()` kini menyimpan fakta pendukung per kandidat: jarak ke SPPG terdekat sebelum dibangun, utilisasi tiap SPPG yang diringankan (sebelum -> sesudah), jumlah sekolah per jenjang yang diambil alih, jumlah siswa dalam radius 2 km dan jumlah serta kapasitas SPPG dalam radius itu, dan jumlah sekolah di luar isochrone yang terjangkau.
+- `alasanKandidat()` menyusun daftar alasan dari fakta itu; dipakai di popup kandidat ("Mengapa di sini:") dan di daftar kandidat (bagian "Mengapa di sini?" yang bisa dibuka).
+
+**Alasan**
+Penjelasan harus bisa diperiksa: tiap kalimat memuat angka yang dihitung dari data (BPS, titik SPPG, isochrone), bukan asumsi. Pengguna bisa menilai apakah alasannya masuk akal.
+
+**Hasil**
+Diuji di browser. Contoh kandidat #1 (Srondol Wetan, Banyumanik): meringankan 3 SPPG yang melebihi kapasitas (Srondol Wetan 241% -> 148%, Banyumanik 140% -> 108%, Gedawang 140% -> 134%); mengambil alih 15 sekolah (SD 8, SMP 4, SMA 1, SMK 2) dengan 3.909 siswa (130% dari kapasitas 3.000); dalam radius 2 km ada 17.215 siswa sedangkan 4 SPPG yang ada berkapasitas 12.000 (permintaan 143%); jarak ke SPPG terdekat 0,3 km. Console bersih.
+**Keterbatasan:** jarak masih garis lurus dan alokasi ke SPPG terdekat; alasan akan diperbarui setelah alokasi berbasis waktu tempuh diterapkan.
+
+**Pelajaran**
+Hasil model sebaiknya selalu disertai bukti yang bisa diperiksa. Simpan fakta saat menghitung, bukan merangkai alasan sesudahnya.
