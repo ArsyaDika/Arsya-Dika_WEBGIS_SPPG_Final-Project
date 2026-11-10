@@ -718,3 +718,24 @@ Diuji di browser (port 5510): KPI 99,4% / 54% / 12 dari 88 / 13.400; 6 bar SPPG 
 
 **Pelajaran**
 Kelompokkan kontrol menurut tugas (lihat peta, atur parameter, cari kandidat) dan tampilkan ringkasan di tempat yang selalu terlihat (dock). Itu lebih terbaca daripada satu kolom panjang.
+
+---
+
+## 28. Koordinat SPPG diperhalus dari titik kelurahan ke titik jalan (alamat)
+
+**Masalah**
+Titik kelurahan (entri 16) hanyalah perbaikan darurat: 62 dari 123 SPPG berbagi titik yang sama dengan SPPG lain. Pengguna meminta titik SPPG yang lebih andal.
+
+**Perubahan**
+- `scripts/ambil-alamat-sppg.mjs`: mengambil 195 SPPG Kota Semarang (nama, ID, alamat) dari direktori publik infosppg.id ke `data/SPPG_alamat.json`. ID direktori tidak sama dengan `No SPPG`, jadi pencocokan memakai nama (115 dari 123 cocok persis).
+- `scripts/geocode-alamat-sppg.mjs`: mengambil nama jalan dari alamat, mencarinya ke Nominatim (tiga variasi kueri), lalu menerima hasil terdekat dengan titik kelurahan lama asalkan <= 2,5 km. Memperbarui `data/SPPG_geocoded.geojson` (`geo_akurasi` = `jalan`; titik kelurahan lama tersimpan di `lng_kelurahan`/`lat_kelurahan`) dan menulis `data/SPPG_alamat_laporan.csv`.
+
+**Alasan**
+Alamat jalan jauh lebih spesifik daripada nama kelurahan. Syarat jarak <= 2,5 km mencegah hasil salah tempat (nama jalan yang sama di wilayah lain). Titik kelurahan lama tetap disimpan agar bisa dibandingkan dan dipulihkan.
+
+**Hasil**
+Dari 123 SPPG yang dipakai: 77 berkoordinat jalan, 44 tetap titik kelurahan, 2 perkiraan. Selisih titik jalan terhadap titik kelurahan: median 0,35 km, persentil 90 = 1,35 km, maksimum 2,32 km. Titik unik 88 -> 113; 19 SPPG di 9 titik masih berbagi koordinat yang sama (mis. beberapa SPPG di jalan yang sama).
+**Keterbatasan:** sumber alamat adalah direktori pihak ketiga (bukan BGN), dan geocoder memberi titik di ruas jalan, bukan titik GPS dapur. Koordinat resmi BGN tidak tersedia untuk publik.
+
+**Pelajaran**
+Gunakan sumber paling spesifik yang tersedia, tetapi periksa kewajarannya (jarak ke titik yang sudah diketahui) dan simpan nilai lama agar perubahan bisa diaudit.
