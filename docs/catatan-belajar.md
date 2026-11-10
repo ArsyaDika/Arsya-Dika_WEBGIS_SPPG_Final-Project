@@ -586,3 +586,31 @@ Berkas hilang dari folder `data/`. Aplikasi hanya membaca `isochrone-sppg-600.ge
 
 **Pelajaran**
 Saat memberi nama baru pada hasil perhitungan ulang, catat berkas lama yang perlu dibersihkan, lalu hapus setelah ada konfirmasi.
+
+---
+
+## 23. KPI cakupan 10 menit dan beban per SPPG (kapasitas 3.000)
+
+**Masalah**
+Cakupan isochrone gabungan sudah 99,4% sekolah, sehingga "cakupan" tidak lagi menjadi pembeda. Yang perlu dilihat adalah beban: berapa siswa yang harus dilayani tiap SPPG dibanding kapasitasnya (3.000 penerima/hari).
+
+**Perubahan**
+`src/app.js`, sesi baru `// ===== CAKUPAN & BEBAN SPPG =====`:
+- `kelompokSppg()`: SPPG di titik yang sama digabung; kapasitas titik = kapasitas x jumlah SPPG di titik itu.
+- `hitungBeban()`: tiap sekolah dialokasikan ke titik SPPG terdekat (haversine meter), lalu dihitung beban dan total kelebihan di atas kapasitas.
+- `hitungCakupan()`: sekolah di dalam/luar gabungan isochrone, per jenjang (sekolah dan estimasi siswa).
+- `gambarCakupan()` (area hijau muda), `gambarBeban()` (halo coklat pada titik yang melebihi kapasitas), `infoBebanSppg()` (beban di popup SPPG), `perbaruiKpi()` (panel).
+- Daftar `clear()` ditambah `cover` dan `beban`.
+`Index.html`: panel "Cakupan & Beban SPPG" (kapasitas bisa diubah), tombol layer "Cakupan 10 menit" dan "Beban Berlebih", legenda baru.
+
+**Alasan**
+- Alokasi ke SPPG terdekat memperlihatkan di mana permintaan lokal melebihi pasokan lokal, tanpa asumsi tambahan.
+- Titik kembar digabung karena SPPG di kelurahan yang sama secara posisi tidak bisa dibedakan.
+- Jarak haversine ditulis langsung (bukan `turf.distance`) karena dipanggil puluhan ribu kali.
+- Kapasitas dijadikan input supaya bisa diuji (mis. 2.000) tanpa mengubah kode.
+
+**Hasil**
+Diuji di browser dan dicocokkan dengan hitungan offline (node): cakupan 10 menit SD 99,3% siswa (549/553 sekolah), SMP 100% (200/200), SMA 98,6% (69/70), belum terjangkau 5 sekolah (~1.200 siswa); kapasitas total 369.000, permintaan estimasi 198.600 (54%); 12 dari 88 titik melebihi kapasitas, kelebihan 13.400 siswa (terpadat: Sawah Besar 243%). Dengan kapasitas 2.000 menjadi 29 titik dan 36.100 siswa; kembali ke 3.000 menjadi 12 titik. Console bersih.
+
+**Pelajaran**
+Saat satu ukuran (cakupan) sudah jenuh, cari ukuran lain yang masih membedakan (beban/kapasitas). Dan cocokkan hasil di browser dengan hitungan terpisah di Node agar kesalahan rumus ketahuan.

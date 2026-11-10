@@ -78,6 +78,9 @@ drawIso(lastIso);
 generateCandidate(lastIso);
 generateHeatmap();
 }
+
+// ================= penghitungan cakupan dan beban setelah semua layer dasar ada (juga saat ganti basemap) =================
+await terapkanBebanDasar();
 }
 
 // ================= LAYER =================
@@ -107,7 +110,9 @@ const jenjang=p.jenjang || layer.toUpperCase();
 new maplibregl.Popup()
 .setLngLat(e.lngLat)
 // ================= memperbaiki popup yang hanya menampilkan nama+jenjang menjadi juga menampilkan alasan SPPG berdekatan (merah) agar pengguna tahu mengapa SPPG itu ditandai =================
-.setHTML(`<b>${esc(nama)}</b><br>${jenjang}`+(layer==='sppg'&&p.dekat==1?`<br><span style="color:#dc2626">&#9888; ${esc(p.alasan)}</span>`:''))
+.setHTML(`<b>${esc(nama)}</b><br>${jenjang}`+(layer==='sppg'&&p.dekat==1?`<br><span style="color:#dc2626">&#9888; ${esc(p.alasan)}</span>`:'')
+// ================= memperbaiki popup SPPG yang tidak menampilkan beban menjadi juga menampilkan beban/kapasitas titik agar pengguna tahu apakah SPPG itu kelebihan permintaan =================
++(layer==='sppg'?infoBebanSppg(e.features[0].geometry.coordinates):''))
 .addTo(map);
 
 if(layer==='sppg') selectedSPPG=e.features[0];
@@ -265,6 +270,166 @@ type:'doughnut',
 data:{labels:['SD','SMP','SMA'],datasets:[{data:[siswaSD,siswaSMP,siswaSMA]}]}
 });
 }
+
+// ================= CAKUPAN & BEBAN SPPG =================
+// ================= pembuatan parameter kapasitas per SPPG (porsi/penerima per hari) agar beban per SPPG bisa dibandingkan dengan kapasitasnya =================
+const KAPASITAS_DEFAULT=3000;
+let analisisDasar=null;            // hasil hitungan cakupan + beban terakhir {grup,kap,beban,tot}
+let sekolahTdkTercakup=new Set();  // indeks sekolah (di sekolahData) yang berada di luar gabungan isochrone 10 menit
+
+// jarak dua titik [lng,lat] dalam meter (haversine); dipakai langsung agar cepat untuk ratusan ribu pasangan
+function jarakM(a,b){
+const R=6371000,r=Math.PI/180;
+const dl=(b[1]-a[1])*r,dg=(b[0]-a[0])*r;
+const h=Math.sin(dl/2)**2+Math.cos(a[1]*r)*Math.cos(b[1]*r)*Math.sin(dg/2)**2;
+return 2*R*Math.asin(Math.sqrt(h));
+}
+function nilaiKapasitas(){
+const el=document.getElementById('kapasitas');
+const v=Number(el&&el.value);
+return v>0?v:KAPASITAS_DEFAULT;
+}
+const fmt=(n)=>Math.round(n).toLocaleString('id-ID');
+
+// ================= pembuatan pengelompokan SPPG yang berada di titik yang sama (kapasitas titik = kapasitas x jumlah SPPG di titik itu) =================
+function kelompokSppg(){
+const m=new Map();
+sppgData.forEach(f=>{
+const xy=f.geometry.coordinates.slice(0,2);
+const k=xy.join(',');
+if(!m.has(k)) m.set(k,{xy,n:0,nama:[]});
+const g=m.get(k);
+g.n++;
+g.nama.push(f.properties['Nama SPPG']);
+});
+return [...m.values()];
+}
+
+// ================= pembuatan alokasi tiap sekolah ke titik SPPG terdekat lalu hitung beban (jumlah siswa) tiap titik dan total kelebihan di atas kapasitas =================
+function hitungBeban(grup,kap){
+const muatan=grup.map(()=>0);
+const dekat=sekolahData.map(s=>{
+const xy=s.geometry.coordinates;
+let b=-1,bd=Infinity;
+grup.forEach((g,i)=>{const d=jarakM(xy,g.xy);if(d<bd){bd=d;b=i;}});
+muatan[b]+=getSiswa(s);
+return {idx:b,d:bd};
+});
+const kelebihan=grup.reduce((a,g,i)=>a+Math.max(0,muatan[i]-g.n*kap),0);
+return {muatan,dekat,kelebihan};
+}
+
+// ================= pembuatan hitungan cakupan: sekolah di dalam/luar gabungan isochrone 10 menit, dihitung per jenjang (jumlah sekolah dan estimasi siswa) =================
+async function hitungCakupan(){
+const gab=await gabungIsochrone();
+sekolahTdkTercakup=new Set();
+const tot={SD:{n:0,ok:0,s:0,sok:0},SMP:{n:0,ok:0,s:0,sok:0},SMA:{n:0,ok:0,s:0,sok:0}};
+sekolahData.forEach((s,i)=>{
+const j=s.properties.jenjang;
+const siswa=getSiswa(s);
+tot[j].n++;tot[j].s+=siswa;
+let ok=false;
+try{ok=turf.booleanPointInPolygon(turf.point(s.geometry.coordinates.slice(0,2)),gab);}catch{}
+if(ok){tot[j].ok++;tot[j].sok+=siswa;}else sekolahTdkTercakup.add(i);
+});
+return {tot,gab};
+}
+
+// ================= pembuatan penerapan hitungan dasar: cakupan + beban, lalu gambar lapisan dan perbarui panel KPI =================
+async function terapkanBebanDasar(){
+if(!sekolahData.length||!sppgData.length) return;
+const kap=nilaiKapasitas();
+const grup=kelompokSppg();
+const beban=hitungBeban(grup,kap);
+let cak=null;
+try{cak=await hitungCakupan();}catch(e){console.error(e);}
+analisisDasar={grup,kap,beban,tot:cak?cak.tot:null};
+gambarCakupan(cak?cak.gab:null);
+gambarBeban();
+perbaruiKpi();
+}
+
+// ================= pembuatan lapisan area cakupan gabungan 10 menit (hijau muda di bawah titik sekolah) =================
+function gambarCakupan(gab){
+safeRemove('cover');
+if(!gab) return;
+map.addSource('cover',{type:'geojson',data:gab});
+map.addLayer({
+id:'cover-layer',
+type:'fill',
+source:'cover',
+paint:{'fill-color':'#22c55e','fill-opacity':0.12,'fill-outline-color':'#16a34a'}
+},map.getLayer('sd-layer')?'sd-layer':undefined);
+}
+
+// ================= pembuatan halo coklat di titik SPPG yang bebannya melebihi kapasitas (makin besar halo, makin berlebih) =================
+function gambarBeban(){
+safeRemove('beban');
+if(!analisisDasar) return;
+const {grup,kap,beban}=analisisDasar;
+const fitur=grup.map((g,i)=>({
+type:'Feature',
+geometry:{type:'Point',coordinates:g.xy},
+properties:{util:beban.muatan[i]/(g.n*kap),muatan:beban.muatan[i],kapasitas:g.n*kap,n:g.n}
+}));
+map.addSource('beban',{type:'geojson',data:{type:'FeatureCollection',features:fitur}});
+map.addLayer({
+id:'beban-layer',
+type:'circle',
+source:'beban',
+filter:['>',['get','util'],1],
+paint:{
+'circle-color':'#92400e',
+'circle-opacity':0.35,
+'circle-radius':['interpolate',['linear'],['get','util'],1,12,2.5,28],
+'circle-stroke-color':'#92400e',
+'circle-stroke-width':1.5
+}
+},map.getLayer('sppg-layer')?'sppg-layer':undefined);
+}
+
+// ================= pembuatan teks beban titik SPPG untuk popup (beban, kapasitas, persen) =================
+function infoBebanSppg(coord){
+if(!analisisDasar) return '';
+const k=coord.slice(0,2).join(',');
+const i=analisisDasar.grup.findIndex(g=>g.xy.join(',')===k);
+if(i<0) return '';
+const g=analisisDasar.grup[i];
+const muatan=analisisDasar.beban.muatan[i];
+const kapT=g.n*analisisDasar.kap;
+const u=muatan/kapT;
+const warna=u>1?'#92400e':(u>0.7?'#a16207':'#15803d');
+return `<br><span style="color:${warna}">Beban titik ini: ${fmt(muatan)} dari ${fmt(kapT)} penerima/hari (${Math.round(u*100)}%)${g.n>1?` &middot; ${g.n} SPPG di titik ini`:''}</span>`;
+}
+
+// ================= pembuatan pembaruan panel KPI cakupan 10 menit dan beban per SPPG =================
+function perbaruiKpi(){
+if(!analisisDasar) return;
+const {grup,kap,beban,tot}=analisisDasar;
+const set=(id,v)=>{const el=document.getElementById(id);if(el) el.innerText=v;};
+if(tot){
+let belumS=0,belumN=0;
+['SD','SMP','SMA'].forEach(j=>{
+const t=tot[j];
+set('kpiCov'+j,`${(100*t.sok/t.s).toFixed(1)}% siswa (${t.ok}/${t.n} sekolah)`);
+belumN+=t.n-t.ok;belumS+=t.s-t.sok;
+});
+set('kpiBelum',`${belumN} sekolah (~${fmt(belumS)} siswa)`);
+}
+const kapTotal=grup.reduce((a,g)=>a+g.n*kap,0);
+const minta=beban.muatan.reduce((a,b)=>a+b,0);
+const over=grup.filter((g,i)=>beban.muatan[i]>g.n*kap).length;
+set('kpiKapasitas',fmt(kapTotal)+' penerima/hari');
+set('kpiPermintaan',fmt(minta));
+set('kpiUtil',Math.round(100*minta/kapTotal)+'% dari kapasitas');
+set('kpiOver',over);
+set('kpiGrup',grup.length);
+set('kpiKelebihan',fmt(beban.kelebihan)+' siswa');
+}
+
+// ================= pembuatan pendengar input kapasitas agar KPI dan halo beban langsung diperbarui =================
+const inputKapasitas=document.getElementById('kapasitas');
+if(inputKapasitas) inputKapasitas.addEventListener('input',()=>{terapkanBebanDasar();});
 
 // ================= HEATMAP =================
 function generateHeatmap(){
@@ -471,7 +636,8 @@ if(map.getSource(id)) map.removeSource(id);
 }
 
 function clear(){
-['sd','smp','sma','sppg','iso','candidate','heatmap'].forEach(safeRemove);
+// ================= memperbaiki daftar clear() yang hanya 7 layer menjadi juga cover dan beban agar tidak terduplikasi saat ganti basemap =================
+['sd','smp','sma','sppg','iso','candidate','heatmap','cover','beban'].forEach(safeRemove);
 }
 
 window.toggleLayer=(id)=>{

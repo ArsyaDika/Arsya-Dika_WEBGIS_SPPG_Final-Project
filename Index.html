@@ -55,6 +55,9 @@ font-weight:600;
 <button onclick="toggleLayer('sppg-layer')" class="btn">SPPG</button>
 <button onclick="toggleLayer('candidate-layer')" class="btn">Candidate</button>
 <button onclick="toggleLayer('heatmap-layer')" class="btn">Heatmap</button>
+<!-- ================= pembuatan tombol toggle untuk area cakupan 10 menit dan halo SPPG kelebihan beban ================= -->
+<button onclick="toggleLayer('cover-layer')" class="btn">Cakupan 10 menit</button>
+<button onclick="toggleLayer('beban-layer')" class="btn">Beban Berlebih</button>
 </div>
 
 <div class="panel">
@@ -73,6 +76,24 @@ font-weight:600;
 <input id="jarakDekat" type="number" min="0" step="50" value="500" class="w-full border p-2 rounded mb-2"/>
 <p class="text-sm">SPPG merah: <b id="jumlahDekat">0</b> dari <b id="jumlahSppg">0</b></p>
 <p class="text-xs text-slate-500">Klik SPPG merah untuk melihat alasannya. Posisi SPPG setingkat kelurahan, jadi jarak di bawah sekitar 1 km hanya perkiraan.</p>
+</div>
+
+<!-- ================= pembuatan panel KPI cakupan 10 menit dan beban per SPPG (kapasitas per SPPG bisa diubah) ================= -->
+<div class="panel">
+<h3 class="font-bold">Cakupan &amp; Beban SPPG</h3>
+<label for="kapasitas" class="text-sm">Kapasitas per SPPG (penerima/hari)</label>
+<input id="kapasitas" type="number" min="1" step="100" value="3000" class="w-full border p-2 rounded mb-2"/>
+<p class="text-sm font-semibold">Cakupan 10 menit</p>
+<p class="text-sm">SD: <b id="kpiCovSD">-</b></p>
+<p class="text-sm">SMP: <b id="kpiCovSMP">-</b></p>
+<p class="text-sm">SMA: <b id="kpiCovSMA">-</b></p>
+<p class="text-sm">Belum terjangkau: <b id="kpiBelum">-</b></p>
+<p class="text-sm font-semibold mt-2">Beban per SPPG</p>
+<p class="text-sm">Kapasitas total: <b id="kpiKapasitas">-</b></p>
+<p class="text-sm">Permintaan (estimasi): <b id="kpiPermintaan">-</b> (<b id="kpiUtil">-</b>)</p>
+<p class="text-sm">Titik melebihi kapasitas: <b id="kpiOver">-</b> dari <b id="kpiGrup">-</b></p>
+<p class="text-sm">Kelebihan permintaan: <b id="kpiKelebihan">-</b></p>
+<p class="text-xs text-slate-500 mt-1">Tiap sekolah dialokasikan ke SPPG terdekat. Jumlah siswa per sekolah masih estimasi (SD 200, SMP 300, SMA 400).</p>
 </div>
 
 <div class="panel">
@@ -104,6 +125,8 @@ font-weight:600;
 <li>🟣 SMA</li>
 <li>⚫ SPPG</li>
 <li>🔴 SPPG berdekatan</li>
+<li><span style="color:#92400e">●</span> Halo coklat: SPPG melebihi kapasitas</li>
+<li><span style="color:#16a34a">▮</span> Area hijau: jangkauan 10 menit</li>
 <li><span style="color:#ec4899">●</span> Kandidat</li>
 <li>🟡 Heatmap</li>
 <li>🟢 Isochrone</li>
