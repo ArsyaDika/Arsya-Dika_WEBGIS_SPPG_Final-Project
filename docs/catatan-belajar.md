@@ -496,3 +496,24 @@ Diuji di browser (Live Server):
 
 **Pelajaran**
 Parameter yang memengaruhi banyak titik sebaiknya diubah lewat satu input yang langsung memperbarui peta. Dan sebelum menetapkan angka bawaan, hitung dulu sebaran hasilnya (di sini 54% pada 500 m) agar tanda tidak menjadi sekadar "semua merah".
+
+---
+
+## 19. Isochrone 10 menit dihitung ulang dari koordinat yang sudah diperbaiki
+
+**Masalah**
+Isochrone pertama (entri 15) dihitung dari koordinat SPPG yang salah (22 SPPG di satu titik), sehingga cakupan yang diturunkan darinya menyesatkan.
+
+**Perubahan**
+- `scripts/fetch-isochrones.mjs`: sumber diganti ke `data/SPPG_geocoded.geojson` dan hanya SPPG ber-`dipakai_analisis`; SPPG di titik yang sama dikelompokkan sehingga satu titik dipanggil ke API sekali lalu hasilnya dibagi ke semua SPPG di titik itu; keluaran ke `data/isochrone-sppg-600.geojson`.
+- Berkas baru `data/isochrone-sppg-600.geojson`: 123 poligon dengan `sppg_idx` (urutan di `SPPG_geocoded.geojson`), `sppg_no`, `sppg_nama`, `waktu_detik=600`.
+
+**Alasan**
+- Mengelompokkan titik kembar menghemat kuota API (93 titik unik dibanding 123 SPPG) tanpa mengubah hasil, karena isochrone dari titik yang sama identik.
+- Nama keluaran dibedakan agar berkas lama tidak tertimpa dan tidak ikut dilanjutkan oleh mekanisme resume skrip. Berkas lama `data/isochrone-600.geojson` masih ada di repo (masih berdasarkan koordinat lama) dan sebaiknya dihapus setelah pemilik repo mengizinkan.
+
+**Hasil**
+Diverifikasi: 123/123 isochrone, 0 gagal, tipe semuanya `Polygon`, cincin tertutup semua, 437 KB. Seluruh 123 SPPG yang dipakai punya isochrone dan tidak ada SPPG yang dikeluarkan ikut tersimpan. Satu poligon tidak memuat titik SPPG-nya sendiri (titik pusat kelurahan berada di luar jaringan jalan terdekat); ini wajar untuk titik perkiraan.
+
+**Pelajaran**
+Saat menghitung ulang data turunan karena data induknya diperbaiki, beri nama keluaran baru supaya hasil lama tidak tercampur dengan yang baru.
