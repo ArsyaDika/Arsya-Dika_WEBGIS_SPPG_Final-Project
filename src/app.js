@@ -113,10 +113,12 @@ new maplibregl.Popup()
 // ================= memperbaiki popup yang hanya menampilkan nama+jenjang menjadi juga menampilkan alasan SPPG berdekatan (merah) agar pengguna tahu mengapa SPPG itu ditandai =================
 .setHTML(`<b>${esc(nama)}</b><br>${jenjang}`+(layer==='sppg'&&p.dekat==1?`<br><span style="color:#dc2626">&#9888; ${esc(p.alasan)}</span>`:'')
 // ================= memperbaiki popup SPPG yang tidak menampilkan beban menjadi juga menampilkan beban/kapasitas titik agar pengguna tahu apakah SPPG itu kelebihan permintaan =================
-+(layer==='sppg'?infoBebanSppg(e.features[0].geometry.coordinates):''))
++(layer==='sppg'?infoBebanSppg(e.features[0]):'')
+// ================= memperbaiki popup SPPG yang hanya menampilkan beban menjadi juga menampilkan nama sekolah yang dilayani dan menggambar area layanannya agar pengguna melihat siapa yang dilayani SPPG ini =================
++(layer==='sppg'?teksSekolahDilayani(e.features[0]):''))
 .addTo(map);
 
-if(layer==='sppg') selectedSPPG=e.features[0];
+if(layer==='sppg'){selectedSPPG=e.features[0];gambarLayanan(e.features[0]);}
 });
 });
 }
@@ -298,10 +300,12 @@ const m=new Map();
 sppgData.forEach(f=>{
 const xy=f.geometry.coordinates.slice(0,2);
 const k=xy.join(',');
-if(!m.has(k)) m.set(k,{xy,n:0,nama:[]});
+// ================= memperbaiki titik SPPG yang hanya menyimpan nama menjadi juga menyimpan No SPPG (nos) agar popup mencari titiknya lewat No SPPG, bukan koordinat yang dibulatkan MapLibre =================
+if(!m.has(k)) m.set(k,{xy,n:0,nama:[],nos:[]});
 const g=m.get(k);
 g.n++;
 g.nama.push(f.properties['Nama SPPG']);
+g.nos.push(String(f.properties['No SPPG']));
 });
 return [...m.values()];
 }
@@ -390,10 +394,15 @@ paint:{
 }
 
 // ================= pembuatan teks beban titik SPPG untuk popup (beban, kapasitas, persen) =================
-function infoBebanSppg(coord){
+// ================= memperbaiki pencarian titik SPPG dari fitur peta: koordinat fitur dibulatkan MapLibre sehingga tidak sama persis dengan data, jadi dicari lewat properti No SPPG =================
+function idxGrupFitur(f){
+if(!analisisDasar||!f||!f.properties) return -1;
+const no=String(f.properties['No SPPG']);
+return analisisDasar.grup.findIndex(g=>g.nos.includes(no));
+}
+function infoBebanSppg(f){
 if(!analisisDasar) return '';
-const k=coord.slice(0,2).join(',');
-const i=analisisDasar.grup.findIndex(g=>g.xy.join(',')===k);
+const i=idxGrupFitur(f);
 if(i<0) return '';
 const g=analisisDasar.grup[i];
 const muatan=analisisDasar.beban.muatan[i];
@@ -438,6 +447,57 @@ const ring=document.getElementById('hasilKandidat'),daftar=document.getElementBy
 if(ring) ring.innerText='Kapasitas berubah. Jalankan ulang pencarian.';
 if(daftar) daftar.innerHTML='';
 terapkanBebanDasar();
+});
+
+// ================= LAYANAN SPPG (AREA & SEKOLAH YANG DILAYANI) =================
+// ================= pembuatan pencarian sekolah yang dilayani satu titik SPPG (hasil alokasi ke SPPG terdekat, konsisten dengan hitungan beban) =================
+function sekolahDilayani(f){
+if(!analisisDasar) return null;
+const i=idxGrupFitur(f);
+if(i<0) return null;
+const idx=[];
+analisisDasar.beban.dekat.forEach((d,s)=>{if(d.idx===i) idx.push(s);});
+return {i,idx};
+}
+
+// ================= pembuatan teks daftar nama sekolah yang dilayani per jenjang untuk popup SPPG (dapat digulir jika panjang) =================
+function teksSekolahDilayani(coord){
+const r=sekolahDilayani(coord);
+if(!r) return '';
+if(r.idx.length===0) return '<hr><b>Sekolah yang dilayani:</b> tidak ada (semua sekolah sekitar lebih dekat ke SPPG lain).';
+const per={SD:[],SMP:[],SMA:[]};
+let total=0;
+r.idx.forEach(s=>{const sk=sekolahData[s];per[sk.properties.jenjang].push(sk.properties.NAMA||'(tanpa nama)');total+=getSiswa(sk);});
+const g=analisisDasar.grup[r.i];
+const bagian=['SD','SMP','SMA'].filter(j=>per[j].length).map(j=>`<b>${j} (${per[j].length})</b>: ${per[j].map(esc).join('; ')}`).join('<br>');
+return `<hr><b>Sekolah yang dilayani:</b> ${r.idx.length} sekolah (&asymp; ${fmt(total)} siswa)`
++(g.n>1?`<br><i>Titik ini berisi ${g.n} SPPG; beban dibagi di antara mereka.</i>`:'')
++`<div style="max-height:170px;overflow:auto;font-size:12px;margin-top:4px">${bagian}</div>`;
+}
+
+// ================= pembuatan gambar area layanan SPPG (poligon cembung dari sekolah yang dilayani + lingkaran penanda tiap sekolah) =================
+function hapusLayanan(){
+['layanan-layer','layanan-sekolah-layer'].forEach(id=>{if(map.getLayer(id)) map.removeLayer(id);});
+if(map.getSource('layanan')) map.removeSource('layanan');
+}
+function gambarLayanan(coord){
+hapusLayanan();
+const r=sekolahDilayani(coord);
+if(!r||r.idx.length===0) return;
+const pts=r.idx.map(s=>turf.point(sekolahData[s].geometry.coordinates.slice(0,2)));
+const kumpulan=turf.featureCollection(pts);
+let area=null;
+try{area=turf.convex(kumpulan);}catch{}
+// kurang dari 3 titik tidak membentuk poligon: pakai lingkaran kecil di sekitar titik pusatnya
+area=(area&&area.geometry.type==='Polygon')?turf.buffer(area,0.15,{units:'kilometers'}):turf.buffer(turf.centroid(kumpulan),0.4,{units:'kilometers'});
+map.addSource('layanan',{type:'geojson',data:turf.featureCollection([area,...pts])});
+map.addLayer({id:'layanan-layer',type:'fill',source:'layanan',filter:['==',['geometry-type'],'Polygon'],paint:{'fill-color':'#0ea5e9','fill-opacity':0.2,'fill-outline-color':'#0369a1'}},map.getLayer('sd-layer')?'sd-layer':undefined);
+map.addLayer({id:'layanan-sekolah-layer',type:'circle',source:'layanan',filter:['==',['geometry-type'],'Point'],paint:{'circle-color':'rgba(0,0,0,0)','circle-radius':9,'circle-stroke-color':'#0369a1','circle-stroke-width':2}});
+}
+// klik di luar SPPG menghapus area layanan agar peta kembali bersih
+map.on('click',(e)=>{
+if(!map.getLayer('sppg-layer')) return;
+if(map.queryRenderedFeatures(e.point,{layers:['sppg-layer']}).length===0) hapusLayanan();
 });
 
 // ================= HEATMAP =================
@@ -623,6 +683,8 @@ if(map.getSource(id)) map.removeSource(id);
 function clear(){
 // ================= memperbaiki daftar clear() yang hanya 7 layer menjadi juga cover dan beban agar tidak terduplikasi saat ganti basemap =================
 ['sd','smp','sma','sppg','iso','candidate','heatmap','cover','beban'].forEach(safeRemove);
+// ================= memperbaiki clear() agar juga menghapus area layanan SPPG sebelum menggambar ulang =================
+hapusLayanan();
 }
 
 window.toggleLayer=(id)=>{

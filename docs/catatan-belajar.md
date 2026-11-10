@@ -646,3 +646,28 @@ Diuji di browser (waktu sekitar 0,45 detik): 5 kandidat menurunkan kelebihan beb
 
 **Pelajaran**
 Algoritma greedy cocok untuk masalah "pilih k lokasi terbaik": ulangi (pilih yang manfaat tambahannya terbesar, perbarui keadaan). Pastikan skor mengukur manfaat tambahan, bukan manfaat total.
+
+---
+
+## 25. Popup SPPG menampilkan sekolah yang dilayani dan area layanannya
+
+**Masalah / permintaan**
+Saat SPPG diklik, popup perlu menunjukkan area dan nama sekolah yang dilayani.
+
+**Perubahan**
+`src/app.js`, sesi baru `// ===== LAYANAN SPPG (AREA & SEKOLAH YANG DILAYANI) =====`:
+- `sekolahDilayani(f)`: sekolah yang dialokasikan ke titik SPPG itu (SPPG terdekat; konsisten dengan hitungan beban).
+- `teksSekolahDilayani(f)`: jumlah sekolah, estimasi siswa, dan nama sekolah per jenjang (SD/SMP/SMA) dalam kotak yang bisa digulir.
+- `gambarLayanan(f)` / `hapusLayanan()`: poligon cembung (convex hull) dari sekolah yang dilayani, diperlebar 150 m, ditambah lingkaran biru di tiap sekolah. Klik di luar SPPG menghapusnya; `clear()` juga menghapusnya saat ganti basemap.
+- Perbaikan bug: `kelompokSppg()` kini menyimpan `nos` (daftar No SPPG) dan fungsi `idxGrupFitur(f)` mencari titik SPPG lewat `No SPPG`.
+`Index.html`: popup dilebarkan (`max-width` 380 px).
+
+**Alasan**
+- Bug yang ditemukan saat pengujian: koordinat dari `queryRenderedFeatures` dibulatkan oleh MapLibre (kuantisasi tile), jadi tidak sama persis dengan koordinat di data. Pencocokan lewat koordinat gagal, sehingga bagian "Beban titik ini" (dari entri 23) ternyata tidak pernah muncul di popup. Properti fitur (`No SPPG`) tidak berubah, jadi dipakai sebagai kunci.
+- Area layanan memakai hull sekolah yang dilayani agar terlihat sebaran wilayahnya, bukan isochrone 10 menit (yang seluas sekitar 76 km² dan memuat ratusan sekolah).
+
+**Hasil**
+Diuji di browser (server statis sementara di port 5510 karena Live Server di 5500 sedang tidak aktif): klik SPPG Lamper Lor 2 menampilkan "Beban titik ini: 1.900 dari 3.000 (63%)", "Sekolah yang dilayani: 7 sekolah (~1.900 siswa)" beserta 3 SD, 3 SMP, 1 SMA berikut namanya, dan area biru muncul di peta. Console bersih (hanya 404 favicon).
+
+**Pelajaran**
+Jangan mencocokkan fitur peta dengan data asli lewat koordinat; pakai properti pengenal (id/nomor) yang tetap utuh. Dan uji setiap bagian popup, jangan hanya angka KPI.
