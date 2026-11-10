@@ -1,0 +1,303 @@
+{
+ "20329233": {
+  "lat": -7.0121405,
+  "lng": 110.4431831,
+  "sumber": "nominatim",
+  "akurasi": "nama_sekolah",
+  "jarak_km": 0.89
+ },
+ "20361966": {
+  "lat": -7.041593333333334,
+  "lng": 110.46929333333334,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "69971375": {
+  "lat": -7.0366051,
+  "lng": 110.3147989,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 0.47
+ },
+ "69977308": {
+  "lat": -7.0862166,
+  "lng": 110.3954571,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 0.43
+ },
+ "69983512": {
+  "lat": -7.060647992307693,
+  "lng": 110.46486501538462,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "69994076": {
+  "lat": -7.060647992307693,
+  "lng": 110.46486501538462,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "69994078": {
+  "lat": -7.039277,
+  "lng": 110.3000736,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 1.85
+ },
+ "69994080": {
+  "lat": -7.0272543,
+  "lng": 110.3817014,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 0.68
+ },
+ "70008989": {
+  "lat": -7.0626825,
+  "lng": 110.39642883333333,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "70009062": {
+  "lat": -7.0226,
+  "lng": 110.311,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "70009065": {
+  "lat": -7.0658511741889,
+  "lng": 110.47786309265139,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "70009368": {
+  "lat": -7.0568722,
+  "lng": 110.3575922,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 1.48
+ },
+ "70013689": {
+  "lat": -7.0226,
+  "lng": 110.311,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "70013830": {
+  "lat": -6.9771435,
+  "lng": 110.4691686,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 0.8
+ },
+ "70014206": {
+  "lat": -7.02905,
+  "lng": 110.45942500000001,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "70026064": {
+  "lat": -7.0226,
+  "lng": 110.311,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "70033172": {
+  "lat": -7.022882,
+  "lng": 110.2961324,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 1.59
+ },
+ "70033262": {
+  "lat": -6.9993162,
+  "lng": 110.3202918,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 0.16
+ },
+ "70033384": {
+  "lat": -7.088913944444445,
+  "lng": 110.37090515555556,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "70034470": {
+  "lat": -6.9748,
+  "lng": 110.4092,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "70034473": {
+  "lat": -7.05425062,
+  "lng": 110.30747378666668,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "70034778": {
+  "lat": -7.02905,
+  "lng": 110.45942500000001,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "70035520": {
+  "lat": -6.9657435,
+  "lng": 110.4495361,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 1.71
+ },
+ "70040114": {
+  "lat": -7.0357853,
+  "lng": 110.4278092,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 0.15
+ },
+ "70043185": {
+  "lat": -7.0537773,
+  "lng": 110.3250266,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 0.76
+ },
+ "70043321": {
+  "lat": -7.0077202,
+  "lng": 110.4822853,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 0.55
+ },
+ "70043688": {
+  "lat": -7.0304981,
+  "lng": 110.4589602,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 0.17
+ },
+ "70044943": {
+  "lat": -7.077866666666668,
+  "lng": 110.31599999999999,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "70045623": {
+  "lat": -7.0597608,
+  "lng": 110.3097369,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 2.13
+ },
+ "70048804": {
+  "lat": -6.9999387,
+  "lng": 110.4585782,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 1.47
+ },
+ "70049571": {
+  "lat": -6.994528571428572,
+  "lng": 110.44048571428571,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "70051055": {
+  "lat": -7.02905,
+  "lng": 110.45942500000001,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "70052605": {
+  "lat": -6.967750725000001,
+  "lng": 110.49232675833333,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "70053275": {
+  "lat": -7.0589057,
+  "lng": 110.4734118,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 0.96
+ },
+ "70054042": {
+  "lat": -7.0246412,
+  "lng": 110.4159103,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 0.29
+ },
+ "70054900": {
+  "lat": -7.0806125,
+  "lng": 110.3347279,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 0.35
+ },
+ "70055610": {
+  "lat": -7.032346004803625,
+  "lng": 110.33376059703724,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "70055803": {
+  "lat": -7.0473973,
+  "lng": 110.3537115,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 0.36
+ },
+ "70057868": {
+  "lat": -7.028433333333333,
+  "lng": 110.46766666666666,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "70058813": {
+  "lat": -7.00838888888889,
+  "lng": 110.466,
+  "sumber": "titik_tengah_kelurahan",
+  "akurasi": "kelurahan_perkiraan",
+  "jarak_km": 0
+ },
+ "70059225": {
+  "lat": -6.9970841,
+  "lng": 110.357512,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 0.41
+ },
+ "70063218": {
+  "lat": -7.0591172,
+  "lng": 110.4278753,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 0.28
+ },
+ "70064008": {
+  "lat": -7.0805146,
+  "lng": 110.3096169,
+  "sumber": "nominatim",
+  "akurasi": "jalan",
+  "jarak_km": 0.76
+ }
+}

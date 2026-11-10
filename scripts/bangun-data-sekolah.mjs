@@ -27,7 +27,8 @@ lama.forEach((f) => { const k = norm(f.properties.NAMA); if (!lamaPerNama.has(k)
 
 // ================= perbaikan koordinat: tanda lintang terbalik, di luar kotak kota, atau hilang (cadangan dari data lama lewat nama) =================
 const dalam = (lat, lng) => lat >= KOTAK.latMin && lat <= KOTAK.latMax && lng >= KOTAK.lngMin && lng <= KOTAK.lngMax;
-const laporan = { diperbaiki_tanda: 0, diselamatkan_dari_data_lama: 0, tanpa_koordinat: [], di_luar_kota: [] };
+const tambahan = fs.existsSync('data/sekolah_geocode_tambahan.json') ? JSON.parse(fs.readFileSync('data/sekolah_geocode_tambahan.json', 'utf8')) : {};
+const laporan = { diperbaiki_tanda: 0, diselamatkan_dari_data_lama: 0, dari_geocode_tambahan: 0, tanpa_koordinat: [], di_luar_kota: [] };
 const sekolah = resmi.filter((s) => JENJANG.includes(s.bentuk)).map((s) => {
   let { lat, lng } = s, sumber = 'resmi';
   if (lat != null && lng != null && !dalam(lat, lng) && dalam(-Math.abs(lat), lng)) { lat = -Math.abs(lat); laporan.diperbaiki_tanda++; sumber = 'resmi_tanda_diperbaiki'; }
@@ -36,6 +37,8 @@ const sekolah = resmi.filter((s) => JENJANG.includes(s.bentuk)).map((s) => {
     const cocok = (lamaPerNama.get(norm(s.nama)) || []).filter((f) => norm(f.properties.DESA) === norm(s.kelurahan));
     if (cocok.length === 1) { [lng, lat] = cocok[0].geometry.coordinates; sumber = 'data_lama_by_nama'; laporan.diselamatkan_dari_data_lama++; }
   }
+  // ================= memperbaiki sekolah tanpa koordinat menjadi memakai hasil geocoding tambahan (data/sekolah_geocode_tambahan.json) sebagai cadangan terakhir agar sekolah itu tetap muncul di peta dan beban SPPG =================
+  if ((lat == null || lng == null) && tambahan[s.npsn] && tambahan[s.npsn].lat != null) { lat = tambahan[s.npsn].lat; lng = tambahan[s.npsn].lng; sumber = `geocode_${tambahan[s.npsn].akurasi}`; laporan.dari_geocode_tambahan++; }
   if (lat == null || lng == null) { laporan.tanpa_koordinat.push(`${s.bentuk} ${s.nama} (${kecNorm(s.kecamatan)})`); sumber = 'tanpa'; }
   return { ...s, kec: kecNorm(s.kecamatan), st: statusNorm(s.status), lat, lng, koordinat_sumber: sumber };
 });

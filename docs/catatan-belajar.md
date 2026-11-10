@@ -833,3 +833,24 @@ Diverifikasi: murid yang dialokasikan = total BPS untuk ketujuh jenjang (SD 124.
 
 **Pelajaran**
 Memperbarui data tidak selesai saat berkas data dibuat; ia selesai saat aplikasi benar-benar memakainya dan angkanya terbukti berubah. Jangan hanya melaporkan "data sudah masuk".
+
+---
+
+## 33. Geocoding 38 sekolah tanpa koordinat; semua 1.042 sekolah terpetakan
+
+**Masalah**
+38 dari 1.042 sekolah resmi (sekitar 3,6%) tidak punya koordinat di data Kemendikdasmen, sehingga tidak muncul di peta dan muridnya tidak dihitung dalam beban SPPG.
+
+**Perubahan**
+- `scripts/geocode-sekolah-tanpa-koordinat.mjs`: mencari koordinat sekolah tanpa Lintang/Bujur lewat Nominatim (nama sekolah, lalu nama jalan dari alamat), memeriksa hasil terhadap titik tengah sekolah lain di kelurahan yang sama (maks 2,5 km), dan memakai titik tengah kelurahan jika tidak ditemukan. Keluaran: `data/sekolah_geocode_tambahan.json`.
+- `scripts/bangun-data-sekolah.mjs`: memakai hasil itu sebagai cadangan terakhir (`koordinat_sumber` = `geocode_nama_sekolah`, `geocode_jalan`, atau `geocode_kelurahan_perkiraan`); `data/sekolah.geojson` dibangun ulang.
+
+**Alasan**
+Sekolah yang tidak terpetakan membuat permintaan terhitung terlalu rendah. Titik tengah kelurahan lebih baik daripada tidak ada, asalkan ditandai sebagai perkiraan.
+
+**Hasil**
+Dari 43 sekolah yang diproses: 23 ditemukan lewat Nominatim (1 nama sekolah, 22 jalan; selisih median 0,68 km dari titik tengah kelurahan, maksimum 2,13 km) dan 20 memakai titik tengah kelurahan (perkiraan). 0 gagal. 38 di antaranya memang tidak punya koordinat resmi dan kini terpetakan. Sekarang 1.042 dari 1.042 sekolah ada di peta dan murid yang dialokasikan sama persis dengan total BPS (SD 124.968, MI 19.469, SMP 64.306, MTs 9.298, SMA 30.742, SMK 36.100, MA 6.842). Dampak di aplikasi: utilisasi kota 79% (292.425 dari 369.000), SPPG di atas kapasitas 41 dari 113, kelebihan 52.372 siswa, cakupan 10 menit 99,2% (1.030 dari 1.042; 12 sekolah belum terjangkau). Console bersih.
+**Keterbatasan:** 20 sekolah masih berupa titik tengah kelurahan; dua sekolah yang mendapat bagian murid 0 dari pembagian BPS memakai nilai cadangan (selisih 700 siswa dari total BPS).
+
+**Pelajaran**
+Selalu catat tingkat kepastian tiap koordinat (resmi, jalan, kelurahan) agar pengguna tahu mana yang bisa dipercaya penuh.
