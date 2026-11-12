@@ -8,7 +8,10 @@
 import fs from 'node:fs';
 
 // ================= pengaturan: alamat direktori, jumlah halaman, dan jeda sopan antar permintaan =================
-const BASE = 'https://infosppg.id/direktori-sppg/jawa-tengah/kota-semarang';
+// ================= memperbaiki alamat tetap Kota Semarang menjadi bisa memilih direktori Kabupaten Semarang lewat opsi --kab (SPPG Ungaran dan sekitarnya tercatat di sana), dengan berkas keluaran terpisah =================
+const KAB = process.argv.includes('--kab');
+const BASE = KAB ? 'https://infosppg.id/direktori-sppg/jawa-tengah/semarang' : 'https://infosppg.id/direktori-sppg/jawa-tengah/kota-semarang';
+const KELUARAN = KAB ? 'data/SPPG_alamat_kab.json' : 'data/SPPG_alamat.json';
 const USER_AGENT = 'sppg-latihan-alamat/1.0';
 const JEDA_MS = 1500;
 const tidur = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -39,6 +42,6 @@ for (let n = 1; n <= 30; n++) {
 }
 
 // ================= penulisan hasil dan pemeriksaan sederhana (ID kosong, alamat kosong, ID ganda) =================
-fs.writeFileSync('data/SPPG_alamat.json', JSON.stringify(semua, null, 1));
+fs.writeFileSync(KELUARAN, JSON.stringify(semua, null, 1));
 const idGanda = semua.length - new Set(semua.map((s) => s.id)).size;
 console.log(`Selesai: ${semua.length} SPPG | tanpa ID: ${semua.filter((s) => !s.id).length} | tanpa alamat: ${semua.filter((s) => !s.alamat).length} | ID ganda: ${idGanda}`);

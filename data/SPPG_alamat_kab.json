@@ -1,0 +1,860 @@
+[
+ {
+  "id": "318",
+  "nama": "SPPG Semarang Ungaran Barat Bandarjo",
+  "alamat": "Jalan Marwa 2, Perum Griya Sakinah, RT 012/RW 006, Desa Bandarjo, Kecamatan Ungaran Barat, Kabupaten Semarang, Provinsi Jawa Tengah",
+  "halaman": 1
+ },
+ {
+  "id": "643",
+  "nama": "SPPG Semarang Ungaran Timur Kalongan 2",
+  "alamat": "Kajangan Rt 03 Rw 02 Desa Kalongan, Kec. Ungaran Timur, Kab. Semarang, Jawa Tengah",
+  "halaman": 1
+ },
+ {
+  "id": "893",
+  "nama": "SPPG Semarang Ambarawa Ngampin",
+  "alamat": "Jl. Mangga Raya, Ngamin Kulon, Ngampin, Kecamatan Ambarawa, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 1
+ },
+ {
+  "id": "929",
+  "nama": "SPPG Semarang Tengaran Tengaran",
+  "alamat": "Dusun Kaliwaru Rt 27 Rw 005, Kecamatan Tengaran, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 1
+ },
+ {
+  "id": "1077",
+  "nama": "SPPG Semarang Suruh Jatirejo",
+  "alamat": "Dusun Klewonan Rt. 03 / Rw. 03, Jatirejo, Suruh, Kab. Semarang, Jawa Tengah",
+  "halaman": 1
+ },
+ {
+  "id": "1166",
+  "nama": "SPPG Semarang Kaliwungu Kaliwungu",
+  "alamat": "Dusun Canggal Rt 03 Rw 17 Desa Kaliwungu, Kecamatan Kaliwungu, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 1
+ },
+ {
+  "id": "1336",
+  "nama": "SPPG Semarang Getasan Sumogawe 3",
+  "alamat": "Jl. Pringapus, Kampung Pringapus, Desa Sumogawe, Kecamatan Getasan, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 1
+ },
+ {
+  "id": "1817",
+  "nama": "SPPG Semarang Pabelan Padaan",
+  "alamat": "Ngasinan, Padaan, Kecamatan Pabelan, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 1
+ },
+ {
+  "id": "1974",
+  "nama": "SPPG Semarang Ambarawa Pojoksari",
+  "alamat": "Gang Dahlia No.2, Rt.06/Rw.01, Dempel, Pojoksari, Kecamatan Ambarawa, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 1
+ },
+ {
+  "id": "2275",
+  "nama": "SPPG Semarang Suruh Reksosari",
+  "alamat": "Dusun Karangsalam RT 007/ RW 002",
+  "halaman": 1
+ },
+ {
+  "id": "2289",
+  "nama": "SPPG Semarang Suruh Krandon Lor",
+  "alamat": "Tuksongo Rt 005 Rw 002, Krandon Lor, Kec. Suruh, Kab. Semarang, Jawa Tengah",
+  "halaman": 1
+ },
+ {
+  "id": "2341",
+  "nama": "SPPG Semarang Bringin Bringin 2",
+  "alamat": "Jl. Salatiga, Karanglo, Bringin, Kec. Bringin, Kab. Semarang, Jawa Tengah",
+  "halaman": 1
+ },
+ {
+  "id": "2405",
+  "nama": "SPPG Semarang Ungaran Timur Sidomulyo",
+  "alamat": "Jl. MT. Hariyono, RT 06 RW 02, Sidosari, Sidomulyo, Kecamatan Ungaran Timur Kabupaten Semarang, Jawa Tengah",
+  "halaman": 1
+ },
+ {
+  "id": "2737",
+  "nama": "SPPG Semarang Bawen Kandangan 2",
+  "alamat": "Dusun Pancuran, Rt 3 Rw 2, Desa Kandangan, Kec. Bawen, Kab. Semarang, Jawa Tengah",
+  "halaman": 1
+ },
+ {
+  "id": "2981",
+  "nama": "SPPG Semarang Suruh Plumbon 2",
+  "alamat": "Dusun Kemiri, Plumbon, Kec. Suruh, Kab. Semarang, Jawa Tengah",
+  "halaman": 1
+ },
+ {
+  "id": "3169",
+  "nama": "SPPG Semarang Bandungan Pakopen",
+  "alamat": "Jl. Mayor Soeyoto No.KM. 6, Coblong, Pakopen, Bandungan, Kabupaten Semarang, Jawa Tengah 50661",
+  "halaman": 1
+ },
+ {
+  "id": "3200",
+  "nama": "SPPG Semarang Susukan Gentan",
+  "alamat": "Desa Gentan, Kecamatan Susukan, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 1
+ },
+ {
+  "id": "3291",
+  "nama": "SPPG Semarang Suruh Plumbon",
+  "alamat": "Jl. Raya Suruh Salatiga Km. 2 Dusun Plumbon, Desa Plumbon, Kecamatan Suruh, Kabupaten Semarang, Provinsi Jawa Tengah",
+  "halaman": 1
+ },
+ {
+  "id": "3357",
+  "nama": "SPPG Semarang Pabelan Pabelan",
+  "alamat": "Jl. Takan Kidul, Pabelan, Kec. Pabelan, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 1
+ },
+ {
+  "id": "3374",
+  "nama": "SPPG Semarang Tengaran Patemon",
+  "alamat": "Jl. Tengaran Getasan Rt 1 Rw 3 Dusun Patemon, Desa Patemon, Kec. Tengaran, Kab. Semarang, Jawa Tengah",
+  "halaman": 1
+ },
+ {
+  "id": "3512",
+  "nama": "SPPG Semarang Ungaran Barat Genuk 2",
+  "alamat": "Jl. Slamet Riyadi No 18A, Kel. Genuk, Kec. Ungaran Barat, Kab. Semarang, Jawa Tengah",
+  "halaman": 2
+ },
+ {
+  "id": "3617",
+  "nama": "SPPG Semarang Banyubiru Kebondowo",
+  "alamat": "Jl. Wijaya Kusuma, Rt. 01 Rw. 01 Ds.Kebondowo Kec. Banyubiru Kab. Semarang, Provinsi Jawa Tengah",
+  "halaman": 2
+ },
+ {
+  "id": "4173",
+  "nama": "SPPG Semarang Pabelan Jembrak",
+  "alamat": "Dusun Godekan Rt/Rw 02/01, Kelurahan Jembrak, Kecamatan Pabelan, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 2
+ },
+ {
+  "id": "4284",
+  "nama": "SPPG Semarang Pringapus Pringapus 3",
+  "alamat": "Jl. Raya Karangjati, Pringapus, Kec. Pringapus, Kab. Semarang, Jawa Tengah",
+  "halaman": 2
+ },
+ {
+  "id": "5026",
+  "nama": "SPPG Semarang Tuntang Lopait",
+  "alamat": "Jalan Fatmawati RT 11 RW 01, Dusun Lopait, Desa Lopait, Kecamatan Tuntang, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 2
+ },
+ {
+  "id": "5087",
+  "nama": "SPPG Semarang Bergas Wringin Putih",
+  "alamat": "Ngobo, Kelurahan Wringin Putih, Kecamatan Bergas,Kabupaten Semarang, Jawa Tengah",
+  "halaman": 2
+ },
+ {
+  "id": "5273",
+  "nama": "SPPG Semarang Suruh Suruh 3",
+  "alamat": "Dusun Gundi Rt 11 Rw 08 Desa Suruh, Kec. Suruh, Kab. Semarang, Jawa Tengah",
+  "halaman": 2
+ },
+ {
+  "id": "5844",
+  "nama": "SPPG Semarang Tengaran Cukil",
+  "alamat": "Dusun Cukil Rt 003 Rw 001, Cukil, Kec. Tengaran, Kab. Semarang, Jawa Tengah",
+  "halaman": 2
+ },
+ {
+  "id": "5906",
+  "nama": "SPPG Semarang Suruh Suruh 1",
+  "alamat": "Gundi, Suruh, Kecamatan Suruh, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 2
+ },
+ {
+  "id": "6116",
+  "nama": "SPPG Semarang Bergas Bergas Kidul 2",
+  "alamat": "Dukuh Kebon Kliwon Rt. 003 Rt.005 Kecamatan Bergas, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 2
+ },
+ {
+  "id": "6262",
+  "nama": "SPPG Semarang Kaliwungu Kaliwungu 4",
+  "alamat": "Dusun Kaliwungu, Rt 01 Rw 01, Desa Kaliwungu, Kec. Kaliwungu, Kab. Semarang, Jawa Tengah",
+  "halaman": 2
+ },
+ {
+  "id": "6420",
+  "nama": "SPPG Semarang Ungaran Barat Ungaran",
+  "alamat": "Jl. Tawes V No 8 Sebantengan, Ungaran, Ungaran Barat, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 2
+ },
+ {
+  "id": "6651",
+  "nama": "SPPG Semarang Bandungan Jetis",
+  "alamat": "Jl. Ambarawa Bandungan Km 3 Jombor Rt 02 Rw 07, Jetis, Kec. Bandungan, Kab. Semarang, Jawa Tengah",
+  "halaman": 2
+ },
+ {
+  "id": "6680",
+  "nama": "SPPG Semarang Bawen Samban",
+  "alamat": "Jl. Batangan Sari Rt 01 Rw 03 Desa Samban Kecamatan Bawen Kabupaten Semarang Provinsi Jawa Tengah 50661",
+  "halaman": 2
+ },
+ {
+  "id": "6809",
+  "nama": "SPPG Semarang Ungaran Barat Candirejo",
+  "alamat": "Jl. Borobudur, Ngablak, Candirejo, Kec. Ungaran Barat, Kab. Semarang, Jawa Tengah",
+  "halaman": 2
+ },
+ {
+  "id": "6985",
+  "nama": "SPPG Semarang Pabelan Ujung-ujung",
+  "alamat": "RT 01 RW 02 Dusun Karang, Desa Ujung Unjung, Kecamatan Pabelan, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 2
+ },
+ {
+  "id": "7050",
+  "nama": "SPPG Semarang Pringapus Pringapus",
+  "alamat": "Ngabean, Pringapus, Kec. Pringapus, Kabupaten Semarang, Jawa Tengah 50214",
+  "halaman": 2
+ },
+ {
+  "id": "7288",
+  "nama": "SPPG Semarang Ungaran Timur Kalirejo 1",
+  "alamat": "Dukuh Kalipasir Rt 06 Rw 01 Kel. Kalirejo, Kecamatan Ungaran Timur, Kabupaten Semarang, Provinsi Jawa Tengah",
+  "halaman": 2
+ },
+ {
+  "id": "7333",
+  "nama": "SPPG Semarang Bringin Bringin 3",
+  "alamat": "Bringin, Kecamatan Bringin, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 2
+ },
+ {
+  "id": "7393",
+  "nama": "SPPG Semarang Tengaran Klero",
+  "alamat": "Kaligandu Rt 11 Rw 3, Tengaran, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 2
+ },
+ {
+  "id": "7673",
+  "nama": "SPPG Semarang Getasan Ngrawan",
+  "alamat": "Jl. Raya Banyubiru Kopeng, Tanon, Ngrawan, Kec. Getasan, Kab. Semarang, Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "7860",
+  "nama": "SPPG Semarang Bergas Wringin Putih 2",
+  "alamat": "Desa Wringinputih Rt 05 Rw 01, Kecamatan Bergas Kabupaten Semarang, Provinsi Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "7923",
+  "nama": "SPPG Semarang Bandungan Bandungan",
+  "alamat": "Jl. Sukorini No.12, Desa Bandungan, Kec. Bandungan, Kab. Semarang, Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "7972",
+  "nama": "SPPG Semarang Ambarawa Lodoyong 2",
+  "alamat": "Jl. Kartini Rt 07 Rw 08 Lodoyong, Kec. Ambarawa, Kab. Semarang, Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "8128",
+  "nama": "SPPG Semarang Banyubiru Kebondowo 2",
+  "alamat": "Dusun Kebondowo Rt 004 Rw 009, Kecamatan Banyubiru, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "8385",
+  "nama": "SPPG Semarang Susukan Kenteng",
+  "alamat": "Dusun Dalaman, Rt. 28 Rw. 07, Desa Kenteng, Kec. Susukan, Kab. Semarang, Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "8621",
+  "nama": "SPPG Semarang Ambarawa Tambakboyo 2",
+  "alamat": "Rt 004 Rw 001 Kel. Tambakboyo, Kec. Ambarawa, Kab. Semarang, Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "8923",
+  "nama": "SPPG Semarang Tengaran Sugihan 2",
+  "alamat": "Jl. Jend Sudirman Rt 014 Rw 03, Sugihan, Kecamatan Tengaran, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "9219",
+  "nama": "SPPG Semarang Tengaran Tengaran 2",
+  "alamat": "Jl. Raya Salatiga-Solo, Kaliwaru RT 24/05, Tengaran, Kecamatan Tengaran, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "9645",
+  "nama": "SPPG Semarang Bergas Bergas Kidul 3",
+  "alamat": "Sruwen, Rt 01 Rw 04, Bergas Kidul, Kec. Bergas, Kab. Semarang, Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "9966",
+  "nama": "SPPG Semarang Getasan Sumogawe",
+  "alamat": "Jl. Diponegoro 1, Pendingan, Sumogawe, Kecamatan Getasan, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "10147",
+  "nama": "SPPG Semarang Bancak Bancak",
+  "alamat": "Bancak, Kec. Bancak, Kab. Semarang, Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "10154",
+  "nama": "SPPG Semarang Banyubiru Ngrapah",
+  "alamat": "Gemenggeng, Ngrapah, Kecamatan Banyubiru, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "10235",
+  "nama": "SPPG Semarang Bancak Wonokerto 2",
+  "alamat": "Jl. Sultan Agung, Rt 01 Rw 01, Wonokerto, Kec. Bancak, Kab. Semarang, Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "10701",
+  "nama": "SPPG Semarang Bancak Boto",
+  "alamat": "Krasak, Rt02/Rw01 Boto, Kec. Bancak, Kab. Semarang, Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "10952",
+  "nama": "SPPG Semarang Bringin Rembes",
+  "alamat": "Rembes Rt 06 Rw 01, Kec. Bringin, Kab. Semarang, Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "11785",
+  "nama": "SPPG Semarang Pringapus Pringsari 2",
+  "alamat": "Jl. Griya Karangjati, Sambeng Sari, Pringsari, Kec. Pringapus, Kab. Semarang, Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "11871",
+  "nama": "SPPG Semarang Ungaran Barat Gogik",
+  "alamat": "Jl. Danau Toba Rt 05 Rw 01, Gogik, Kec. Ungaran Barat, Kab. Semarang, Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "12157",
+  "nama": "SPPG Semarang Sumowono Kemawi",
+  "alamat": "Desa Kemawi Rt 05/03 Kemawi, Kec. Sumowono, Kab. Semarang, Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "12177",
+  "nama": "SPPG Semarang Ungaran Barat Ungaran 3",
+  "alamat": "Jl. Kh. Hasyim Asyari, Kelurahan Ungaran, Kec. Ungaran Barat, Kab. Semarang, Jawa Tengah",
+  "halaman": 3
+ },
+ {
+  "id": "12672",
+  "nama": "SPPG Semarang Ungaran Barat Langensari",
+  "alamat": "Jl. Jendral Sudirman Langensari, Kecamatan Ungaran Barat, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 4
+ },
+ {
+  "id": "13123",
+  "nama": "SPPG Semarang Sumowono Sumowono",
+  "alamat": "Jl. Sukorini no 57, Dusun Sawah Gondang, RT 003/RW 001, Kec Sumowono, Kab. Semarang, Jawa Tengah",
+  "halaman": 4
+ },
+ {
+  "id": "13135",
+  "nama": "SPPG Semarang Tuntang Candirejo",
+  "alamat": "Candi kidul RT 002 RW 008,Kel. Candirejo, Kec. Tuntang. Kab. Semarang",
+  "halaman": 4
+ },
+ {
+  "id": "13290",
+  "nama": "SPPG Semarang Pabelan Sumberejo",
+  "alamat": "Dusun Ngasinan Rt 001 Rw 006, Sumberejo, Kec. Pabelan, Kab. Semarang, Jawa Tengah",
+  "halaman": 4
+ },
+ {
+  "id": "13881",
+  "nama": "SPPG Semarang Bergas Jatijajar",
+  "alamat": "Dusun Gege Rt 07 Rw 01 Desa Jatijajar Kecamatan Bergas Kabupaten Semarang Provinsi Jawa Tengah",
+  "halaman": 4
+ },
+ {
+  "id": "13924",
+  "nama": "SPPG Semarang Ungaran Barat Genuk",
+  "alamat": "Jl. Nusa Indah No.10, Ungaran, Genuk, Kec. Ungaran Barat, Kab. Semarang, Jawa Tengah",
+  "halaman": 4
+ },
+ {
+  "id": "13945",
+  "nama": "SPPG Semarang Ambarawa Tambakboyo",
+  "alamat": "Dusun Tambaksari Rt 02 Rw 02 Desa Tambak Boyo Kec. Ambarawa Kab. Semarang Jawa Tengah",
+  "halaman": 4
+ },
+ {
+  "id": "14273",
+  "nama": "SPPG Semarang Banyubiru Kebondowo 3",
+  "alamat": "Jl. Wijaya Kusuma, Kel. Kebondowo, Kec. Banyubiru, Kab. Semarang, Jawa Tengah",
+  "halaman": 4
+ },
+ {
+  "id": "14551",
+  "nama": "SPPG Semarang Pabelan Kadirejo",
+  "alamat": "Jl. Macanan-Gambir No.Km. 3, Area Sawah, Kadirejo, Kec. Pabelan, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 4
+ },
+ {
+  "id": "14712",
+  "nama": "SPPG Semarang Ambarawa Baran",
+  "alamat": "Lingkungan Baran Jurang Rt 003 Rw 006, Baran, Kec. Ambarawa, Kab. Semarang, Jawa Tengah",
+  "halaman": 4
+ },
+ {
+  "id": "14741",
+  "nama": "SPPG Semarang Getasan Kopeng",
+  "alamat": "Jl. Umbul Songo, Kopeng, Getasan, Kab. Semarang, Jawa Tengah",
+  "halaman": 4
+ },
+ {
+  "id": "15096",
+  "nama": "SPPG Semarang Bawen Harjosari",
+  "alamat": "Soekarno Hatta Km 32 Merakrejo, Desa Harjosari, Kecamatan Bawen, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 4
+ },
+ {
+  "id": "15167",
+  "nama": "SPPG Semarang Getasan Samirono",
+  "alamat": "JL TENGARAN GETASAN RT 4 RW 1, PONGANGAN, SAMIRONO, KECAMATAN GETASAN, KABUPATEN SEMARANG, JAWA TENGAH",
+  "halaman": 4
+ },
+ {
+  "id": "15203",
+  "nama": "SPPG Semarang Suruh Jatirejo 2",
+  "alamat": "Jatirejo, Kecamatan Suruh, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 4
+ },
+ {
+  "id": "15292",
+  "nama": "SPPG Semarang Ambarawa Lodoyong",
+  "alamat": "Jl. Brigjend Sudiarto, Pandean, Lodoyong, No:66, Kabupaten Semarang, Jawa Tengah 50611",
+  "halaman": 4
+ },
+ {
+  "id": "15765",
+  "nama": "SPPG Semarang Jambu Bedono 2",
+  "alamat": "Jl. Alternatif Bedono Bandungan Rt.08 Rw.01 Dusun Krajan, Desa Bedono, Kecamatan Jambu, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 4
+ },
+ {
+  "id": "15963",
+  "nama": "SPPG Semarang Susukan Kemetul",
+  "alamat": "Jl. Sipenggung, Kemetul, Kec. Susukan, Kab. Semarang, Jawa Tengah",
+  "halaman": 4
+ },
+ {
+  "id": "16147",
+  "nama": "SPPG Semarang Ungaran Timur Gedanganak",
+  "alamat": "Gedanganak, Kec. Ungaran Timur, Kab Semarang, Jawa Tengah",
+  "halaman": 4
+ },
+ {
+  "id": "16170",
+  "nama": "SPPG Semarang Susukan Susukan 1",
+  "alamat": "Jalan Suroto,Dusun Susukan, Desa Susukan, Kecamatan Susukan, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 4
+ },
+ {
+  "id": "16204",
+  "nama": "SPPG Semarang Tuntang Kesongo 2",
+  "alamat": "Dusun. Ngreco Rt. 001 Rw. 004, Kesongo, Tuntang, Kab. Semarang, Jawa Tengah",
+  "halaman": 4
+ },
+ {
+  "id": "16419",
+  "nama": "SPPG Semarang Tengaran Sugihan",
+  "alamat": "Dusun Gatak Rt035/Rw08, Sugihan, Kec. Tengaran, Kab. Semarang, Jawa Tengah",
+  "halaman": 5
+ },
+ {
+  "id": "16792",
+  "nama": "SPPG Semarang Bergas Bergas Lor 2",
+  "alamat": "Jl. Bandungan RT 01 RW 02 Pondansari, Bergaslor Kecamatan Bergas Kabupaten Semarang",
+  "halaman": 5
+ },
+ {
+  "id": "17007",
+  "nama": "SPPG Semarang Ungaran Timur Kalirejo 2",
+  "alamat": "Jl. Cemara Rt/Rw 05/02 Kalianyar Kel. Kalirejo, Kec. Ungaran Timur, Kab. Semarang, Jawa Tengah",
+  "halaman": 5
+ },
+ {
+  "id": "17450",
+  "nama": "SPPG Semarang Tuntang Delik",
+  "alamat": "Dsn. Ngesal Rt2 Rw6, Ds. Delik, Kec. Tuntang, Kab. Semarang, Provinsi Jawa Tengah",
+  "halaman": 5
+ },
+ {
+  "id": "17463",
+  "nama": "SPPG Semarang Pabelan Pabelan 2",
+  "alamat": "Pabelan, Rt 01 Rw 01, Kec. Pabelan, Kab. Semarang, Jawa Tengah",
+  "halaman": 5
+ },
+ {
+  "id": "17533",
+  "nama": "SPPG Semarang Ambarawa Ngampin 2",
+  "alamat": "Desa Ngampin, Kecamatan Ambarawa, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 5
+ },
+ {
+  "id": "17745",
+  "nama": "SPPG Semarang Bawen Doplang",
+  "alamat": "Dusun Getan, Desa Doplang, Kecamatan Bawen, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 5
+ },
+ {
+  "id": "18390",
+  "nama": "SPPG Semarang Ungaran Barat Ungaran 2",
+  "alamat": "Jl. Diponegoro No. 164 A, Ungaran, Kecamatan Ungaran Barat, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 5
+ },
+ {
+  "id": "18584",
+  "nama": "SPPG Semarang Tuntang Karanganyar",
+  "alamat": "Dusun Plakaran Rt 004 Rw 006, Karanganyar, Kec. Tuntang, Kab. Semarang, Jawa Tengah",
+  "halaman": 5
+ },
+ {
+  "id": "19030",
+  "nama": "SPPG Semarang Bandungan Candi",
+  "alamat": "Jurang Belik, Candi, Kecamatan Bandungan, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 5
+ },
+ {
+  "id": "19413",
+  "nama": "SPPG Semarang Jambu Bedono",
+  "alamat": "Wawar Lor Bedono, Kec. Jambu, Kab. Semarang, Jawa Tengah",
+  "halaman": 5
+ },
+ {
+  "id": "19552",
+  "nama": "SPPG Semarang Suruh Suruh 2",
+  "alamat": "Jl. Suruh Karanggede, Karangasem, Suruh, Kec. Suruh, Kab. Semarang, Jawa Tengah",
+  "halaman": 5
+ },
+ {
+  "id": "19734",
+  "nama": "SPPG Semarang Bandungan Banyukuning 2",
+  "alamat": "Jl. Hadiningratm, Banyukuning, Kec. Bandungan, Kab. Semarang, Jawa Tengah",
+  "halaman": 5
+ },
+ {
+  "id": "20145",
+  "nama": "SPPG Semarang Sumowono Mendongan 2",
+  "alamat": "Jl. Andika Jaya, Rt 002 Rw 001, Mendongan, Kec. Sumowono, Kab. Semarang, Jawa Tengah",
+  "halaman": 5
+ },
+ {
+  "id": "20300",
+  "nama": "SPPG Semarang Pabelan Segiri",
+  "alamat": "Jl. Singo Sentiko Dusun Karangsalam, Desa Segiri, Kecamatan Pabelan, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 5
+ },
+ {
+  "id": "20454",
+  "nama": "SPPG Semarang Ungaran Barat Candirejo 2",
+  "alamat": "Kel. Candirejo Rt 007 Rw 003, Kec. Ungaran Barat, Kab. Semarang, Jawa Tengah",
+  "halaman": 5
+ },
+ {
+  "id": "20781",
+  "nama": "SPPG Semarang Tengaran Duren",
+  "alamat": "Dukuh Rt 13 Rw 3 Desa Duren Kec.Tengaran Kab. Semarang, Jawa Tengah",
+  "halaman": 5
+ },
+ {
+  "id": "20833",
+  "nama": "SPPG Semarang Tengaran Bener 2",
+  "alamat": "Dusun Krajan 1 Rt 007 Rw 001, Bener, Kec. Tengaran, Kab. Semarang, Jawa Tengah",
+  "halaman": 5
+ },
+ {
+  "id": "21235",
+  "nama": "SPPG Semarang Ungaran Timur Sidomulyo 2",
+  "alamat": "Jl. Progo I No.24, Sidomulyo, Kec. Ungaran Timur, Kab. Semarang, Jawa Tengah",
+  "halaman": 5
+ },
+ {
+  "id": "22060",
+  "nama": "SPPG Semarang Jambu Jambu",
+  "alamat": "Jambu RT 001, RW 003, Desa Jambu, Kec. Jambu, Kab. Semarang, Jawa Tengah",
+  "halaman": 5
+ },
+ {
+  "id": "22231",
+  "nama": "SPPG Semarang Ambarawa Panjang",
+  "alamat": "Jl. Pemuda No 1, Panjang, Kecamatan Ambarawa, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 6
+ },
+ {
+  "id": "22299",
+  "nama": "SPPG Semarang Susukan Susukan 4",
+  "alamat": "Deresan Rt 02 Rw 04 Desa Susukan, Kec. Susukan, Kab. Semarang, Jawa Tengah",
+  "halaman": 6
+ },
+ {
+  "id": "22347",
+  "nama": "SPPG Semarang Bawen Asinan",
+  "alamat": "Desa Asinan RT 03/RW 01, Kecamatan Bawen, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 6
+ },
+ {
+  "id": "22385",
+  "nama": "SPPG Semarang Suruh Dersansari",
+  "alamat": "Dusun Dersan Kulon RT 13 RW 03, Dersansari, Kecamatan Suruh, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 6
+ },
+ {
+  "id": "22900",
+  "nama": "SPPG Semarang Pringapus Pringapus 2",
+  "alamat": "Jl. Syekh Basarudin, Rt 8 Rw 3, Balongsari, Pringapus, Kec. Pringapus, Kab. Semarang, Jawa Tengah",
+  "halaman": 6
+ },
+ {
+  "id": "23376",
+  "nama": "SPPG Semarang Ungaran Timur Leyangan",
+  "alamat": "Leyangan, Kec. Ungaran Timur, Kab. Semarang, Jawa Tengah",
+  "halaman": 6
+ },
+ {
+  "id": "23433",
+  "nama": "SPPG Semarang Bandungan Bandungan 2",
+  "alamat": "RT 01/RW 05, Dusun Celowok, Desa Kenteng, Kec. Bandungan, Kab. Semarang, Jawa Tengah",
+  "halaman": 6
+ },
+ {
+  "id": "23447",
+  "nama": "SPPG Semarang Tengaran Sruwen",
+  "alamat": "Jl. Raya Solo Semarang, Tegalrejo, Kec. Tengaran, Kab. Semarang",
+  "halaman": 6
+ },
+ {
+  "id": "24089",
+  "nama": "SPPG Semarang Sumowono Trayu",
+  "alamat": "Desa Trayu, Kec. Sumowono, Kab. Semarang, Jawa Tengah",
+  "halaman": 6
+ },
+ {
+  "id": "24638",
+  "nama": "SPPG Semarang Tengaran Karangduren",
+  "alamat": "Dusun Kaligintung Rt 006 Rw 002, Karangduren, Kec. Tengaran, Kab. Semarang, Jawa Tengah",
+  "halaman": 6
+ },
+ {
+  "id": "25032",
+  "nama": "SPPG Semarang Ungaran Timur Gedanganak 2",
+  "alamat": "Jl. Tentara Pelajar, Gedanganak, Kecamatan Ungaran Timur, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 6
+ },
+ {
+  "id": "25081",
+  "nama": "SPPG Semarang Jambu Jambu 2",
+  "alamat": "Dusun Krajan Rt01, Kelurahan, Jambu, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 6
+ },
+ {
+  "id": "25389",
+  "nama": "SPPG Semarang Bancak Wonokerto",
+  "alamat": "Dusun Galeh Wonokerto ,Wonokerto ,Bancak Kab Semarang ,Jawa tengah",
+  "halaman": 6
+ },
+ {
+  "id": "25532",
+  "nama": "SPPG Semarang Ungaran Barat Lerep 2",
+  "alamat": "Rt 008 Rw 002 Dusun Indrakila, Lerep, Kec. Ungaran Barat, Kab. Semarang, Jawa Tengah",
+  "halaman": 6
+ },
+ {
+  "id": "25628",
+  "nama": "SPPG Semarang Susukan Susukan 3",
+  "alamat": "Jl. Raya Sruwen Karanggede Km 7, Rt 06 Rw 05, Susukan, Kec. Susukan, Kab. Semarang, Jawa Tengah",
+  "halaman": 6
+ },
+ {
+  "id": "25640",
+  "nama": "SPPG Semarang Getasan Sumogawe 2",
+  "alamat": "Jl. Raya Kopeng No.8, Pendingan, Sumogawe, Kec. Getasan, Kab. Semarang, Jawa Tengah",
+  "halaman": 6
+ },
+ {
+  "id": "25833",
+  "nama": "SPPG Semarang Tuntang Karanganyar 2",
+  "alamat": "Jl. Raya Tuntang Beringin, Demunga, Karanganyar, Kec. Tuntang, Kab. Semarang, Jawa Tengah",
+  "halaman": 6
+ },
+ {
+  "id": "26434",
+  "nama": "SPPG Semarang Bergas Wujil",
+  "alamat": "Gang Mawar, Wujil, Kec. Bergas, Kab. Semarang, Jawa Tengah",
+  "halaman": 6
+ },
+ {
+  "id": "26442",
+  "nama": "SPPG Semarang Susukan Susukan 2",
+  "alamat": "Dapur Polos Rt.03 Rw.01, Kel. Susukan, Kec. Susukan, Kab. Semarang, Jawa Tengah",
+  "halaman": 6
+ },
+ {
+  "id": "26589",
+  "nama": "SPPG Semarang Kaliwungu Siwal",
+  "alamat": "Jl. Pager Siwal Desa Siwal Rt 003 Rw 003 Kecamatan Kaliwungu, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 6
+ },
+ {
+  "id": "26590",
+  "nama": "SPPG Semarang Tengaran Butuh",
+  "alamat": "Krajan Rt 010 Rw 005, Desa Butuh, Kec. Tengaran, Kab. Semarang, Jawa Tengah",
+  "halaman": 7
+ },
+ {
+  "id": "26668",
+  "nama": "SPPG Semarang Ungaran Timur Gedanganak 3",
+  "alamat": "Jl. Halmahera Raya Watubaban, Gedangganak, Kec. Ungaran Timur, Kab. Semarang, Jawa Tengah",
+  "halaman": 7
+ },
+ {
+  "id": "26938",
+  "nama": "SPPG Semarang Ungaran Barat Lerep",
+  "alamat": "Dsn. Tegalrejo, Ds Lerep, Kec. Ungaran Barat, Kab. Semarang",
+  "halaman": 7
+ },
+ {
+  "id": "27090",
+  "nama": "SPPG Semarang Tengaran Karangduren 4",
+  "alamat": "Kuncen Rt 15 Rw 03, Karangduren, Kec. Tengaran, Kab. Semarang, Jawa Tengah",
+  "halaman": 7
+ },
+ {
+  "id": "27290",
+  "nama": "SPPG Semarang Ungaran Timur Kalongan",
+  "alamat": "Jl. Ungaran Mranggen Kelurahan Kalongan Kecamatan Ungaran Timur, Kalongan, Ungaran Timur, Kab. Semarang, Jawa Tengah",
+  "halaman": 7
+ },
+ {
+  "id": "27313",
+  "nama": "SPPG Semarang Bergas Bergas Lor 1",
+  "alamat": "Jl. Tegalsari Sikunir II, Sikunir, Bergas Lor, Kecamatan Bergas, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 7
+ },
+ {
+  "id": "27454",
+  "nama": "SPPG Semarang Tuntang Gedangan",
+  "alamat": "Gedangan, Kec. Tuntang, Kab. Semarang, Jawa Tengah",
+  "halaman": 7
+ },
+ {
+  "id": "27544",
+  "nama": "SPPG Semarang Tuntang Kesongo",
+  "alamat": "Jalan Pelita, Dusun Krajan RT 05/RW 01, Desa Kesongo, Kec. Tuntang, Kab. Semarang, Jawa Tengah.",
+  "halaman": 7
+ },
+ {
+  "id": "27568",
+  "nama": "SPPG Semarang Pringapus Wonorejo",
+  "alamat": "Dusun Sambiroto Rt.04 Rw.05, Wonorejo, Kec. Pringapus, Kab. Semarang, Jawa Tengah",
+  "halaman": 7
+ },
+ {
+  "id": "27575",
+  "nama": "SPPG Semarang Bawen Bawen",
+  "alamat": "Jl. Palagan, Tegalrejo Rt. 09 Rw. 03, Bawen, Kec. Bawen, Kab. Semarang, Jawa Tengah",
+  "halaman": 7
+ },
+ {
+  "id": "27754",
+  "nama": "SPPG Semarang Bergas Bergas Kidul",
+  "alamat": "Dusun Krajan, Desa Bergas Kidul, Kec. Bergas, Kab. Semarang",
+  "halaman": 7
+ },
+ {
+  "id": "27867",
+  "nama": "SPPG Semarang Bandungan Kenteng",
+  "alamat": "Kenteng, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 7
+ },
+ {
+  "id": "27910",
+  "nama": "SPPG Semarang Kaliwungu Kaliwungu 2",
+  "alamat": "Kaliwungu, Kecamatan Kaliwungu, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 7
+ },
+ {
+  "id": "27987",
+  "nama": "SPPG Semarang Ungaran Timur Susukan",
+  "alamat": "Jl. Brigjend Katamso No. 100, Susukan, Ungaran Timur, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 7
+ },
+ {
+  "id": "28001",
+  "nama": "SPPG Semarang Ungaran Barat Ungaran 4",
+  "alamat": "Jl. Jalak IV Kuncen, Kel. Ungaran, Kec. Ungaran Barat, Kab. Semarang, Jawa Tengah",
+  "halaman": 7
+ },
+ {
+  "id": "28199",
+  "nama": "SPPG Semarang Bringin Bringin",
+  "alamat": "Jalan P. Diponegoro, Kelurahan Bringin, Kecamatan Bringin, Kabupaten Semarang, Provinsi Jawa Tengah",
+  "halaman": 7
+ },
+ {
+  "id": "28323",
+  "nama": "SPPG Semarang Ambarawa Kupang",
+  "alamat": "Desa Kupang Dukuh RT 04 RW 02 Kelurahan Kupang Kecamatan Ambarawa Kabupaten Semarang, Jawa Tengah",
+  "halaman": 7
+ },
+ {
+  "id": "28348",
+  "nama": "SPPG Semarang Tengaran Nyamat",
+  "alamat": "Jl. Ponoyoso No. 7 Dusun Krajan Rt02/Rw01, Nyamat, Kecamatan Tengaran, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 7
+ },
+ {
+  "id": "28786",
+  "nama": "SPPG Semarang Ungaran Barat Keji",
+  "alamat": "Dusun Suruhan Rt 01 Rw 02 Desa Keji, Keji, Kec. Ungaran Barat, Kab. Semarang, Jawa Tengah",
+  "halaman": 7
+ },
+ {
+  "id": "29503",
+  "nama": "SPPG Semarang Bawen Asinan 2",
+  "alamat": "Krajan, Asinan, Kecamatan Bawen, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 7
+ },
+ {
+  "id": "29634",
+  "nama": "SPPG Semarang Tengaran Bener",
+  "alamat": "Dusun Krajan II Bener, Rt.03/Rw.02, Krajan Dua, Bener, Kec. Tengaran, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 8
+ },
+ {
+  "id": "29883",
+  "nama": "SPPG Semarang Bawen Asinan 2",
+  "alamat": "Krajan, Asinan, Kecamatan Bawen, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 8
+ },
+ {
+  "id": "30016",
+  "nama": "SPPG Semarang Tengaran Bener",
+  "alamat": "Dusun Krajan II Bener, Rt.03/Rw.02, Krajan Dua, Bener, Kec. Tengaran, Kabupaten Semarang, Jawa Tengah",
+  "halaman": 8
+ }
+]

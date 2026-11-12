@@ -1011,3 +1011,25 @@ Diuji di browser, tampilan sesuai mockup Tema 3 dan Console bersih (hanya pering
 
 **Pelajaran**
 Memusatkan warna pada variabel membuat pergantian tema cukup satu tempat; warna yang ditulis langsung di kode JavaScript tetap harus disamakan secara terpisah.
+
+---
+
+## 41. Memperbaiki titik SPPG lewat nama jalan di OpenStreetMap
+
+**Permintaan**
+Sebanyak 31 SPPG masih memakai titik pusat kelurahan, sehingga posisinya kurang tepat untuk isochrone dan alokasi.
+
+**Perubahan**
+Skrip baru `scripts/geocode-sppg-overpass.mjs` mencari ruas jalan atau nama tempat dari alamat lewat Overpass API (kata kunci dari nama jalan, nomor rumah, kata cadangan), lalu mengambil titik pada ruas itu yang terdekat dengan titik kelurahan. `scripts/ambil-alamat-sppg.mjs` kini ikut mengambil alamat Kabupaten Semarang (`data/SPPG_alamat_kab.json`, untuk SPPG Ungaran). Hasil: `data/SPPG_geocoded.geojson` dan laporan `data/SPPG_overpass_laporan.csv`.
+
+**Alasan**
+1. Nominatim tidak menemukan banyak jalan (ejaan berbeda, gang, perumahan), jadi dipakai pencocokan kata kunci yang longgar.
+2. Server Overpass sering penuh, jadi permintaan diulang bertahap (8, 16, 32, 60 detik) dan memakai dua server.
+3. Hasil kosong akibat "runtime error" atau `fetch failed` bukan berarti alamat tidak ada, jadi tidak dihitung sebagai hasil.
+
+**Hasil**
+Tiga putaran: 12 dari 31 SPPG mendapat titik lebih akurat (8 ruas jalan, 4 tempat). 19 SPPG tetap di titik kelurahan karena gagal jaringan atau tidak ditemukan; ini dicatat sebagai batasan data. Titik SPPG unik: 120.
+**Catatan:** koordinat 19 SPPG itu masih perkiraan tingkat kelurahan.
+
+**Pelajaran**
+Bedakan "tidak ditemukan" dari "gagal bertanya". Hasil kosong dari layanan luar harus diperiksa penyebabnya sebelum dipercaya.
