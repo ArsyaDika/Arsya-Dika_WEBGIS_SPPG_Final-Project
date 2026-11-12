@@ -1053,3 +1053,28 @@ Setelah titik SPPG diperbaiki (entri 41), isochrone dan matriks waktu tempuh har
 
 **Pelajaran**
 Data turunan (isochrone, matriks) harus dibangun ulang setiap kali data sumbernya (titik SPPG) berubah, dan kunci datanya (koordinat) perlu dicocokkan agar tidak tersisa data usang.
+
+---
+
+## 43. Langkah A: kandidat SPPG baru dinilai dengan waktu tempuh dari 150 calon lokasi
+
+**Permintaan**
+Kandidat lokasi SPPG baru masih dinilai dengan jarak garis lurus, padahal alokasi sekolah ke SPPG sudah memakai waktu tempuh dan kapasitas. Pengguna meminta penilaian kandidat diselaraskan (Langkah A).
+
+**Perubahan**
+1. `scripts/pilih-kandidat.mjs` (baru): memilih 150 calon lokasi dari titik sekolah ke `data/kandidat-lokasi.json`. Skor calon = kelebihan siswa dalam 2 km di atas kapasitas SPPG sekitar + 2 x siswa dalam 2 km yang waktu tempuh ke SPPG tercepatnya lebih dari 10 menit; jarak minimal 300 m ke SPPG dan 1 km antar calon.
+2. `scripts/fetch-matriks-kandidat.mjs` (baru): matriks waktu tempuh 150 calon x 1.042 sekolah dari OpenRouteService ke `data/waktu-kandidat.json` (45 permintaan, 156.300 rute, semuanya terhubung).
+3. `src/app.js`: `cariKandidat(K)` kini memakai `cariKandidatWaktu` (sekolah pindah ke calon hanya bila waktunya lebih cepat dan tidak lebih dari 30 menit, batas BGN; cakupan "belum tercakup" diukur dalam 10 menit, bukan radius 2 km). Versi garis lurus diganti nama `cariKandidatLurus` dan tetap dipakai sebagai cadangan bila `waktu-kandidat.json` tidak termuat. Teks alasan kandidat kini memuat rata-rata waktu tempuh yang dihemat sekolah yang diambil alih.
+
+**Alasan**
+1. Memilih 150 calon dahulu membuat matriks cukup 150 baris, bukan 1.042, dan hitungan di browser jauh lebih ringan (20 kandidat dalam sekitar 0,1 detik).
+2. Pemilihan calon tidak memakai kapasitas yang diketik pengguna (kapasitas acuan 3.000 hanya untuk mengurutkan); keputusan akhir tetap di aplikasi dengan kapasitas yang sedang dipakai. Calon berskor 0 diurutkan menurut kepadatan siswa agar tetap berguna bila kapasitas diturunkan.
+3. Cadangan dipertahankan agar aplikasi tetap berjalan bila berkas data tidak ada.
+
+**Hasil**
+Diuji di browser, Console bersih (hanya 404 `favicon.ico`). Kurva manfaat (kelebihan beban 95.627 siswa) berubah dari 80.627 / 65.627 / 38.879 untuk 5 / 10 / 20 lokasi (jarak garis lurus) menjadi 81.800 / 68.917 / 48.393 (waktu tempuh). Jalur cadangan diuji dengan menyembunyikan berkas data: angkanya sama dengan sebelum Langkah A.
+**Makna:** penilaian waktu tempuh lebih hati-hati; manfaat kandidat lebih kecil daripada perkiraan garis lurus. Selisih berasal dari dua hal sekaligus (waktu tempuh dan pembatasan ke 150 calon), tidak dipisahkan satu per satu.
+**Catatan:** 69 dari 150 calon berskor 0 pada kapasitas acuan 3.000; mereka hanya berguna bila kapasitas diturunkan.
+
+**Pelajaran**
+Ukuran yang dipakai untuk menilai usulan harus sama dengan ukuran yang dipakai untuk menghitung kondisi sekarang. Bila tidak, perbaikan yang tampak di peta belum tentu terjadi saat alokasi dihitung ulang.

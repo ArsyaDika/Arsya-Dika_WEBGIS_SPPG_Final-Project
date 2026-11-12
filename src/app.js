@@ -397,6 +397,7 @@ return [...m.values()];
 // ================= pembuatan alokasi tiap sekolah ke titik SPPG terdekat lalu hitung beban (jumlah siswa) tiap titik dan total kelebihan di atas kapasitas =================
 // ================= memperbaiki alokasi ke SPPG terdekat berdasarkan jarak garis lurus menjadi berdasarkan WAKTU TEMPUH berkendara (matriks ORS data/waktu-tempuh.json) agar sekolah dilayani SPPG yang benar-benar tercepat; jarak garis lurus hanya cadangan untuk pasangan yang tidak ada di matriks =================
 let matriksWaktu=null;   // {titik:["lng,lat"], npsn:[...], detik:[[...]]}
+let matriksKandidat=null;   // {kandidat:[npsn sekolah acuan], titik:["lng,lat"], npsn:[...sekolah], detik:[[...]]}: waktu tempuh 150 calon lokasi SPPG baru ke semua sekolah
 function indeksWaktu(grup){
 if(!matriksWaktu) return null;
 const baris=grup.map(g=>matriksWaktu.titik.indexOf(g.xy.join(',')));
@@ -471,6 +472,7 @@ const kap=nilaiKapasitas();
 const grup=kelompokSppg();
 // ================= memperbaiki hitungBeban tanpa waktu tempuh menjadi memuat matriks waktu tempuh sekali lalu memakainya untuk alokasi, ditambah alokasi berkapasitas dengan batas 30 menit (kriteria BGN) =================
 if(!matriksWaktu){try{const r=await fetch('./data/waktu-tempuh.json',{cache:'no-cache'});if(r.ok) matriksWaktu=await r.json();}catch{}}
+if(!matriksKandidat){try{const r=await fetch('./data/waktu-kandidat.json',{cache:'no-cache'});if(r.ok) matriksKandidat=await r.json();}catch{}}   // bila tidak ada, kandidat memakai cadangan jarak garis lurus
 const iw=indeksWaktu(grup);
 const beban=hitungBeban(grup,kap,iw);
 const kapasitasAlok=alokasiBerkapasitas(grup,kap,iw,1800);
@@ -863,8 +865,110 @@ paint:{
 let kandidatTerakhir=null;   // {daftar,sebelum,sesudah} hasil pencarian terakhir
 let candidatePopupBound=false;
 
-// ================= pembuatan pencarian kandidat: tiap putaran pilih satu lokasi sekolah yang paling banyak mengurangi kelebihan beban dan menjangkau sekolah yang belum tercakup 10 menit =================
+// ================= memperbaiki pencarian kandidat yang menilai dengan jarak garis lurus dari semua 1.042 sekolah menjadi memakai WAKTU TEMPUH dari 150 calon lokasi (data/waktu-kandidat.json) agar kandidat dinilai dengan ukuran yang sama dengan alokasi SPPG yang ada; versi garis lurus dipertahankan sebagai cadangan bila data waktu kandidat tidak termuat =================
 function cariKandidat(K){
+return matriksKandidat?cariKandidatWaktu(K):cariKandidatLurus(K);
+}
+
+// ================= pembuatan pencarian kandidat berbasis waktu tempuh: tiap putaran pilih satu calon yang paling banyak mengurangi kelebihan beban dan menjangkau sekolah yang belum tercakup 10 menit; sekolah pindah ke calon hanya bila waktu tempuhnya lebih cepat dan tidak lebih dari batas BGN 30 menit =================
+function cariKandidatWaktu(K){
+const {grup,kap,beban}=analisisDasar;
+const N=sekolahData.length;
+const siswa=sekolahData.map(s=>getSiswa(s));
+const idxSek=new Map(sekolahData.map((s,i)=>[String(s.properties.NPSN),i]));
+const kolom=new Map(matriksKandidat.npsn.map((n,j)=>[String(n),j]));
+const col=sekolahData.map(s=>kolom.get(String(s.properties.NPSN)));        // kolom matriks tiap sekolah (undefined bila tidak ada)
+const BATAS_DETIK=1800, DETIK_10_MENIT=600, JARAK_MIN_SPPG=300, JARAK_MIN_KANDIDAT=1000;   // detik / meter
+// calon yang sekolah acuannya ada di data dan tidak terlalu dekat dengan SPPG yang ada
+const calon=[];
+matriksKandidat.kandidat.forEach((npsn,i)=>{
+const h=idxSek.get(String(npsn));
+if(h==null) return;
+const xy=matriksKandidat.titik[i].split(',').map(Number);
+if(grup.some(g=>jarakM(xy,g.xy)<JARAK_MIN_SPPG)) return;
+calon.push({i,h,xy});
+});
+const g=beban.dekat.map(d=>d.idx);                                         // penugasan: indeks titik SPPG, atau indeks kandidat (>= grup.length)
+const tKini=beban.dekat.map(d=>d.t!=null?d.t:Infinity);                    // waktu tempuh tiap sekolah ke pemberi layanan saat ini
+const kapAll=grup.map(x=>x.n*kap);
+const muatan=beban.muatan.slice();
+const belum=new Set(sekolahTdkTercakup);                                   // sekolah di luar gabungan isochrone 10 menit
+const kelebihanAwal=beban.kelebihan;
+const belumAwal=[...belum].reduce((a,i)=>a+siswa[i],0);
+const dipilih=[];
+const terpakai=new Set();
+
+for(let r=0;r<K;r++){
+let best=null;
+for(const c of calon){
+if(terpakai.has(c.i)) continue;
+if(dipilih.some(p=>jarakM(c.xy,p.xy)<JARAK_MIN_KANDIDAT)) continue;        // terlalu dekat dengan kandidat lain
+const baris=matriksKandidat.detik[c.i];
+let muatC=0;
+const lepas=new Map();                                                     // titik asal -> siswa yang pindah ke kandidat
+for(let s=0;s<N;s++){
+const t=col[s]==null?null:baris[col[s]];
+if(t!=null&&t<=BATAS_DETIK&&t<tKini[s]){muatC+=siswa[s];lepas.set(g[s],(lepas.get(g[s])||0)+siswa[s]);}
+}
+let gain=0;                                                                // pengurangan kelebihan beban di titik asal
+lepas.forEach((v,idx)=>{gain+=Math.max(0,muatan[idx]-kapAll[idx])-Math.max(0,muatan[idx]-v-kapAll[idx]);});
+const exC=Math.max(0,muatC-kap);                                           // kelebihan baru jika kandidat sendiri melebihi kapasitas
+let cov=0;
+belum.forEach(s=>{const t=col[s]==null?null:baris[col[s]];if(t!=null&&t<=DETIK_10_MENIT) cov+=siswa[s];});   // siswa belum tercakup yang terjangkau dalam 10 menit
+const skor=gain-exC+cov;
+if(!best||skor>best.skor) best={c,skor,gain,cov,muatC,lepas};
+}
+if(!best||best.skor<=0) break;                                             // tidak ada lokasi yang masih memberi manfaat
+
+const c=best.c, baris=matriksKandidat.detik[c.i];
+const idxBaru=kapAll.length;
+kapAll.push(kap);muatan.push(best.muatC);
+// ================= pembuatan fakta pendukung alasan kandidat: rata-rata waktu yang dihemat sekolah yang diambil alih, utilisasi SPPG yang diringankan, rincian jenjang, dan kepadatan siswa vs kapasitas SPPG dalam radius 2 km =================
+const xy=c.xy;
+const dariSppg=[];
+best.lepas.forEach((v,idx)=>{
+const sebelum=muatan[idx]/kapAll[idx];
+muatan[idx]-=v;
+if(idx<grup.length) dariSppg.push({nama:grup[idx].nama[0],siswa:v,sebelum,sesudah:muatan[idx]/kapAll[idx]});
+});
+let nSek=0,hemat=0,siswaHemat=0;
+const perJ={};
+for(let s=0;s<N;s++){
+const t=col[s]==null?null:baris[col[s]];
+if(t!=null&&t<=BATAS_DETIK&&t<tKini[s]){
+if(Number.isFinite(tKini[s])){hemat+=(tKini[s]-t)*siswa[s];siswaHemat+=siswa[s];}
+g[s]=idxBaru;tKini[s]=t;nSek++;
+const jj=sekolahData[s].properties.jenjang;perJ[jj]=(perJ[jj]||0)+1;
+}
+}
+const jarakTerdekat=Math.min(...grup.map(x=>jarakM(xy,x.xy)),...dipilih.map(p=>jarakM(xy,p.xy)));
+let siswa2km=0;for(let s=0;s<N;s++){if(jarakM(xy,sekolahData[s].geometry.coordinates)<=2000) siswa2km+=siswa[s];}
+const dekat2=grup.filter(x=>jarakM(xy,x.xy)<=2000);
+const sppg2km=dekat2.reduce((a,x)=>a+x.n,0);
+const dicakup=[...belum].filter(s=>{const t=col[s]==null?null:baris[col[s]];return t!=null&&t<=DETIK_10_MENIT;});
+dicakup.forEach(s=>belum.delete(s));
+terpakai.add(c.i);
+const p=sekolahData[c.h].properties;
+dipilih.push({
+c:c.h,rank:r+1,xy,
+host:{nama:p.NAMA,jenjang:p.jenjang,kel:p.DESA,kec:p.KECAMATAN},
+gainBeban:best.gain,gainBelum:best.cov,sekolah:nSek,siswa:best.muatC,util:best.muatC/kap,
+dariSppg:dariSppg.sort((a,b)=>b.siswa-a.siswa).slice(0,3),
+fakta:{jarakTerdekat,perJ,siswa2km,sppg2km,kap2km:sppg2km*kap,nBelum:dicakup.length,kap,berbasisWaktu:true,hematRataDetik:siswaHemat?hemat/siswaHemat:null},
+sisaKelebihan:kapAll.reduce((a,k,i)=>a+Math.max(0,muatan[i]-k),0),
+sisaBelum:[...belum].reduce((a,i)=>a+siswa[i],0)
+});
+}
+const akhir=dipilih[dipilih.length-1];
+return {
+daftar:dipilih,
+sebelum:{kelebihan:kelebihanAwal,belum:belumAwal},
+sesudah:{kelebihan:akhir?akhir.sisaKelebihan:kelebihanAwal,belum:akhir?akhir.sisaBelum:belumAwal}
+};
+}
+
+// ================= pembuatan pencarian kandidat versi jarak garis lurus (cadangan): tiap putaran pilih satu lokasi sekolah yang paling banyak mengurangi kelebihan beban dan menjangkau sekolah yang belum tercakup 10 menit =================
+function cariKandidatLurus(K){
 const {grup,kap,beban}=analisisDasar;
 const N=sekolahData.length;
 const xy=sekolahData.map(s=>s.geometry.coordinates.slice(0,2));
@@ -950,8 +1054,9 @@ const j=JENJANG.filter(x=>f.perJ[x.k]).map(x=>`${x.k} ${f.perJ[x.k]}`).join(', '
 a.push(`Mengambil alih ${k.sekolah} sekolah (${j}) dengan ${fmt(k.siswa)} siswa, setara ${Math.round(k.util*100)}% dari kapasitas ${fmt(f.kap)}.`);
 a.push(`Dalam radius 2 km ada ${fmt(f.siswa2km)} siswa, sedangkan SPPG yang ada ${f.sppg2km?`${f.sppg2km} dengan kapasitas ${fmt(f.kap2km)} (permintaan ${Math.round(100*f.siswa2km/f.kap2km)}% dari kapasitas)`:'tidak ada'}.`);
 a.push(`Jarak ke SPPG terdekat ${(f.jarakTerdekat/1000).toFixed(1)} km (garis lurus), memenuhi syarat minimal 300 m.`);
-if(f.nBelum) a.push(`Menjangkau ${f.nBelum} sekolah (~${fmt(k.gainBelum)} siswa) yang berada di luar isochrone.`);
-a.push(`Dasar data: murid BPS 2025/2026 per sekolah, alokasi ke SPPG terdekat, kapasitas ${fmt(f.kap)} per SPPG.`);
+if(f.hematRataDetik!=null) a.push(`Sekolah yang diambil alih rata-rata menghemat ${(f.hematRataDetik/60).toFixed(1)} menit waktu tempuh dibanding pemberi layanan saat ini (dihitung per siswa).`);
+if(f.nBelum) a.push(`Menjangkau ${f.nBelum} sekolah (~${fmt(k.gainBelum)} siswa) yang berada di luar isochrone${f.berbasisWaktu?' 10 menit, kini terjangkau dalam 10 menit dari lokasi ini':''}.`);
+a.push(f.berbasisWaktu?`Dasar data: murid BPS 2025/2026 per sekolah, alokasi ke SPPG tercepat (waktu tempuh berkendara ORS, batas 30 menit), kapasitas ${fmt(f.kap)} per SPPG.`:`Dasar data: murid BPS 2025/2026 per sekolah, alokasi ke SPPG terdekat, kapasitas ${fmt(f.kap)} per SPPG.`);
 return a;
 }
 function teksKandidat(k){
