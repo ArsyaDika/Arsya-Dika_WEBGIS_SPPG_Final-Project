@@ -992,3 +992,22 @@ Tiga gambar dibuat dan diperiksa visual. Satu cacat teks palet pada tema gelap (
 
 **Pelajaran**
 Uji keterbacaan teks pada setiap latar warna; kontras mudah terlewat saat membuat varian tema.
+
+---
+
+## 40. Menerapkan Tema 3 (Malam Analitik) ke aplikasi
+
+**Permintaan**
+Pengguna memilih Tema 3 dari tiga usulan pada entri 39 dan meminta tema itu dipakai pada aplikasi.
+
+**Perubahan**
+`Index.html`: variabel warna (rel, laci, kartu KPI, dock, popup, kontrol) diganti ke palet Tema 3, dan legenda memakai warna jenjang serta SPPG yang baru. `src/app.js`: warna titik dan lapisan peta disesuaikan, dan basemap awal kini gelap.
+
+**Alasan**
+Warna status dipertahankan konsisten (hijau baik, kuning waspada, oranye bahaya) agar makna tidak berubah antar tema. Titik SPPG putih, SPPG berdekatan merah muda terang, halo beban berlebih oranye, kandidat merah muda, area cakupan hijau, sehingga tiap lapisan mudah dibedakan di atas basemap gelap.
+
+**Hasil**
+Diuji di browser, tampilan sesuai mockup Tema 3 dan Console bersih (hanya peringatan CDN Tailwind dan 404 `favicon.ico`, keduanya tidak berpengaruh).
+
+**Pelajaran**
+Memusatkan warna pada variabel membuat pergantian tema cukup satu tempat; warna yang ditulis langsung di kode JavaScript tetap harus disamakan secara terpisah.

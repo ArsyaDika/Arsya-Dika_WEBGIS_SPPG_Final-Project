@@ -16,43 +16,56 @@
 
 <style>
 /* ================= memperbaiki tata letak sidebar panjang menjadi rel ikon + laci kontrol + KPI melayang + dock grafik (Opsi 3) agar dashboard tidak memanjang ke bawah dan area bawah peta terisi ================= */
-html,body{margin:0;height:100%;overflow:hidden;}
+/* ================= pembuatan Tema 3 (Malam Analitik): satu set variabel warna untuk seluruh antarmuka agar tema mudah diganti ================= */
+:root{--rail:#070d19;--railTeks:#94a3b8;--primer:#38bdf8;--sekunder:#818cf8;--aksen:#fbbf24;--latar:#0b1220;--permukaan:#111c33;--teks:#e5edf9;--teks2:#94a3b8;--garis:#1f2d4d;--baik:#4ade80;--waspada:#fbbf24;--bahaya:#fb923c;--halo:#f97316;--kandidat:#f472b6;}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--latar);color:var(--teks);}
+.text-slate-500{color:var(--teks2)!important;}
+input,select{background:var(--latar)!important;color:var(--teks)!important;border-color:var(--garis)!important;}
+input.bg-slate-100{background:var(--latar)!important;}
+details summary{color:var(--primer)!important;}
+.maplibregl-popup-content{background:var(--permukaan)!important;color:var(--teks)!important;border:1px solid var(--garis);box-shadow:0 4px 14px rgba(0,0,0,.5)!important;}
+.maplibregl-popup-anchor-top .maplibregl-popup-tip,.maplibregl-popup-anchor-top-left .maplibregl-popup-tip,.maplibregl-popup-anchor-top-right .maplibregl-popup-tip{border-bottom-color:var(--permukaan)!important;}
+.maplibregl-popup-anchor-bottom .maplibregl-popup-tip,.maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip,.maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip{border-top-color:var(--permukaan)!important;}
+.maplibregl-popup-anchor-left .maplibregl-popup-tip{border-right-color:var(--permukaan)!important;}.maplibregl-popup-anchor-right .maplibregl-popup-tip{border-left-color:var(--permukaan)!important;}
+.maplibregl-popup-close-button{color:var(--teks2)!important;}
+.maplibregl-ctrl-attrib{background:rgba(17,28,51,.8)!important;color:var(--teks2)!important;}.maplibregl-ctrl-attrib a{color:var(--primer)!important;}
+hr{border-color:var(--garis);}
 #map{position:absolute;top:0;bottom:0;left:64px;right:0;}
 .maplibregl-popup{max-width:380px!important;}
-.panel{background:white;border-radius:16px;padding:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);}
-.btn{width:100%;padding:8px;margin-bottom:6px;border-radius:10px;background:linear-gradient(135deg,#6366f1,#22c55e);color:white;font-weight:600;}
+.panel{background:var(--permukaan);color:var(--teks);border:1px solid var(--garis);border-radius:16px;padding:12px;box-shadow:0 4px 12px rgba(0,0,0,0.3);}
+.btn{width:100%;padding:8px;margin-bottom:6px;border-radius:10px;background:linear-gradient(135deg,var(--primer),var(--sekunder));color:#0b1220;font-weight:700;}
 
 /* rel ikon di kiri */
-#rail{position:absolute;top:0;bottom:0;left:0;width:64px;background:#0f172a;z-index:30;display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:12px;}
-#rail button{width:52px;padding:6px 0;border-radius:10px;color:#cbd5e1;font-size:10px;text-align:center;background:transparent;}
+#rail{position:absolute;top:0;bottom:0;left:0;width:64px;background:var(--rail);z-index:30;display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:12px;}
+#rail button{width:52px;padding:6px 0;border-radius:10px;color:var(--railTeks);font-size:10px;text-align:center;background:transparent;}
 #rail button i{display:block;font-style:normal;font-size:20px;margin-bottom:1px;}
-#rail button.on{color:#fff;background:#334155;}
+#rail button.on{color:#0b1220;background:var(--primer);}
 /* laci kontrol di samping rel */
-#drawer{position:absolute;top:0;bottom:0;left:64px;width:380px;background:#f1f5f9;z-index:25;padding:12px;overflow-y:auto;box-shadow:2px 0 12px rgba(0,0,0,.2);display:none;}
+#drawer{position:absolute;top:0;bottom:0;left:64px;width:380px;background:var(--latar);color:var(--teks);z-index:25;padding:12px;overflow-y:auto;box-shadow:2px 0 12px rgba(0,0,0,.2);display:none;}
 #drawer.buka{display:block;}
 #drawer section{display:none;}#drawer section.aktif{display:block;}
 #drawer section .panel{margin-bottom:12px;}
 /* kartu KPI melayang di atas peta */
 #kpiStrip{position:absolute;top:12px;left:84px;z-index:20;display:grid;grid-template-columns:repeat(4,160px);gap:8px;transition:left .15s;}
 body.drawer-on #kpiStrip{left:464px;}
-.kpi{background:rgba(255,255,255,.96);border-radius:12px;padding:8px 11px;box-shadow:0 2px 8px rgba(0,0,0,.18);}
-.kpi small{display:block;color:#64748b;font-size:11px;}.kpi b{font-size:21px;}.kpi .ok{color:#15803d;}.kpi .bad{color:#b45309;}
+.kpi{background:var(--permukaan);color:var(--teks);border:1px solid var(--garis);border-radius:12px;padding:8px 11px;box-shadow:0 2px 8px rgba(0,0,0,.18);}
+.kpi small{display:block;color:var(--teks2);font-size:11px;}.kpi b{font-size:21px;}.kpi .ok{color:var(--baik);}.kpi .bad{color:var(--bahaya);}
 /* dock grafik di bawah peta */
-#dock{position:absolute;left:64px;right:0;bottom:0;height:238px;background:rgba(248,250,252,.97);box-shadow:0 -2px 10px rgba(0,0,0,.18);padding:10px 12px;display:grid;grid-template-columns:1.2fr 1fr 1fr 1.1fr;gap:10px;z-index:20;transition:left .15s;}
+#dock{position:absolute;left:64px;right:0;bottom:0;height:238px;background:var(--latar);border-top:1px solid var(--garis);box-shadow:0 -2px 10px rgba(0,0,0,.4);padding:10px 12px;display:grid;grid-template-columns:1.2fr 1fr 1fr 1.1fr;gap:10px;z-index:20;transition:left .15s;}
 body.drawer-on #dock{left:444px;}
 body.dock-off #dock,body.dock-off #kpiStrip{display:none;}
 body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-left{margin-bottom:240px;}
-.card{background:#fff;border-radius:12px;padding:10px 12px;box-shadow:0 1px 4px rgba(0,0,0,.1);overflow:hidden;}
-.card h4{margin:0 0 7px;font-size:12px;color:#334155;font-weight:700;}
-.row{display:flex;align-items:center;gap:6px;margin:4px 0;font-size:11px;}.row span.n{width:150px;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.trk{position:relative;flex:1;height:11px;}.trk i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:#22c55e;}
-.trk i.a{background:#eab308;}.trk i.r{background:#92400e;}.trk u{position:absolute;top:-3px;bottom:-3px;width:0;border-left:2px dashed #64748b;}
-.hist{display:flex;align-items:flex-end;gap:10px;height:96px;padding:0 6px;}.hist div{flex:1;border-radius:4px 4px 0 0;text-align:center;color:#fff;font-size:11px;padding-top:2px;min-height:14px;}
-.cat{font-size:11px;color:#64748b;margin-top:6px;}
+.card{background:var(--permukaan);color:var(--teks);border:1px solid var(--garis);border-radius:12px;padding:10px 12px;overflow:hidden;}
+.card h4{margin:0 0 7px;font-size:12px;color:var(--teks);font-weight:700;}
+.row{display:flex;align-items:center;gap:6px;margin:4px 0;font-size:11px;}.row span.n{width:150px;color:var(--teks2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.trk{position:relative;flex:1;height:11px;}.trk i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--baik);}
+.trk i.a{background:var(--waspada);}.trk i.r{background:var(--bahaya);}.trk u{position:absolute;top:-3px;bottom:-3px;width:0;border-left:2px dashed var(--teks2);}
+.hist{display:flex;align-items:flex-end;gap:10px;height:96px;padding:0 6px;}.hist div{flex:1;border-radius:4px 4px 0 0;text-align:center;color:#0b1220;font-weight:700;font-size:11px;padding-top:2px;min-height:14px;}
+.cat{font-size:11px;color:var(--teks2);margin-top:6px;}
 </style>
 </head>
 
-<body class="bg-slate-100 dock-on">
+<body class="dock-on">
 
 <!-- ================= pembuatan rel ikon kiri: tombol Dashboard (tampil/sembunyi KPI + dock) dan tombol laci Layer, Param, Kandidat, Data ================= -->
 <nav id="rail">
@@ -89,11 +102,11 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <div class="panel">
 <h3 class="font-bold">Legenda titik</h3>
 <ul class="text-sm">
-<li><span style="color:#3b82f6">●</span> SD &nbsp; <span style="color:#06b6d4">●</span> MI</li>
-<li><span style="color:#f59e0b">●</span> SMP &nbsp; <span style="color:#ea580c">●</span> MTs</li>
-<li><span style="color:#8b5cf6">●</span> SMA &nbsp; <span style="color:#14b8a6">●</span> SMK &nbsp; <span style="color:#a21caf">●</span> MA</li>
-<li>⚫ SPPG &nbsp; 🔴 SPPG berdekatan (lihat tab Param)</li>
-<li><span style="color:#0ea5e9">●</span> Biru: area layanan SPPG yang diklik</li>
+<li><span style="color:#60a5fa">●</span> SD &nbsp; <span style="color:#22d3ee">●</span> MI</li>
+<li><span style="color:#fbbf24">●</span> SMP &nbsp; <span style="color:#fb923c">●</span> MTs</li>
+<li><span style="color:#a78bfa">●</span> SMA &nbsp; <span style="color:#34d399">●</span> SMK &nbsp; <span style="color:#e879f9">●</span> MA</li>
+<li><span style="color:#f8fafc">●</span> SPPG &nbsp; <span style="color:#f87171">●</span> SPPG berdekatan (lihat tab Param)</li>
+<li><span style="color:#38bdf8">●</span> Biru: area layanan SPPG yang diklik</li>
 </ul>
 </div>
 </section>
@@ -112,8 +125,8 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <h3 class="font-bold">Legenda analisis</h3>
 <ul class="text-sm">
 <li><span style="color:#16a34a">▮</span> Area hijau: cakupan isochrone semua SPPG</li>
-<li><span style="color:#92400e">●</span> Halo coklat: SPPG melebihi kapasitas</li>
-<li><span style="color:#ec4899">●</span> Kandidat SPPG baru</li>
+<li><span style="color:#f97316">●</span> Halo coklat: SPPG melebihi kapasitas</li>
+<li><span style="color:#f472b6">●</span> Kandidat SPPG baru</li>
 <li>🟡 Heatmap sebaran siswa</li>
 <li>🟢 Isochrone satu SPPG / gabungan (Run)</li>
 </ul>

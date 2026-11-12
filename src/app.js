@@ -26,7 +26,7 @@ layers:[{id:'esri-satellite',type:'raster',source:'esri'}]
 
 const map=new maplibregl.Map({
 container:'map',
-style:styles.street,
+style:styles.dark,
 center:[110.42,-6.99],
 zoom:12
 });
@@ -34,13 +34,13 @@ zoom:12
 // ================= JENJANG =================
 // ================= pembuatan daftar jenjang (SD, MI, SMP, MTs, SMA, SMK, MA) dengan id layer dan warna, agar semua bagian kode (layer, popup, dashboard) memakai satu sumber dan mudah ditambah jenjang baru =================
 const JENJANG=[
-{k:'SD',id:'sd',warna:'#3b82f6'},
-{k:'MI',id:'mi',warna:'#06b6d4'},
-{k:'SMP',id:'smp',warna:'#f59e0b'},
-{k:'MTs',id:'mts',warna:'#ea580c'},
-{k:'SMA',id:'sma',warna:'#8b5cf6'},
-{k:'SMK',id:'smk',warna:'#14b8a6'},
-{k:'MA',id:'ma',warna:'#a21caf'}
+{k:'SD',id:'sd',warna:'#60a5fa'},
+{k:'MI',id:'mi',warna:'#22d3ee'},
+{k:'SMP',id:'smp',warna:'#fbbf24'},
+{k:'MTs',id:'mts',warna:'#fb923c'},
+{k:'SMA',id:'sma',warna:'#a78bfa'},
+{k:'SMK',id:'smk',warna:'#34d399'},
+{k:'MA',id:'ma',warna:'#e879f9'}
 ];
 
 let sekolahData=[], sppgData=[];
@@ -76,7 +76,7 @@ const fc={type:'FeatureCollection',features:sekolahData.filter(s=>s.properties.j
 if(fc.features.length) addLayer(j.id,fc,j.warna);
 });
 // ================= pembuatan warna SPPG berdasarkan properti dekat: merah jika berdekatan dengan SPPG lain, hitam jika tidak =================
-addLayer('sppg',sppg,['case',['==',['get','dekat'],1],'#ef4444','#000']);
+addLayer('sppg',sppg,['case',['==',['get','dekat'],1],'#f87171','#f8fafc']);
 
 bindPopup();
 
@@ -313,7 +313,7 @@ const rata=dijangkau.length?dijangkau.reduce((a,i)=>a+cnt[i],0)/dijangkau.length
 const luar=dilayani.filter(i=>!himpDij.has(i));
 const g=r?analisisDasar.grup[r.i]:null;
 wadah.innerHTML=`<p class="text-sm"><b>Dijangkau</b> dalam ${menit} menit: <b>${dijangkau.length}</b> sekolah &middot; ${fmt(jumlahSiswa(dijangkau))} siswa<br><span class="text-xs text-slate-500">Tidak eksklusif: sekolah yang sama juga dijangkau SPPG lain, jadi jangan dijumlahkan antar SPPG.</span></p>`
-+`<p class="text-sm"><b>Dilayani</b> (alokasi waktu tempuh, eksklusif): <b>${dilayani.length}</b> sekolah &middot; ${fmt(jumlahSiswa(dilayani))} siswa${luar.length?`<br><span class="text-xs" style="color:#b45309">${luar.length} di antaranya di luar isochrone ${menit} menit.</span>`:''}${g&&g.n>1?`<br><span class="text-xs text-slate-500">Titik ini berisi ${g.n} SPPG; daftar dilayani dibagi di antara mereka.</span>`:''}</p>`
++`<p class="text-sm"><b>Dilayani</b> (alokasi waktu tempuh, eksklusif): <b>${dilayani.length}</b> sekolah &middot; ${fmt(jumlahSiswa(dilayani))} siswa${luar.length?`<br><span class="text-xs" style="color:#fb923c">${luar.length} di antaranya di luar isochrone ${menit} menit.</span>`:''}${g&&g.n>1?`<br><span class="text-xs text-slate-500">Titik ini berisi ${g.n} SPPG; daftar dilayani dibagi di antara mereka.</span>`:''}</p>`
 +`<p class="text-sm"><b>Tumpang tindih</b>: ${dijangkau.length?Math.round(100*tumpang.length/dijangkau.length):0}% (${tumpang.length} sekolah) juga dijangkau SPPG lain; rata-rata ${rata.toFixed(1)} titik SPPG menjangkau tiap sekolah di area ini.</p>`;
 }
 // ringkasan untuk Run Global (gabungan semua SPPG): berapa sekolah dijangkau dan seberapa tumpang tindih
@@ -332,6 +332,9 @@ wadah.innerHTML=`<p class="text-sm"><b>Dijangkau</b> oleh minimal satu SPPG dala
 // ================= CHART =================
 // ================= memperbaiki drawChart yang tetap tiga label (SD, SMP, SMA) menjadi menerima label, jumlah sekolah, jumlah siswa, dan warna per jenjang agar semua jenjang tergambar =================
 function drawChart(label,jumlah,siswa,warna){
+// ================= pembuatan warna bawaan Chart.js untuk Tema 3 (Malam Analitik): teks abu terang dan garis kisi gelap agar terbaca di panel gelap =================
+Chart.defaults.color='#94a3b8';
+Chart.defaults.borderColor='#1f2d4d';
 
 if(chartSekolah) chartSekolah.destroy();
 if(chartSiswa) chartSiswa.destroy();
@@ -509,10 +512,10 @@ type:'circle',
 source:'beban',
 filter:['>',['get','util'],1],
 paint:{
-'circle-color':'#92400e',
+'circle-color':'#f97316',
 'circle-opacity':0.35,
 'circle-radius':['interpolate',['linear'],['get','util'],1,12,2.5,28],
-'circle-stroke-color':'#92400e',
+'circle-stroke-color':'#f97316',
 'circle-stroke-width':1.5
 }
 },map.getLayer('sppg-layer')?'sppg-layer':undefined);
@@ -636,13 +639,13 @@ const J=document.getElementById('dJ'+n),C=document.getElementById('dC'+n);
 if(J) J.innerHTML=judul;
 if(C) C.innerHTML=html;
 }
-const warnaUtil=(u)=>u>1?'#92400e':(u>0.7?'#eab308':'#22c55e');
+const warnaUtil=(u)=>u>1?'#fb923c':(u>0.7?'#fbbf24':'#4ade80');
 function barisBar(nama,nilai,maks,teks,warna,garis){
 const lebar=Math.max(1,Math.min(100,100*nilai/Math.max(1,maks)));
 return `<div class="row"><span class="n" title="${esc(nama)}">${esc(nama)}</span><div class="trk"><i style="width:${lebar}%;background:${warna}"></i>${garis!=null?`<u style="left:${Math.min(100,100*garis/Math.max(1,maks))}%"></u>`:''}</div><b>${teks}</b></div>`;
 }
 function barisInfo(k,v){
-return `<div class="row" style="justify-content:space-between;gap:10px"><span style="width:auto;color:#475569">${k}</span><b style="text-align:right">${v}</b></div>`;
+return `<div class="row" style="justify-content:space-between;gap:10px"><span style="width:auto;color:var(--teks2)">${k}</span><b style="text-align:right">${v}</b></div>`;
 }
 // jumlah sekolah dan siswa per jenjang dari daftar indeks sekolah
 function perJenjang(idxs){
@@ -689,7 +692,7 @@ setCard(1,'SPPG terpadat (garis putus = kapasitas 100%)',arr.map(a=>barisBar(a.n
 const u=grup.map((g,i)=>beban.muatan[i]/(g.n*kap));
 const b1=u.filter(x=>x<=0.5).length,b2=u.filter(x=>x>0.5&&x<=1).length,b3=u.filter(x=>x>1).length;
 const mb=Math.max(b1,b2,b3,1);
-setCard(2,'Sebaran utilisasi (titik SPPG)',`<div class="hist"><div style="height:${100*b1/mb}%;background:#22c55e">${b1}</div><div style="height:${100*b2/mb}%;background:#eab308">${b2}</div><div style="height:${100*b3/mb}%;background:#92400e">${b3}</div></div><div class="cat">&le;50% &nbsp; 50&ndash;100% &nbsp; &gt;100%</div>`);
+setCard(2,'Sebaran utilisasi (titik SPPG)',`<div class="hist"><div style="height:${100*b1/mb}%;background:#4ade80">${b1}</div><div style="height:${100*b2/mb}%;background:#fbbf24">${b2}</div><div style="height:${100*b3/mb}%;background:#fb923c">${b3}</div></div><div class="cat">&le;50% &nbsp; 50&ndash;100% &nbsp; &gt;100%</div>`);
 
 // kurva manfaat kandidat (dihitung tertunda agar tidak berat saat kapasitas diketik; dibatalkan jika pengguna sudah memilih titik)
 setCard(3,'Kurva manfaat kandidat','<div class="cat">Menghitung...</div>');
@@ -701,12 +704,12 @@ try{cariKandidat(20).daftar.forEach(d=>nilai.push(d.sisaKelebihan));}catch(e){co
 const mx=Math.max(1,nilai[0]),W=120,H=80;
 const pts=nilai.map((v,i)=>`${6+(W-12)*i/Math.max(1,nilai.length-1)},${8+(H-16)*(1-v/mx)}`).join(' ');
 const idx=(k)=>nilai[Math.min(k,nilai.length-1)];
-setCard(3,'Kurva manfaat kandidat',`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:96px"><polyline fill="none" stroke="#6366f1" stroke-width="2.5" points="${pts}"/></svg><div class="cat">${fmt(nilai[0])} &rarr; ${fmt(idx(5))} (5 lokasi) &rarr; ${fmt(idx(10))} (10) &rarr; ${fmt(nilai[nilai.length-1])} (${nilai.length-1})</div>`);
+setCard(3,'Kurva manfaat kandidat',`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:96px"><polyline fill="none" stroke="#38bdf8" stroke-width="2.5" points="${pts}"/></svg><div class="cat">${fmt(nilai[0])} &rarr; ${fmt(idx(5))} (5 lokasi) &rarr; ${fmt(idx(10))} (10) &rarr; ${fmt(nilai[nilai.length-1])} (${nilai.length-1})</div>`);
 },60);
 
 // kualitas data (ringkas)
 const semua=sppgSemuaData,dipakai=semua.filter(f=>f.properties.dipakai_analisis);
-const jalan=dipakai.filter(f=>f.properties.geo_akurasi==='jalan').length;
+const jalan=dipakai.filter(f=>['jalan','ruas_jalan','tempat'].includes(f.properties.geo_akurasi)).length;
 const asli=sekolahData.filter(s=>s.properties.sumber_siswa==='bps'||s.properties.siswa).length;
 setCard(4,'Kualitas data',barisInfo('SPPG dipakai / tercatat',`${dipakai.length} / ${semua.length}`)+barisInfo('Koordinat SPPG: jalan / kelurahan',`${jalan} / ${dipakai.length-jalan}`)+barisInfo('Titik SPPG unik',grup.length)+barisInfo('Siswa dari data asli/BPS',Math.round(100*asli/Math.max(1,sekolahData.length))+'%'));
 }
@@ -733,9 +736,9 @@ setCard(3,'Beban vs kapasitas',barisBar('Beban',muatan,Math.max(kapT,muatan),fmt
 setCard(4,'Catatan SPPG',barisInfo('Nama',esc(namaPendek(p['Nama SPPG'])))
 +barisInfo('Kelurahan / Kec.',`${esc(p['Desa/Kelurahan SPPG'])} / ${esc(p['Kecamatan SPPG'])}`)
 +(p.alamat?`<div class="cat" style="margin:2px 0">${esc(p.alamat)}</div>`:'')
-+barisInfo('Koordinat',p.geo_akurasi==='jalan'?'titik jalan (alamat)':'titik kelurahan (perkiraan)')
++barisInfo('Koordinat',p.geo_akurasi==='jalan'?'titik jalan (alamat)':(p.geo_akurasi==='ruas_jalan'?'ruas jalan dari nama jalan (perkiraan)':(p.geo_akurasi==='tempat'?'nama tempat/kawasan (perkiraan)':'titik kelurahan (perkiraan)')))
 +(g.n>1?barisInfo('SPPG di titik ini',g.n):'')
-+(p.dekat==1?`<div style="color:#dc2626;margin-top:4px">&#9888; ${esc(p.alasan)}</div>`:''));
++(p.dekat==1?`<div style="color:#f87171;margin-top:4px">&#9888; ${esc(p.alasan)}</div>`:''));
 }
 
 // ================= pembuatan tampilan sekolah terpilih: siswa, SPPG yang melayani, SPPG terdekat, dan status jangkauan 10 menit =================
@@ -759,8 +762,8 @@ setKpi(4,dk.t!=null?'Waktu ke SPPG':'Jarak ke SPPG',dk.t!=null?(dk.t/60).toFixed
 setCard(1,'Identitas sekolah',barisInfo('Nama',esc(p.NAMA||'-'))+barisInfo('Jenjang',esc(p.jenjang))+barisInfo('Kecamatan',esc(p.KECAMATAN||'-'))+barisInfo('Kelurahan',esc(p.DESA||'-'))+(p.ALAMAT?`<div class="cat" style="margin:2px 0">${esc(p.ALAMAT)}</div>`:'')+barisInfo('Siswa (BPS, dibagi rata)',fmt(siswa)));
 setCard(2,'SPPG yang melayani',barisInfo('SPPG',esc(namaPendek(g.nama[0])))+barisBar('Beban',muatan,Math.max(kapT,muatan),fmt(muatan),warnaUtil(u),kapT)+barisInfo('Kapasitas',fmt(kapT))+(g.n>1?barisInfo('SPPG di titik ini',g.n):''));
 const wMaks=Math.max(60,...terdekat.map(t=>t.t!=null?t.t:t.d/6));   // jarak/6 m/s sebagai perkiraan kasar jika tanpa waktu tempuh
-setCard(3,'SPPG tercepat (waktu tempuh)',terdekat.map(t=>barisBar(namaPendek(grup[t.k].nama[0]),t.t!=null?t.t:t.d/6,wMaks,t.t!=null?(t.t/60).toFixed(1)+' mnt':(t.d/1000).toFixed(1)+' km',t.t!=null&&t.t>600?'#b45309':(jenjang?jenjang.warna:'#6366f1'),600)).join('')+'<div class="cat">Garis putus = batas 10 menit.</div>');
-setCard(4,`Jangkauan ${waktuIso/60} menit`,barisInfo('Dijangkau titik SPPG',dijangkau)+(dk.t!=null&&dk.t>600?`<div style="color:#b45309;margin-top:4px">&#9888; SPPG pelayan berjarak ${(dk.t/60).toFixed(1)} menit: di luar isochrone 10 menit (masih dalam batas BGN 30 menit).</div>`:'')+(luar?'<div style="color:#b45309;margin-top:4px">&#9888; Di luar isochrone 10 menit dari semua SPPG.</div>':'<div class="cat" style="margin-top:4px">Berada di dalam isochrone 10 menit.</div>'));
+setCard(3,'SPPG tercepat (waktu tempuh)',terdekat.map(t=>barisBar(namaPendek(grup[t.k].nama[0]),t.t!=null?t.t:t.d/6,wMaks,t.t!=null?(t.t/60).toFixed(1)+' mnt':(t.d/1000).toFixed(1)+' km',t.t!=null&&t.t>600?'#fb923c':(jenjang?jenjang.warna:'#38bdf8'),600)).join('')+'<div class="cat">Garis putus = batas 10 menit.</div>');
+setCard(4,`Jangkauan ${waktuIso/60} menit`,barisInfo('Dijangkau titik SPPG',dijangkau)+(dk.t!=null&&dk.t>600?`<div style="color:#fb923c;margin-top:4px">&#9888; SPPG pelayan berjarak ${(dk.t/60).toFixed(1)} menit: di luar isochrone 10 menit (masih dalam batas BGN 30 menit).</div>`:'')+(luar?'<div style="color:#fb923c;margin-top:4px">&#9888; Di luar isochrone 10 menit dari semua SPPG.</div>':'<div class="cat" style="margin-top:4px">Berada di dalam isochrone 10 menit.</div>'));
 }
 
 // ================= pembuatan rincian kualitas data dan metode di tab Data (selalu diperbarui) =================
@@ -769,7 +772,7 @@ const {grup,kap,tot}=analisisDasar;
 const el=document.getElementById('dataKualitas');
 if(!el) return;
 const semua=sppgSemuaData,dipakai=semua.filter(f=>f.properties.dipakai_analisis);
-const jalan=dipakai.filter(f=>f.properties.geo_akurasi==='jalan').length;
+const jalan=dipakai.filter(f=>['jalan','ruas_jalan','tempat'].includes(f.properties.geo_akurasi)).length;
 const asli=sekolahData.filter(s=>s.properties.sumber_siswa==='bps'||s.properties.siswa).length;
 const per=tot?Object.keys(tot).map(j=>`${j} ${tot[j].n}`).join(' / '):'-';
 el.innerHTML=barisInfo('SPPG tercatat / dipakai analisis',`${semua.length} / ${dipakai.length}`)
@@ -809,8 +812,8 @@ try{area=turf.convex(kumpulan);}catch{}
 // kurang dari 3 titik tidak membentuk poligon: pakai lingkaran kecil di sekitar titik pusatnya
 area=(area&&area.geometry.type==='Polygon')?turf.buffer(area,0.15,{units:'kilometers'}):turf.buffer(turf.centroid(kumpulan),0.4,{units:'kilometers'});
 map.addSource('layanan',{type:'geojson',data:turf.featureCollection([area,...pts])});
-map.addLayer({id:'layanan-layer',type:'fill',source:'layanan',filter:['==',['geometry-type'],'Polygon'],paint:{'fill-color':'#0ea5e9','fill-opacity':0.2,'fill-outline-color':'#0369a1'}},map.getLayer('sd-layer')?'sd-layer':undefined);
-map.addLayer({id:'layanan-sekolah-layer',type:'circle',source:'layanan',filter:['==',['geometry-type'],'Point'],paint:{'circle-color':'rgba(0,0,0,0)','circle-radius':9,'circle-stroke-color':'#0369a1','circle-stroke-width':2}});
+map.addLayer({id:'layanan-layer',type:'fill',source:'layanan',filter:['==',['geometry-type'],'Polygon'],paint:{'fill-color':'#38bdf8','fill-opacity':0.2,'fill-outline-color':'#7dd3fc'}},map.getLayer('sd-layer')?'sd-layer':undefined);
+map.addLayer({id:'layanan-sekolah-layer',type:'circle',source:'layanan',filter:['==',['geometry-type'],'Point'],paint:{'circle-color':'rgba(0,0,0,0)','circle-radius':9,'circle-stroke-color':'#7dd3fc','circle-stroke-width':2}});
 }
 // klik di luar SPPG menghapus area layanan agar peta kembali bersih
 // ================= memperbaiki klik peta kosong yang hanya menghapus area layanan menjadi juga mengembalikan dashboard ke ringkasan kota agar pengguna bisa kembali tanpa tombol =================
@@ -961,7 +964,7 @@ function gambarKandidat(hasil){
 safeRemove('candidate');
 if(!hasil||!hasil.daftar.length) return;
 map.addSource('candidate',{type:'geojson',data:{type:'FeatureCollection',features:hasil.daftar.map(k=>({type:'Feature',geometry:{type:'Point',coordinates:k.xy},properties:{rank:k.rank,teks:teksKandidat(k)}}))}});
-map.addLayer({id:'candidate-layer',type:'circle',source:'candidate',paint:{'circle-color':'#ec4899','circle-radius':10,'circle-stroke-color':'#ffffff','circle-stroke-width':2}});
+map.addLayer({id:'candidate-layer',type:'circle',source:'candidate',paint:{'circle-color':'#f472b6','circle-radius':10,'circle-stroke-color':'#ffffff','circle-stroke-width':2}});
 if(!candidatePopupBound){
 candidatePopupBound=true;
 map.on('click','candidate-layer',(e)=>{
@@ -982,7 +985,7 @@ return;
 }
 ring.innerHTML=`Kelebihan beban: <b>${fmt(h.sebelum.kelebihan)}</b> &rarr; <b>${fmt(h.sesudah.kelebihan)}</b> siswa.<br>Belum tercakup 10 menit: <b>${fmt(h.sebelum.belum)}</b> &rarr; <b>${fmt(h.sesudah.belum)}</b> siswa.`;
 // ================= memperbaiki daftar kandidat yang hanya satu baris menjadi bisa dibuka (details) berisi alasan pemilihan lokasi berdasarkan data =================
-daftar.innerHTML=h.daftar.map(k=>`<li><b>${esc(k.host.kel)}, ${esc(k.host.kec)}</b>: ambil alih ${k.sekolah} sekolah (${fmt(k.siswa)} siswa)${k.gainBeban>0?`, kelebihan &minus;${fmt(k.gainBeban)}`:''}<details><summary style="cursor:pointer;color:#4f46e5">Mengapa di sini?</summary><ul style="margin:2px 0 4px 14px;padding:0;list-style:disc;font-size:12px">${alasanKandidat(k).map(t=>`<li>${t}</li>`).join('')}</ul></details></li>`).join('');
+daftar.innerHTML=h.daftar.map(k=>`<li><b>${esc(k.host.kel)}, ${esc(k.host.kec)}</b>: ambil alih ${k.sekolah} sekolah (${fmt(k.siswa)} siswa)${k.gainBeban>0?`, kelebihan &minus;${fmt(k.gainBeban)}`:''}<details><summary style="cursor:pointer;color:#38bdf8">Mengapa di sini?</summary><ul style="margin:2px 0 4px 14px;padding:0;list-style:disc;font-size:12px">${alasanKandidat(k).map(t=>`<li>${t}</li>`).join('')}</ul></details></li>`).join('');
 }
 
 // ================= pembuatan tombol Cari Lokasi SPPG Baru dan pendengar kapasitas (hasil lama dihapus jika kapasitas berubah) =================
