@@ -1033,3 +1033,23 @@ Tiga putaran: 12 dari 31 SPPG mendapat titik lebih akurat (8 ruas jalan, 4 tempa
 
 **Pelajaran**
 Bedakan "tidak ditemukan" dari "gagal bertanya". Hasil kosong dari layanan luar harus diperiksa penyebabnya sebelum dipercaya.
+
+---
+
+## 42. Menghitung ulang isochrone dan matriks waktu tempuh dengan titik SPPG baru
+
+**Permintaan**
+Setelah titik SPPG diperbaiki (entri 41), isochrone dan matriks waktu tempuh harus dihitung ulang agar sesuai posisi baru.
+
+**Perubahan**
+`data/isochrone-multi.geojson` dan `data/waktu-tempuh.json` dihasilkan ulang dari OpenRouteService dengan `scripts/fetch-isochrones-multi.mjs` dan `scripts/fetch-matriks-waktu.mjs` (kode skrip tidak diubah).
+
+**Alasan**
+1. Skrip isochrone bisa dilanjutkan dan hanya menarik titik yang belum ada, sehingga hemat kuota API; titik yang sudah tidak dipakai menyisakan 19 titik (190 poligon) usang yang dibuang secara manual.
+2. Matriks dihitung penuh karena satu perubahan titik mengubah baris waktu tempuhnya.
+
+**Hasil**
+1.200 poligon (120 titik x 10 waktu), semua cocok dengan titik SPPG. Matriks 120 SPPG x 1.042 sekolah, tidak ada yang tidak terhubung; waktu ke SPPG tercepat: median 2,5 menit, persentil 90 5,2 menit, maksimum 17,4 menit. Diuji di browser: cakupan 10 menit 99,3% (1.032 dari 1.042 sekolah), 36 dari 120 titik SPPG melebihi kapasitas, Console bersih.
+
+**Pelajaran**
+Data turunan (isochrone, matriks) harus dibangun ulang setiap kali data sumbernya (titik SPPG) berubah, dan kunci datanya (koordinat) perlu dicocokkan agar tidak tersisa data usang.
