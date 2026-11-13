@@ -1078,3 +1078,26 @@ Diuji di browser, Console bersih (hanya 404 `favicon.ico`). Kurva manfaat (keleb
 
 **Pelajaran**
 Ukuran yang dipakai untuk menilai usulan harus sama dengan ukuran yang dipakai untuk menghitung kondisi sekarang. Bila tidak, perbaikan yang tampak di peta belum tentu terjadi saat alokasi dihitung ulang.
+
+---
+
+## 44. Menyiapkan proyek sebagai portfolio: README baru dan tangkapan layar
+
+**Permintaan**
+Pengguna meminta penilaian kesiapan proyek sebagai portfolio dan menjalankan langkah yang disarankan.
+
+**Perubahan**
+1. `README.md` ditulis ulang: pertanyaan yang dijawab, tautan demo, temuan utama dengan angka, fitur, cara kerja, bagian "Keterbatasan data", teknologi, cara menjalankan dan menghitung ulang data, serta nama penulis.
+2. `docs/screenshot/dashboard.png` dan `docs/screenshot/kandidat.png` (diambil dari aplikasi yang berjalan).
+3. `.gitignore` ditambah `.vscode/` agar pengaturan editor tidak muncul terus di status git.
+
+**Alasan**
+1. README lama hanya menyebut SD/SMP/SMA, tidak punya tangkapan layar, tautan demo, atau penjelasan metode, dan penulisnya masih "Nama Kamu". Reviewer hanya punya README dan tampilan repo untuk menilai.
+2. Keterbatasan (siswa hasil bagi rata, kapasitas dari berita, 19 titik SPPG setingkat kelurahan, kandidat dari 150 calon) ditulis terbuka karena membuat angka lebih dapat dipercaya, bukan lebih lemah.
+3. Angka di README diambil dari aplikasi dan log hitungan, bukan diketik dari ingatan.
+
+**Hasil**
+README mengikuti isi aplikasi saat ini. Tautan demo bergantung pada GitHub Pages yang diaktifkan di pengaturan repo (belum dapat diperiksa dari lingkungan kerja ini).
+
+**Pelajaran**
+Proyek yang kuat secara teknis tetap perlu ditulis agar terbaca: temuan di bagian atas, metode ringkas, dan batasan yang jujur.
