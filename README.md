@@ -55,13 +55,13 @@ HTML, CSS, JavaScript tanpa kerangka kerja; MapLibre GL JS 4.7, Turf.js 7, Chart
 
 ## Cara menjalankan
 
-Aplikasi statis. Dari folder proyek jalankan server lokal, lalu buka `Index.html`:
+Aplikasi statis. Dari folder proyek jalankan server lokal, lalu buka `index.html`:
 
 ```
 python -m http.server 8000
 ```
 
-Buka http://localhost:8000/Index.html (atau pakai ekstensi Live Server).
+Buka http://localhost:8000/index.html (atau pakai ekstensi Live Server).
 
 ### Menghitung ulang data (opsional)
 
