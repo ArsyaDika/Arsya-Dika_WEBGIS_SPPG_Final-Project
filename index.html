@@ -46,22 +46,50 @@ hr{border-color:var(--garis);}
 #drawer section{display:none;}#drawer section.aktif{display:block;}
 #drawer section .panel{margin-bottom:12px;}
 /* kartu KPI melayang di atas peta */
-#kpiStrip{position:absolute;top:12px;left:84px;z-index:20;display:grid;grid-template-columns:repeat(4,160px);gap:8px;transition:left .15s;}
+/* ================= memperbaiki kartu KPI yang terlalu besar (160px, angka 21px) menjadi lebih ringkas (124px, angka 16px) dan dock bawah dari 238px menjadi 184px ================= */
+#kpiStrip{position:absolute;top:10px;left:84px;z-index:20;display:grid;grid-template-columns:repeat(4,124px);gap:6px;transition:left .15s;}
 body.drawer-on #kpiStrip{left:464px;}
-.kpi{background:var(--permukaan);color:var(--teks);border:1px solid var(--garis);border-radius:12px;padding:8px 11px;box-shadow:0 2px 8px rgba(0,0,0,.18);}
-.kpi small{display:block;color:var(--teks2);font-size:11px;}.kpi b{font-size:21px;}.kpi .ok{color:var(--baik);}.kpi .bad{color:var(--bahaya);}
+.kpi{background:var(--permukaan);color:var(--teks);border:1px solid var(--garis);border-radius:10px;padding:5px 8px;box-shadow:0 2px 8px rgba(0,0,0,.18);line-height:1.25;overflow:hidden;}
+.kpi small{display:block;color:var(--teks2);font-size:9.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.kpi b{font-size:16px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.kpi .ok{color:var(--baik);}.kpi .bad{color:var(--bahaya);}
 /* dock grafik di bawah peta */
-#dock{position:absolute;left:64px;right:0;bottom:0;height:238px;background:var(--latar);border-top:1px solid var(--garis);box-shadow:0 -2px 10px rgba(0,0,0,.4);padding:10px 12px;display:grid;grid-template-columns:1.2fr 1fr 1fr 1.1fr;gap:10px;z-index:20;transition:left .15s;}
+#dock{position:absolute;left:64px;right:0;bottom:0;height:184px;background:var(--latar);border-top:1px solid var(--garis);box-shadow:0 -2px 10px rgba(0,0,0,.4);padding:7px 10px;display:grid;grid-template-columns:1.2fr 1fr 1fr 1.1fr;gap:8px;z-index:20;transition:left .15s;}
 body.drawer-on #dock{left:444px;}
 body.dock-off #dock,body.dock-off #kpiStrip{display:none;}
-body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-left{margin-bottom:240px;}
-.card{background:var(--permukaan);color:var(--teks);border:1px solid var(--garis);border-radius:12px;padding:10px 12px;overflow:hidden;}
-.card h4{margin:0 0 7px;font-size:12px;color:var(--teks);font-weight:700;}
-.row{display:flex;align-items:center;gap:6px;margin:4px 0;font-size:11px;}.row span.n{width:150px;color:var(--teks2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-left{margin-bottom:186px;}
+.card{background:var(--permukaan);color:var(--teks);border:1px solid var(--garis);border-radius:10px;padding:7px 10px;overflow:hidden;}
+.card h4{margin:0 0 4px;font-size:11px;color:var(--teks);font-weight:700;}
+.row{display:flex;align-items:center;gap:6px;margin:2px 0;font-size:10px;}.row span.n{width:150px;color:var(--teks2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .trk{position:relative;flex:1;height:11px;}.trk i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--baik);}
 .trk i.a{background:var(--waspada);}.trk i.r{background:var(--bahaya);}.trk u{position:absolute;top:-3px;bottom:-3px;width:0;border-left:2px dashed var(--teks2);}
-.hist{display:flex;align-items:flex-end;gap:10px;height:96px;padding:0 6px;}.hist div{flex:1;border-radius:4px 4px 0 0;text-align:center;color:#0b1220;font-weight:700;font-size:11px;padding-top:2px;min-height:14px;}
+.hist{display:flex;align-items:flex-end;gap:10px;height:64px;padding:0 6px;}.hist div{flex:1;border-radius:4px 4px 0 0;text-align:center;color:#0b1220;font-weight:700;font-size:11px;padding-top:2px;min-height:14px;}
 .cat{font-size:11px;color:var(--teks2);margin-top:6px;}
+/* ================= pembuatan kartu pengantar (judul, tujuan, legenda permanen, temuan utama, tombol tur) dan kartu tur 5 langkah agar pengunjung baru langsung paham isi dashboard ================= */
+#intro{position:absolute;top:10px;right:10px;width:292px;z-index:21;background:var(--permukaan);color:var(--teks);border:1px solid var(--garis);border-radius:12px;padding:8px 11px;box-shadow:0 2px 10px rgba(0,0,0,.3);font-size:12px;line-height:1.4;max-height:calc(100% - 250px);overflow-y:auto;}
+#intro h1{margin:0;font-size:14px;font-weight:800;padding-right:24px;}
+#intro p{margin:4px 0;}
+#intro .leg{display:flex;flex-wrap:wrap;gap:3px 11px;margin:5px 0;font-size:11px;color:var(--teks2);}
+#intro .leg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px;box-sizing:border-box;}
+#temuan{background:rgba(56,189,248,.1);border:1px solid var(--garis);border-radius:8px;padding:5px 7px;}
+#introToggle{position:absolute;top:6px;right:8px;width:22px;height:22px;border-radius:6px;background:var(--latar);color:var(--teks);font-weight:700;line-height:1;}
+#intro.kecil #introBody{display:none;}
+#btnTur{margin-top:4px;padding:5px 10px;border-radius:8px;background:linear-gradient(135deg,var(--primer),var(--sekunder));color:#0b1220;font-weight:700;font-size:12px;width:100%;}
+#tur{display:none;position:absolute;left:50%;top:86px;transform:translateX(-50%);width:340px;max-width:calc(100% - 24px);z-index:60;background:var(--permukaan);color:var(--teks);border:2px solid var(--aksen);border-radius:12px;padding:10px 12px;box-shadow:0 6px 20px rgba(0,0,0,.5);font-size:13px;line-height:1.45;}
+#tur p{margin:5px 0 8px;}#tur .turbtn{display:flex;justify-content:space-between;gap:8px;}
+#tur button{padding:4px 10px;border-radius:8px;background:var(--latar);color:var(--teks);border:1px solid var(--garis);font-size:12px;font-weight:600;}
+#tur button[data-a=n]{background:var(--primer);color:#0b1220;}
+.tur-sorot{outline:3px solid var(--aksen);outline-offset:2px;}
+abbr[title]{text-decoration:underline dotted;cursor:help;}
+/* ================= pembuatan tampilan layar sempit (ponsel): kartu KPI 2x2, laci selebar layar, dock bisa digeser menyamping, kartu pengantar diciutkan awalnya ================= */
+@media (max-width:760px){
+#rail{width:52px;}#rail button{width:44px;font-size:9px;}
+#map{left:52px;}
+#kpiStrip,body.drawer-on #kpiStrip{left:58px;right:6px;top:6px;grid-template-columns:repeat(2,1fr);}
+#drawer{left:52px;width:calc(100% - 52px);}
+#dock,body.drawer-on #dock{left:52px;height:150px;display:flex;overflow-x:auto;gap:8px;}
+#dock .card{min-width:230px;flex:0 0 auto;}
+body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-left{margin-bottom:152px;}
+#intro{top:auto;bottom:160px;right:6px;width:calc(100% - 70px);max-height:45%;}
+}
 </style>
 </head>
 
@@ -69,13 +97,14 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 
 <!-- ================= pembuatan rel ikon kiri: tombol Dashboard (tampil/sembunyi KPI + dock) dan tombol laci Layer, Param, Kandidat, Data ================= -->
 <nav id="rail">
-<button data-tab="dash" class="on"><i>▦</i>Dash</button>
-<button data-tab="layer"><i>☰</i>Layer</button>
+<!-- ================= memperbaiki label menu yang berjargon (Dash, Param, Kandidat) menjadi lebih jelas (Ringkas, Atur, Usulan); id tab (data-tab) tidak berubah ================= -->
+<button data-tab="dash" class="on" title="Tampilkan atau sembunyikan angka kunci dan grafik"><i>▦</i>Ringkas</button>
+<button data-tab="layer" title="Nyalakan atau matikan titik di peta, ganti peta dasar, lihat legenda"><i>☰</i>Layer</button>
 <!-- ================= pembuatan tab Analisis: hasil perhitungan/penilaian (cakupan, beban berlebih, heatmap, kandidat) dipisah dari tab Layer yang hanya berisi titik ================= -->
-<button data-tab="analisis"><i>◎</i>Analisis</button>
-<button data-tab="param"><i>⚙</i>Param</button>
-<button data-tab="kandidat"><i>★</i>Kandidat</button>
-<button data-tab="data"><i>ⓘ</i>Data</button>
+<button data-tab="analisis" title="Area jangkauan, heatmap siswa, dan lokasi usulan"><i>◎</i>Analisis</button>
+<button data-tab="param" title="Atur waktu tempuh, kapasitas, dan jarak SPPG berdekatan"><i>⚙</i>Atur</button>
+<button data-tab="kandidat" title="Usulan lokasi SPPG baru"><i>★</i>Usulan</button>
+<button data-tab="data" title="Kualitas data, metode, dan keterbatasan"><i>ⓘ</i>Data</button>
 </nav>
 
 <!-- ================= pembuatan laci kontrol: setiap tab menampilkan satu kelompok panel agar tidak ada satu kolom panjang ================= -->
@@ -96,16 +125,21 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <button onclick="toggleLayer('smp-layer,mts-layer')" class="btn">SMP / MTs</button>
 <button onclick="toggleLayer('sma-layer,smk-layer,ma-layer')" class="btn">SMA / SMK / MA</button>
 <button onclick="toggleLayer('sppg-layer')" class="btn">SPPG</button>
-<p class="text-xs text-slate-500">Hasil perhitungan (cakupan, beban, heatmap, kandidat) ada di tab Analisis.</p>
+<!-- ================= pembuatan filter sekolah bermasalah jangkauan: hanya sekolah bercincin merah (di luar isochrone 10 menit atau tidak tertampung kapasitas) yang terlihat, sebagai bahan menimbang lokasi SPPG baru ================= -->
+<button onclick="toggleLayer('status-layer')" class="btn">Cincin sekolah jauh</button>
+<button onclick="hanyaSekolahJauh()" class="btn">Hanya sekolah jauh / tidak tertampung</button>
+<p class="text-xs text-slate-500">Sekolah bercincin merah: <b id="jumlahJauh">-</b>.</p>
+<p class="text-xs text-slate-500">Hasil perhitungan (area jangkauan, beban, heatmap, usulan lokasi) ada di tab Analisis.</p>
 </div>
 
 <div class="panel">
 <h3 class="font-bold">Legenda titik</h3>
 <ul class="text-sm">
-<li><span style="color:#60a5fa">●</span> SD &nbsp; <span style="color:#22d3ee">●</span> MI</li>
-<li><span style="color:#fbbf24">●</span> SMP &nbsp; <span style="color:#fb923c">●</span> MTs</li>
-<li><span style="color:#a78bfa">●</span> SMA &nbsp; <span style="color:#34d399">●</span> SMK &nbsp; <span style="color:#e879f9">●</span> MA</li>
-<li><span style="color:#f8fafc">●</span> SPPG &nbsp; <span style="color:#f87171">●</span> SPPG berdekatan (lihat tab Param)</li>
+<li><span style="color:#3b82f6">●</span> SD / MI &nbsp; <span style="color:#f59e0b">●</span> SMP / MTs &nbsp; <span style="color:#a78bfa">●</span> SMA / SMK / MA</li>
+<li class="text-xs text-slate-500">Madrasah (MI, MTs, MA) = warna jenjang yang sama dengan pinggiran putih.</li>
+<li><span style="color:#000;text-shadow:0 0 0 #fff,-1px 0 #fff,1px 0 #fff,0 1px #fff,0 -1px #fff">●</span> SPPG (hitam); pinggiran putih tebal = SPPG berdekatan (tab Atur)</li>
+<li><span style="color:#ef4444">◉</span> Cincin merah: sekolah di luar area 10 menit berkendara; cincin lebih besar: tidak tertampung kapasitas</li>
+<li class="text-xs text-slate-500">Ukuran titik sekolah mengikuti jumlah siswa dan tingkat zoom.</li>
 <li><span style="color:#38bdf8">●</span> Biru: area layanan SPPG yang diklik</li>
 </ul>
 </div>
@@ -115,33 +149,33 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <!-- ================= pembuatan panel hasil analisis: tombol tampil/sembunyi untuk cakupan isochrone, beban berlebih, heatmap, dan kandidat (hasil perhitungan, bukan titik data) ================= -->
 <div class="panel">
 <h3 class="font-bold">Hasil analisis</h3>
-<button onclick="toggleLayer('cover-layer')" class="btn">Cakupan isochrone</button>
-<button onclick="toggleLayer('beban-layer')" class="btn">Beban berlebih</button>
+<button onclick="toggleLayer('cover-layer')" class="btn">Area 10 menit berkendara</button>
+<button onclick="toggleLayer('beban-layer')" class="btn">Halo SPPG kelebihan beban</button>
 <button onclick="toggleLayer('heatmap-layer')" class="btn">Heatmap siswa</button>
-<button onclick="toggleLayer('candidate-layer')" class="btn">Kandidat SPPG baru</button>
-<p class="text-xs text-slate-500">Cakupan mengikuti waktu tempuh yang dipilih di tab Param. Kandidat dihitung di tab Kandidat; heatmap muncul setelah Run Isochrone atau Run Global.</p>
+<button onclick="toggleLayer('candidate-layer')" class="btn">Usulan SPPG baru</button>
+<p class="text-xs text-slate-500">Area mengikuti waktu tempuh yang dipilih di tab Atur. Usulan lokasi tampil otomatis dan bisa dicoba ulang di tab Usulan. Heatmap muncul setelah tombol "Tampilkan area" ditekan di tab Atur.</p>
 </div>
 <div class="panel">
 <h3 class="font-bold">Legenda analisis</h3>
 <ul class="text-sm">
-<li><span style="color:#16a34a">▮</span> Area hijau: cakupan isochrone semua SPPG</li>
-<li><span style="color:#f97316">●</span> Halo coklat: SPPG melebihi kapasitas</li>
-<li><span style="color:#f472b6">●</span> Kandidat SPPG baru</li>
+<li><span style="color:#16a34a">▮</span> Area hijau: gabungan <abbr title="Isochrone: area yang bisa dicapai dalam waktu tempuh tertentu dari satu titik">isochrone</abbr> 10 menit semua SPPG</li>
+<li><span style="color:#f97316">●</span> Halo oranye: SPPG kelebihan permintaan (muncul bila kapasitas diturunkan di tab Atur)</li>
+<li><span style="color:#f472b6">●</span> Usulan SPPG baru</li>
 <li>🟡 Heatmap sebaran siswa</li>
-<li>🟢 Isochrone satu SPPG / gabungan (Run)</li>
+<li>🟢 Area satu SPPG / semua SPPG (tombol "Tampilkan area")</li>
 </ul>
 </div>
 </section>
 
 <section data-panel="param">
 <div class="panel">
-<h3 class="font-bold">Isochrone</h3>
+<h3 class="font-bold">Area jangkauan (<abbr title="Isochrone: area yang bisa dicapai dalam waktu tempuh tertentu dari satu titik">isochrone</abbr>)</h3>
 <!-- ================= memperbaiki input waktu yang bisa diubah (tetapi isochrone kini data statis) menjadi terkunci 600 detik (10 menit) agar tampilan jujur terhadap data ================= -->
 <!-- ================= memperbaiki input waktu terkunci 600 detik menjadi slider 1-10 menit (isochrone sudah dihitung per menit) agar pengguna bisa memilih waktu tempuh <= 600 detik ================= -->
 <label for="waktuMenit" class="text-sm">Waktu tempuh berkendara: <b id="waktuLabel">10 menit (600 detik)</b></label>
 <input id="waktuMenit" type="range" min="1" max="10" step="1" value="10" class="w-full mb-2"/>
-<p class="text-xs text-slate-500 mb-2">Geser untuk mengubah waktu tempuh (maksimum 10 menit). Area cakupan, KPI cakupan, dan Run Isochrone mengikuti. Klik SPPG lalu Run Isochrone untuk area 1 SPPG.</p>
-<button id="run-local" class="btn">Run Isochrone</button>
+<p class="text-xs text-slate-500 mb-2">Geser untuk mengubah waktu tempuh (maksimum 10 menit; batas resmi BGN 20-30 menit, 10 menit dipakai sebagai ukuran yang lebih ketat). Area, angka cakupan, dan sekolah bercincin merah mengikuti. Klik satu titik SPPG, lalu tekan tombol di bawah untuk melihat area jangkauan SPPG itu saja.</p>
+<button id="run-local" class="btn">Tampilkan area 1 SPPG (klik SPPG dulu)</button>
 </div>
 
 <!-- ================= pembuatan panel parameter SPPG berdekatan: jarak (meter) yang dianggap berdekatan, SPPG yang berdekatan berubah merah ================= -->
@@ -149,8 +183,8 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <h3 class="font-bold">SPPG Berdekatan</h3>
 <label for="jarakDekat" class="text-sm">Dianggap berdekatan jika jarak &le; (meter)</label>
 <input id="jarakDekat" type="number" min="0" step="50" value="500" class="w-full border p-2 rounded mb-2"/>
-<p class="text-sm">SPPG merah: <b id="jumlahDekat">0</b> dari <b id="jumlahSppg">0</b></p>
-<p class="text-xs text-slate-500">Klik SPPG merah untuk melihat alasannya.</p>
+<p class="text-sm">SPPG berdekatan: <b id="jumlahDekat">0</b> dari <b id="jumlahSppg">0</b></p>
+<p class="text-xs text-slate-500">SPPG berdekatan ditandai pinggiran putih tebal di peta. Klik salah satunya untuk melihat alasannya.</p>
 </div>
 
 <!-- ================= pembuatan panel KPI cakupan 10 menit dan beban per SPPG (kapasitas per SPPG bisa diubah) ================= -->
@@ -174,16 +208,16 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <p class="text-sm">Rata-rata waktu tempuh: <b id="kpiRataWaktu">-</b></p>
 <div class="flex gap-1 mt-2"><button class="btn" style="margin:0;padding:4px" onclick="setKapasitas(2000)">2.000</button><button class="btn" style="margin:0;padding:4px" onclick="setKapasitas(2500)">2.500</button><button class="btn" style="margin:0;padding:4px" onclick="setKapasitas(3000)">3.000</button></div>
 <p class="text-xs text-slate-500">Skenario kapasitas: 2.000 (hanya peserta didik), 2.500 (2.000 siswa + 500 kelompok 3B), 3.000 (juru masak bersertifikat). Acuan BGN dari berita dan salinan juknis; cek dokumen resmi.</p>
-<p class="text-xs text-slate-500 mt-1">Tiap sekolah dialokasikan ke SPPG terdekat. Jumlah siswa dari BPS tahun ajaran 2025/2026 per kecamatan dan status (negeri/swasta), dibagi rata ke sekolah di kelompok itu.</p>
+<p class="text-xs text-slate-500 mt-1">Tiap SPPG mengutamakan sekolah terdekatnya sampai kuota penuh (aturan resmi 3.000/hari, maksimal 30 menit), lalu sekolah yang tersisa diambil SPPG terdekat lain yang masih punya kuota. Jumlah siswa adalah estimasi: tabel BPS tahun ajaran 2025/2026 per kecamatan dan status (negeri/swasta), dibagi rata ke sekolah di kelompok itu.</p>
 </div>
 
 <div class="panel">
-<h3 class="font-bold">Global Analysis</h3>
-<button id="run-global" class="btn">Run Global</button>
+<h3 class="font-bold">Semua SPPG sekaligus</h3>
+<button id="run-global" class="btn">Tampilkan area semua SPPG</button>
 </div>
 
 <div class="panel">
-<h3 class="font-bold">Hasil Run (isochrone terpilih)</h3>
+<h3 class="font-bold">Hasil area yang ditampilkan</h3>
 <!-- ================= memperbaiki istilah "Terlayani" (sebenarnya jangkauan yang tumpang tindih) menjadi "dijangkau", dan menambah ringkasan dijangkau vs dilayani vs tumpang tindih (Opsi D) ================= -->
 <div id="hasilD" class="mb-2"></div>
 <p class="text-sm">Sekolah dijangkau (rincian): <b id="served">0</b></p>
@@ -198,13 +232,13 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <section data-panel="kandidat">
 <!-- ================= pembuatan panel kandidat SPPG baru berbasis beban: jumlah lokasi, tombol cari, ringkasan sebelum/sesudah, dan daftar lokasi ================= -->
 <div class="panel">
-<h3 class="font-bold">Kandidat SPPG Baru</h3>
+<h3 class="font-bold">Usulan SPPG Baru</h3>
 <label for="jumlahKandidat" class="text-sm">Jumlah lokasi yang dicari (maks 20)</label>
 <input id="jumlahKandidat" type="number" min="1" max="20" value="5" class="w-full border p-2 rounded mb-2"/>
 <button id="run-kandidat" class="btn">Cari Lokasi SPPG Baru</button>
 <p class="text-sm" id="hasilKandidat">Belum dijalankan.</p>
 <ol class="text-sm list-decimal pl-5 space-y-1" id="listKandidat"></ol>
-<p class="text-xs text-slate-500 mt-1">Metode: tiap putaran memilih satu lokasi sekolah yang paling banyak mengurangi kelebihan beban SPPG (kapasitas sesuai kotak di tab Param) dan menjangkau sekolah yang belum tercakup. Kandidat tidak boleh lebih dekat dari 300 m ke SPPG ada dan 1 km ke kandidat lain. Lokasi masih berupa titik sekolah acuan, bukan lahan yang sudah dicek.</p>
+<p class="text-xs text-slate-500 mt-1">Saat dibuka, aplikasi otomatis menampilkan jumlah lokasi paling sedikit yang menutup sekolah di luar area 10 menit. Ubah jumlahnya lalu tekan tombol untuk mencoba skenario lain. Metode: tiap putaran memilih satu lokasi sekolah yang paling banyak mengurangi siswa tidak tertampung dan sekolah di luar area (kapasitas sesuai kotak di tab Atur). Usulan tidak boleh lebih dekat dari 300 m ke SPPG yang ada dan 1 km ke usulan lain. Lokasi masih berupa titik sekolah acuan, bukan lahan yang sudah dicek.</p>
 </div>
 </section>
 
@@ -227,6 +261,26 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <div class="kpi"><small id="kL4">&nbsp;</small><b id="kV4">-</b><small id="kS4">&nbsp;</small></div>
 <button id="btnKota" style="display:none;grid-column:1/-1;padding:5px 10px;border-radius:10px;background:#0f172a;color:#fff;font-size:12px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.25)">&larr; Kembali ke ringkasan kota</button>
 </div>
+
+<!-- ================= pembuatan kartu pengantar di sudut peta: judul, pertanyaan yang dijawab, legenda permanen, temuan utama (diisi aplikasi), dan tombol tur ================= -->
+<div id="intro">
+<button id="introToggle" title="Ciutkan atau perbesar">–</button>
+<h1>SPPG Kota Semarang</h1>
+<div id="introBody">
+<p>Apakah dapur <abbr title="Satuan Pelayanan Pemenuhan Gizi: dapur penyedia makan bergizi gratis di bawah Badan Gizi Nasional">SPPG</abbr> sudah menjangkau dan mencukupi sekolah di sekitarnya, dan di mana lokasi baru paling berguna?</p>
+<div class="leg">
+<span><i style="background:#000;border:1.5px solid #fff"></i>SPPG (dapur)</span>
+<span><i style="background:#3b82f6"></i>SD/MI</span>
+<span><i style="background:#f59e0b"></i>SMP/MTs</span>
+<span><i style="background:#a78bfa"></i>SMA/SMK/MA</span>
+<span><i style="background:#3b82f6;border:2px solid #ef4444"></i>sekolah jauh</span>
+<span><i style="background:#f472b6;border:1.5px solid #fff"></i>usulan SPPG baru</span>
+</div>
+<p id="temuan">Menghitung...</p>
+<button id="btnTur">Mulai tur 30 detik</button>
+</div>
+</div>
+<div id="tur"></div>
 
 <!-- MAP -->
 <div id="map"></div>

@@ -1101,3 +1101,68 @@ README mengikuti isi aplikasi saat ini. Tautan demo bergantung pada GitHub Pages
 
 **Pelajaran**
 Proyek yang kuat secara teknis tetap perlu ditulis agar terbaca: temuan di bagian atas, metode ringkas, dan batasan yang jujur.
+
+## 45. Alokasi berkapasitas, sekolah jauh, warna Template A, dan KPI lebih ringkas
+
+**Masalah**
+Popup SPPG menampilkan "porsi" yang timpang (Mijen 8.640, Mijen 2 hanya 389) dan 14 dari 120 titik bernilai 0. Penyebabnya aturan pemenang tunggal: tiap sekolah dilayani SPPG tercepat tanpa batas kapasitas, dan "porsi" sebenarnya hanya jumlah siswa di area terdekat (1 siswa = 1 porsi).
+
+**Perubahan**
+1. `hitungBeban` memakai `alokasiBerkapasitas` (batas 30 menit BGN): sekolah dilayani SPPG tercepat yang masih punya sisa kapasitas; yang tidak muat ditandai `tertampung:false`. Bentuk hasilnya tidak berubah, jadi popup, dashboard, dan kandidat ikut.
+2. Popup SPPG: "Siswa dialokasikan", titik berisi beberapa SPPG menampilkan angka per SPPG.
+3. Lapisan `status`: cincin merah untuk sekolah di luar isochrone 10 menit, cincin lebih besar untuk yang tidak tertampung; tombol "Hanya sekolah jauh / tidak tertampung".
+4. Warna Template A: SD/MI biru, SMP/MTs kuning, SMA/SMK/MA ungu, madrasah berpinggiran putih; SPPG hitam.
+5. Kartu KPI dan dock grafik diperkecil.
+6. Kurva manfaat kandidat kini memakai siswa tidak tertampung + di luar 10 menit.
+
+**Alasan**
+Kapasitas 3.000 mengikuti aturan BGN. Batas 10 menit dipertahankan sebagai ukuran ketat, karena tidak ada sekolah lebih dari 17,4 menit dari SPPG terdekat (jauh di bawah batas BGN 20-30 menit).
+
+**Hasil**
+Pada kapasitas 3.000: utilisasi kota 79%, 0 siswa tidak tertampung, titik SPPG kosong turun dari 14 ke 4, 10 sekolah di luar 10 menit. Lima kandidat sudah menghabiskan sisa masalah (2.070 siswa menjadi 0). Console bersih.
+
+**Pelajaran**
+Angka "beban" bergantung pada aturan alokasi: pemenang tunggal mengukur kebutuhan area terdekat, bukan kapasitas yang terpakai. Label dan aturan harus sejalan. Dua penanda yang sama-sama merah (SPPG berdekatan dan sekolah jauh) membingungkan, jadi satu warna satu arti.
+
+## 46. Aturan alokasi SPPG-sentris dan koordinat SPPG baru
+
+**Permintaan**
+Aturan resmi (maks 3.000 porsi/hari, waktu tempuh <= 30 menit) dan prioritas: tiap SPPG mengutamakan sekolah terdekatnya sampai kuota penuh, baru sekolah yang tersisa diambil SPPG terdekat lain. Lalu hitung ulang titik SPPG yang koordinatnya berubah.
+
+**Perubahan**
+1. `alokasiBerkapasitas` kini mengurutkan semua pasangan SPPG-sekolah dari waktu tempuh terpendek, lalu menerima pasangan bila sekolah belum dilayani dan kuota SPPG masih muat (sebelumnya: sekolah dengan pilihan paling sedikit didahulukan).
+2. Koordinat 6 SPPG diganti hasil geocoding lanjutan (3 tingkat jalan, 3 tingkat tempat); titik kelurahan turun dari 19 menjadi 13.
+3. Dihitung ulang: isochrone 6 titik baru (poligon lama dihapus, skrip yang bisa dilanjutkan hanya menarik yang hilang), matriks waktu SPPG-sekolah, pilihan 150 kandidat, dan matriks kandidat-sekolah.
+
+**Alasan**
+Urutan berbasis waktu terpendek membuat tiap SPPG menyerap sekolah terdekatnya lebih dulu, sesuai aturan pengguna. Matriks harus dihitung ulang karena baris SPPG yang pindah tidak berlaku lagi.
+
+**Hasil**
+Semua siswa tertampung pada 3.000 (utilisasi kota 79%), rata-rata waktu tempuh 3,53 menit dari 3,79, Mijen 2 naik dari 607 ke sekitar 1.700 siswa. Harganya: sekolah yang dilayani SPPG lebih dari 10 menit naik dari 21 ke 38 (terjauh 23,2 menit, masih di bawah 30). Perhitungan ulang: 0 pasangan tidak terhubung, waktu tercepat median 2,5 menit, maksimum 17,4 menit.
+
+**Pelajaran**
+Aturan urutan penugasan menentukan siapa mendapat apa; angka per SPPG tidak punya satu jawaban "benar" sampai aturannya disepakati. Skrip yang bisa dilanjutkan (melewati hasil yang sudah ada) membuat pembaruan sebagian murah.
+
+## 47. Memperbaiki dashboard dari sudut pandang pengguna pertama kali
+
+**Masalah**
+Ditinjau seperti orang yang belum pernah melihatnya: tidak ada judul atau penjelasan, legenda tersembunyi di tab, temuan utama (10 sekolah jauh, 5 lokasi baru) harus dicari sendiri, istilah teknis (isochrone, Run Global, Param), kartu "SPPG terpadat" semua 100%, teks tab tidak sinkron dengan tampilan (masih menyebut "SPPG merah" dan "halo coklat"), label "data asli/BPS 100%" menyesatkan, dan tampilan ponsel belum diuji.
+
+**Perubahan**
+1. Kartu pengantar di sudut peta: judul, pertanyaan yang dijawab, legenda permanen, kalimat temuan otomatis, tombol tur 5 langkah; bisa diciutkan dan otomatis menciut di ponsel.
+2. Usulan lokasi baru langsung dihitung dan digambar saat data siap (jumlah paling sedikit yang membuat siswa di luar area 10 menit dan tidak tertampung menjadi nol), tanpa perlu membuka tab Usulan.
+3. KPI: "Terjangkau 10 menit", "Kapasitas terpakai", "Di luar 10 menit", "Tidak tertampung", masing-masing dengan penjelasan saat kursor di atas kartu.
+4. Kartu "SPPG terpadat" diganti "Sekolah terjauh dari SPPG pelayannya"; kurva kandidat diberi judul dan kalimat penjelas.
+5. Istilah: menu Ringkas/Layer/Analisis/Atur/Usulan/Data, tombol "Tampilkan area ...", singkatan SPPG dan isochrone dijelaskan lewat tooltip.
+6. Teks yang tidak sinkron diperbaiki; label siswa menjadi "estimasi (BPS kecamatan, dibagi rata)".
+7. Ukuran titik sekolah mengikuti jumlah siswa dan zoom, dengan sedikit transparansi.
+8. Tata letak ponsel: KPI 2x2, laci selebar layar, dock bisa digeser, tanpa gulir menyamping (diuji pada lebar 390 px).
+
+**Alasan**
+Pengunjung portfolio hanya punya beberapa detik; angka yang benar tidak berguna bila cerita utamanya tersembunyi.
+
+**Hasil**
+Layar pertama langsung menyatakan temuan: 79% kapasitas terpakai, 0 siswa tidak tertampung, 10 sekolah (2.070 siswa) di luar area 10 menit, dan 5 lokasi baru cukup menutupnya. Console bersih (hanya favicon 404). README dan tangkapan layar diperbarui.
+
+**Pelajaran**
+Setiap kali tampilan atau aturan berubah, cari teks lama yang masih menjelaskan versi sebelumnya (di sini "SPPG merah"). Menguji sebagai orang asing menemukan masalah yang tidak terlihat oleh pembuatnya.
