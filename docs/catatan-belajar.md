@@ -1184,3 +1184,19 @@ Waktu tempuh langsung menjawab batas 10 dan 30 menit tanpa istilah teknis, dan k
 
 **Pelajaran**
 Cocokkan jumlah kartu baru dengan angka yang sudah ada (jumlah rentang = 292.425) untuk memastikan tidak ada siswa yang hilang dari hitungan.
+
+## 49. Dasar usulan lokasi baru: uji ketahanan (kapasitas riil dan lalu lintas pagi)
+
+**Masalah**
+Usulan 5 lokasi SPPG baru hanya didasarkan pada batas 10 menit buatan sendiri. Menurut aturan BGN (3.000 porsi, 30 menit) semua siswa sudah tertampung, jadi usulan itu tidak punya dasar yang kuat.
+
+**Perubahan**
+- Usulan tidak lagi memakai kriteria 10 menit. Lokasi baru hanya diusulkan untuk mengurangi siswa yang tidak tertampung pada skenario yang dipilih.
+- Dua parameter baru di menu Atur: faktor lalu lintas jam pagi (waktu tempuh dikali 1 / 1,25 / 1,5 / 2 sebelum dibandingkan dengan batas 30 menit) dan kapasitas riil (2.000 / 2.500 / 3.000, yang sudah ada).
+- Pencarian kandidat diperbaiki: lokasi baru hanya mengambil sekolah dari SPPG yang melebihi kapasitas, sebatas kelebihannya dan kapasitas lokasi baru. Sebelumnya kapasitas lokasi baru terbuang untuk sekolah yang sudah terlayani baik, sehingga hasilnya kurang (2.500 menyisakan 1.285 siswa dengan 3 lokasi).
+
+**Hasil**
+BGN (3.000, normal): 0 lokasi. 3.000 dengan macet ×1,5: 232 siswa, 1 lokasi. 2.500 normal: 2.300 siswa, 1 lokasi. 2.500 dengan macet ×1,5: 8.338 siswa, 5 lokasi. 2.000: sekitar 50.000 siswa, 10 lokasi belum cukup (30.091 tersisa). Simulasi terpisah memberi angka sejalan (2.500 normal: 2.365 siswa).
+
+**Pelajaran**
+Dasar sebuah usulan harus sama dengan aturan yang berlaku; parameter buatan sendiri hanya layak jadi pengujian tambahan. Setelah mengubah tujuan pencarian, periksa juga bahwa algoritmanya benar-benar mencapai tujuan itu (di sini kapasitas lokasi baru terbuang).

@@ -16,10 +16,14 @@ Dengan aturan resmi BGN yang dipakai proyek ini (maksimal 3.000 porsi per SPPG p
 | Kapasitas terpakai di seluruh kota | **79%** (292.425 dari 369.000 porsi per hari) |
 | Siswa yang tidak tertampung kuota SPPG mana pun dalam 30 menit | **0** |
 | Sekolah di luar area 10 menit dari SPPG mana pun | **10 sekolah** (2.070 siswa) |
-| Lokasi SPPG baru yang cukup untuk menutup 10 sekolah itu | **5 lokasi** |
+| Lokasi SPPG baru yang diperlukan menurut aturan BGN | **0** (semua siswa tertampung dalam 30 menit) |
+| Uji ketahanan: kapasitas riil 2.500, lalu lintas normal | 2.300 siswa tidak tertampung; **1 lokasi baru** menutupnya |
+| Uji ketahanan: kapasitas riil 2.500, lalu lintas jam pagi ×1,5 | 8.338 siswa tidak tertampung; **5 lokasi baru** menutupnya |
 | Waktu tempuh ke SPPG tercepat | median 2,5 menit, persentil 90 5,0 menit, maksimum 17,4 menit |
 
-Artinya, **kapasitas secara keseluruhan sudah mencukupi**, dan kebutuhan lokasi baru muncul karena **jangkauan**, bukan karena kekurangan dapur: sepuluh sekolah di tepi kota berada lebih jauh dari 10 menit dari SPPG mana pun. Batas 10 menit adalah ukuran internal yang lebih ketat dari batas BGN (20–30 menit); tidak ada sekolah yang lebih dari 17,4 menit dari SPPG terdekat.
+Artinya, **menurut aturan BGN jaringan SPPG Kota Semarang sudah mencukupi dan tidak ada lokasi baru yang wajib dibangun**. Batas 10 menit adalah ukuran internal yang lebih ketat dari batas BGN (20–30 menit); sepuluh sekolah di tepi kota berada di luar 10 menit, tetapi tidak ada yang lebih dari 17,4 menit dari SPPG terdekat.
+
+Usulan lokasi baru karena itu dihitung dari **uji ketahanan**, bukan dari aturan dasar: apakah siswa tetap tertampung bila kapasitas riil SPPG lebih kecil dari 3.000 dan bila lalu lintas jam pagi memperlambat pengantaran (waktu tempuh dikali 1,25 / 1,5 / 2). Pilih skenarionya di menu Atur; lokasi usulan muncul hanya bila ada siswa yang tidak tertampung pada skenario itu. Faktor lalu lintas adalah pengali sederhana, bukan data macet nyata (data ORS tanpa lalu lintas).
 
 Catatan alokasi: SPPG yang penuh melepas sekolah ke SPPG terdekat berikutnya, sehingga sebagian sekolah dilayani SPPG yang bukan tercepat. Rata-rata waktu tempuh siswa 3,5 menit, tetapi 38 sekolah dilayani SPPG yang berjarak lebih dari 10 menit (terjauh 23 menit, masih di bawah 30).
 
@@ -32,7 +36,7 @@ Catatan alokasi: SPPG yang penuh melepas sekolah ke SPPG terdekat berikutnya, se
 - **Area jangkauan (isochrone) dinamis**: slider waktu tempuh 1–10 menit dari data multi-waktu (tanpa memanggil API dari browser).
 - **Alokasi berkapasitas berbasis waktu tempuh**: pasangan SPPG–sekolah diproses dari waktu tempuh terpendek; tiap SPPG mengambil sekolah terdekatnya sampai kuota 3.000 per hari penuh, lalu sisa sekolah diambil SPPG terdekat lain yang masih punya kuota, semuanya maksimal 30 menit.
 - **Sekolah jauh**: sekolah di luar area 10 menit diberi cincin merah (cincin lebih besar bila tidak tertampung), dengan filter "hanya sekolah jauh" untuk menimbang lokasi SPPG baru.
-- **Usulan SPPG baru**: pencarian serakah dari 150 calon lokasi, dinilai dengan waktu tempuh dan kapasitas, lengkap dengan alasan tiap lokasi; jumlah paling sedikit yang menutup semua sekolah jauh tampil otomatis.
+- **Usulan SPPG baru (uji ketahanan)**: pemilih skenario kapasitas riil (2.000 / 2.500 / 3.000) dan lalu lintas jam pagi (normal / ×1,25 / ×1,5 / ×2). Pencarian serakah dari 150 calon lokasi, dinilai dengan waktu tempuh dan kapasitas, lengkap dengan alasan tiap lokasi; jumlah paling sedikit yang menutup semua siswa yang tidak tertampung tampil otomatis.
 - Dashboard ringkasan kota: empat angka kunci, sekolah terjauh dari SPPG pelayannya, sebaran waktu tempuh siswa (0–5, 5–10, 10–20, 20–30 menit), daftar usulan lokasi SPPG baru (klik baris untuk zoom ke lokasinya), dan kualitas data.
 
 ## Cara kerja singkat
@@ -50,6 +54,7 @@ Catatan alokasi: SPPG yang penuh melepas sekolah ke SPPG terdekat berikutnya, se
 - **Satu siswa dianggap satu porsi**, dan satu sekolah tidak dipecah ke beberapa SPPG.
 - **Titik SPPG tidak seluruhnya presisi.** Dari 123 SPPG yang dipakai (120 titik unik): 80 di jalan, 23 di ruas jalan OSM, 7 di tempat bernama, dan **13 masih berupa titik kelurahan** (pencarian OSM gagal atau tidak menemukan alamatnya; 4 di antaranya di Kabupaten Semarang).
 - **Cakupan sekolah hanya Kota Semarang.** Beberapa SPPG di Kabupaten Semarang (Ungaran) ikut dihitung karena dekat perbatasan, tetapi sekolah di kabupaten itu tidak dimuat.
+- **Faktor lalu lintas hanya pengali sederhana** pada waktu tempuh, bukan data kemacetan nyata. Usulan lokasi baru bergantung pada skenario yang dipilih dan paling sensitif terhadap asumsi kapasitas riil.
 - **Kandidat dipilih dari 150 calon lokasi** (titik sekolah, jarak minimal 1 km antar calon dan 300 m dari SPPG yang ada), bukan dari seluruh kota. Hasilnya petunjuk awal, bukan rekomendasi penempatan final.
 - Daftar alamat SPPG berasal dari direktori pihak ketiga (infosppg.id), bukan dari BGN.
 

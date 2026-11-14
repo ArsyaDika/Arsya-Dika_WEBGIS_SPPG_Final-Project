@@ -33,6 +33,7 @@ hr{border-color:var(--garis);}
 #map{position:absolute;top:0;bottom:0;left:64px;right:0;}
 .maplibregl-popup{max-width:380px!important;}
 .panel{background:var(--permukaan);color:var(--teks);border:1px solid var(--garis);border-radius:16px;padding:12px;box-shadow:0 4px 12px rgba(0,0,0,0.3);}
+.btn-macet:not(.aktif){opacity:.5}
 .btn{width:100%;padding:8px;margin-bottom:6px;border-radius:10px;background:linear-gradient(135deg,var(--primer),var(--sekunder));color:#0b1220;font-weight:700;}
 
 /* rel ikon di kiri */
@@ -207,6 +208,9 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <p class="text-sm">Dilayani di luar 10 menit: <b id="kpiLuar10">-</b></p>
 <p class="text-sm">Rata-rata waktu tempuh: <b id="kpiRataWaktu">-</b></p>
 <div class="flex gap-1 mt-2"><button class="btn" style="margin:0;padding:4px" onclick="setKapasitas(2000)">2.000</button><button class="btn" style="margin:0;padding:4px" onclick="setKapasitas(2500)">2.500</button><button class="btn" style="margin:0;padding:4px" onclick="setKapasitas(3000)">3.000</button></div>
+<p class="text-sm font-semibold mt-2">Lalu lintas jam pagi (waktu tempuh &times;)</p>
+<div class="flex gap-1 mt-1"><button class="btn btn-macet aktif" data-f="1" style="margin:0;padding:4px" onclick="setMacet(1)">Normal</button><button class="btn btn-macet" data-f="1.25" style="margin:0;padding:4px" onclick="setMacet(1.25)">&times;1,25</button><button class="btn btn-macet" data-f="1.5" style="margin:0;padding:4px" onclick="setMacet(1.5)">&times;1,5</button><button class="btn btn-macet" data-f="2" style="margin:0;padding:4px" onclick="setMacet(2)">&times;2</button></div>
+<p class="text-xs text-slate-500">Data ORS tidak memuat kemacetan. Faktor ini menguji apakah sekolah masih terjangkau dalam 30 menit saat pengantaran pagi. Usulan SPPG baru dihitung dari skenario kapasitas dan lalu lintas yang dipilih.</p>
 <p class="text-xs text-slate-500">Skenario kapasitas: 2.000 (hanya peserta didik), 2.500 (2.000 siswa + 500 kelompok 3B), 3.000 (juru masak bersertifikat). Acuan BGN dari berita dan salinan juknis; cek dokumen resmi.</p>
 <p class="text-xs text-slate-500 mt-1">Tiap SPPG mengutamakan sekolah terdekatnya sampai kuota penuh (aturan resmi 3.000/hari, maksimal 30 menit), lalu sekolah yang tersisa diambil SPPG terdekat lain yang masih punya kuota. Jumlah siswa adalah estimasi: tabel BPS tahun ajaran 2025/2026 per kecamatan dan status (negeri/swasta), dibagi rata ke sekolah di kelompok itu.</p>
 </div>

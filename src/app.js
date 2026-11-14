@@ -198,6 +198,7 @@ if(inputJarak) inputJarak.addEventListener('input',terapkanSppgBerdekatan);
 // ================= penarikan data isochrone statis 10 menit (hasil scripts/fetch-isochrones.mjs) agar aplikasi tidak butuh API/key saat dipakai =================
 // ================= memperbaiki isochrone satu waktu (600 detik, isochrone-sppg-600.geojson) menjadi multi-waktu (60 sampai 600 detik, isochrone-multi.geojson) agar pengguna bisa memilih waktu tempuh <= 600 detik lewat slider tanpa memanggil API =================
 let isoSppg=null;      // FeatureCollection: poligon per titik SPPG per waktu (properti titik "lng,lat" dan waktu_detik)
+let faktorMacet=1;    // pengali waktu tempuh untuk uji lalu lintas jam pagi (1 = tanpa macet, data ORS apa adanya)
 let waktuIso=600;      // waktu tempuh (detik) yang dipilih pengguna; maksimum 600
 async function muatIsochrone(){
 if(isoSppg) return isoSppg;
@@ -425,7 +426,7 @@ return v==null?null:v;
 // ================= memperbaiki alokasi pemenang tunggal (tiap sekolah ke SPPG tercepat tanpa batas kapasitas, sehingga satu SPPG bisa 8.640 siswa dan tetangganya 389 atau 0) menjadi alokasi berkapasitas: sekolah dilayani SPPG tercepat yang masih punya sisa kapasitas dan berjarak <= 30 menit; sekolah yang tidak muat di SPPG mana pun dicatat tertampung=false dan dihitung ke SPPG tercepat sebagai kelebihan; tanpa matriks waktu tetap memakai SPPG terdekat (cadangan) =================
 function hitungBeban(grup,kap,iw){
 const muatan=grup.map(()=>0);
-const ak=iw?alokasiBerkapasitas(grup,kap,iw,1800):null;
+const ak=iw?alokasiBerkapasitas(grup,kap,iw,1800/faktorMacet):null;   // batas 30 menit BGN diterapkan pada waktu tempuh yang sudah dikali faktor macet
 const dekat=sekolahData.map((s,si)=>{
 const xy=s.geometry.coordinates;
 const tj=ak&&ak.tujuan[si];
@@ -650,6 +651,13 @@ const lab=document.getElementById('waktuLabel');
 if(lab) lab.innerText=`${m} menit (${waktuIso} detik)`;
 terapkanCakupan();
 });
+// ================= pembuatan pemilih skenario lalu lintas jam pagi: waktu tempuh dikali faktor (1 / 1,25 / 1,5 / 2) sebelum dibandingkan dengan batas 30 menit BGN; alokasi dan usulan lokasi dihitung ulang =================
+window.setMacet=(v)=>{
+faktorMacet=Number(v)||1;
+document.querySelectorAll('.btn-macet').forEach(b=>b.classList.toggle('aktif',Number(b.dataset.f)===faktorMacet));
+kandidatTerakhir=null;safeRemove('candidate');
+terapkanBebanDasar();
+};
 // ================= pembuatan tombol skenario kapasitas (2.000 / 2.500 / 3.000) yang mengisi kotak kapasitas dan memicu perhitungan ulang =================
 window.setKapasitas=(v)=>{const el=document.getElementById('kapasitas');if(el){el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}));}};
 // ================= memperbaiki pendengar kapasitas agar juga menghapus kandidat lama (hasilnya tidak berlaku lagi untuk kapasitas baru) =================
@@ -769,14 +777,18 @@ const asli=sekolahData.filter(s=>s.properties.sumber_siswa==='bps'||s.properties
 setCard(4,'Kualitas data',barisInfo('SPPG dipakai / tercatat',`${dipakai.length} / ${semua.length}`)+barisInfo('Koordinat SPPG: jalan / kelurahan',`${jalan} / ${dipakai.length-jalan}`)+barisInfo('Titik SPPG unik',grup.length)+barisInfo('Jumlah siswa','estimasi (BPS kecamatan, dibagi rata)'));
 }
 
+function skenarioTeks(){
+const kap=analisisDasar?analisisDasar.kap:3000;
+return `kapasitas ${fmt(kap)}/SPPG, lalu lintas ${faktorMacet===1?'normal':'×'+String(faktorMacet).replace('.',',')}`;
+}
 // ================= pembuatan kartu usulan lokasi SPPG baru: tiap baris berisi kelurahan, kecamatan, sekolah dan siswa yang diambil alih; klik untuk zoom dan membuka popup =================
 function renderKartuUsulan(){
 if(pilihan) return;
 const d=kandidatTerakhir&&kandidatTerakhir.daftar;
-if(!d||!d.length){setCard(3,'Usulan lokasi SPPG baru','<div class="cat">'+(analisisDasar?'Tidak ada lokasi baru yang diperlukan.':'Menghitung...')+'</div>');return;}
+if(!d||!d.length){setCard(3,'Usulan lokasi SPPG baru','<div class="cat">'+(analisisDasar?`Skenario: ${skenarioTeks()}. Semua siswa tertampung, jadi tidak ada lokasi baru yang diperlukan.<br>Uji skenario lebih berat di menu Atur (kapasitas riil 2.500 atau 2.000, lalu lintas jam pagi).`:'Menghitung...')+'</div>');return;}
 const rk=ringkasanKandidat;
-const ket=rk?(rk.akhir===0?`${d.length} lokasi menutup semua sekolah yang belum terlayani baik.`:`${d.length} lokasi menurunkan sisa menjadi ${fmt(rk.akhir)} siswa.`):'';
-setCard(3,'Usulan lokasi SPPG baru',d.slice(0,5).map((k,i)=>`<div class="row kand-row" data-i="${i}" style="cursor:pointer;justify-content:space-between;gap:8px" title="Klik untuk melihat lokasi di peta"><span style="width:auto;color:#f472b6">#${k.rank}</span><span class="n" style="flex:1" title="${esc(k.host.kel)}, ${esc(k.host.kec)}">${esc(k.host.kel)}, ${esc(k.host.kec)}</span><b>${k.sekolah} sek &middot; ${fmt(k.siswa)}</b></div>`).join('')+`<div class="cat">${ket}${d.length>5?' (5 teratas ditampilkan)':''}</div>`);
+const ket=rk?`Skenario: ${skenarioTeks()}. Siswa tidak tertampung ${fmt(rk.awal)} &rarr; ${fmt(rk.akhir)} dengan ${d.length} lokasi baru.`:'';
+setCard(3,'Usulan lokasi SPPG baru (uji ketahanan)',d.slice(0,5).map((k,i)=>`<div class="row kand-row" data-i="${i}" style="cursor:pointer;justify-content:space-between;gap:8px" title="Klik untuk melihat lokasi di peta"><span style="width:auto;color:#f472b6">#${k.rank}</span><span class="n" style="flex:1" title="${esc(k.host.kel)}, ${esc(k.host.kec)}">${esc(k.host.kel)}, ${esc(k.host.kec)}</span><b>${k.sekolah} sek &middot; ${fmt(k.siswa)}</b></div>`).join('')+`<div class="cat">${ket}${d.length>5?' (5 teratas ditampilkan)':''}</div>`);
 }
 document.addEventListener('click',(e)=>{
 const r=e.target.closest&&e.target.closest('.kand-row');
@@ -950,7 +962,7 @@ const siswa=sekolahData.map(s=>getSiswa(s));
 const idxSek=new Map(sekolahData.map((s,i)=>[String(s.properties.NPSN),i]));
 const kolom=new Map(matriksKandidat.npsn.map((n,j)=>[String(n),j]));
 const col=sekolahData.map(s=>kolom.get(String(s.properties.NPSN)));        // kolom matriks tiap sekolah (undefined bila tidak ada)
-const BATAS_DETIK=1800, DETIK_10_MENIT=600, JARAK_MIN_SPPG=300, JARAK_MIN_KANDIDAT=1000;   // detik / meter
+const BATAS_DETIK=1800/faktorMacet, DETIK_10_MENIT=600, JARAK_MIN_SPPG=300, JARAK_MIN_KANDIDAT=1000;   // detik / meter
 // calon yang sekolah acuannya ada di data dan tidak terlalu dekat dengan SPPG yang ada
 const calon=[];
 matriksKandidat.kandidat.forEach((npsn,i)=>{
@@ -961,10 +973,12 @@ if(grup.some(g=>jarakM(xy,g.xy)<JARAK_MIN_SPPG)) return;
 calon.push({i,h,xy});
 });
 const g=beban.dekat.map(d=>d.idx);                                         // penugasan: indeks titik SPPG, atau indeks kandidat (>= grup.length)
-const tKini=beban.dekat.map(d=>d.t!=null?d.t:Infinity);                    // waktu tempuh tiap sekolah ke pemberi layanan saat ini
+// sekolah yang tidak tertampung belum benar-benar dilayani, jadi calon lokasi mana pun dalam batas 30 menit boleh mengambilnya
+const tKini=beban.dekat.map(d=>(d.tertampung&&d.t!=null)?d.t:Infinity);                    // waktu tempuh tiap sekolah ke pemberi layanan saat ini
 const kapAll=grup.map(x=>x.n*kap);
 const muatan=beban.muatan.slice();
-const belum=new Set(sekolahTdkTercakup);                                   // sekolah di luar gabungan isochrone 10 menit
+// ================= mengubah dasar usulan lokasi: karena semua sekolah sudah terjangkau <= 30 menit (aturan BGN), usulan tidak lagi memakai kriteria 10 menit; lokasi baru hanya diusulkan untuk mengurangi siswa tidak tertampung pada skenario kapasitas riil dan/atau lalu lintas jam pagi =================
+const belum=new Set();
 const kelebihanAwal=beban.kelebihan;
 const belumAwal=[...belum].reduce((a,i)=>a+siswa[i],0);
 const dipilih=[];
@@ -976,19 +990,27 @@ for(const c of calon){
 if(terpakai.has(c.i)) continue;
 if(dipilih.some(p=>jarakM(c.xy,p.xy)<JARAK_MIN_KANDIDAT)) continue;        // terlalu dekat dengan kandidat lain
 const baris=matriksKandidat.detik[c.i];
-let muatC=0;
-const lepas=new Map();                                                     // titik asal -> siswa yang pindah ke kandidat
+// ================= memperbaiki pemilihan sekolah calon lokasi: hanya sekolah dari SPPG yang melebihi kapasitas (terdekat dulu), sebatas kelebihannya dan sebatas kapasitas lokasi baru, agar kapasitas lokasi baru tidak terbuang untuk sekolah yang sudah terlayani dengan baik =================
+let muatC=0,gain=0;
+const lepas=new Map(),take=[];                                             // titik asal -> siswa yang pindah ke kandidat
+const elig=[];
 for(let s=0;s<N;s++){
 const t=col[s]==null?null:baris[col[s]];
-if(t!=null&&t<=BATAS_DETIK&&t<tKini[s]){muatC+=siswa[s];lepas.set(g[s],(lepas.get(g[s])||0)+siswa[s]);}
+if(t!=null&&t<=BATAS_DETIK&&t<tKini[s]&&muatan[g[s]]>kapAll[g[s]]) elig.push({s,t});
 }
-let gain=0;                                                                // pengurangan kelebihan beban di titik asal
-lepas.forEach((v,idx)=>{gain+=Math.max(0,muatan[idx]-kapAll[idx])-Math.max(0,muatan[idx]-v-kapAll[idx]);});
-const exC=Math.max(0,muatC-kap);                                           // kelebihan baru jika kandidat sendiri melebihi kapasitas
-let cov=0;
-belum.forEach(s=>{const t=col[s]==null?null:baris[col[s]];if(t!=null&&t<=DETIK_10_MENIT) cov+=siswa[s];});   // siswa belum tercakup yang terjangkau dalam 10 menit
-const skor=gain-exC+cov;
-if(!best||skor>best.skor) best={c,skor,gain,cov,muatC,lepas};
+elig.sort((a,b)=>a.t-b.t);
+const sisaEx=new Map();
+for(const {s} of elig){
+const src=g[s];
+if(!sisaEx.has(src)) sisaEx.set(src,muatan[src]-kapAll[src]);
+const ex=sisaEx.get(src);
+if(ex<=0||muatC+siswa[s]>kap) continue;
+muatC+=siswa[s];take.push(s);lepas.set(src,(lepas.get(src)||0)+siswa[s]);
+gain+=Math.min(siswa[s],ex);sisaEx.set(src,ex-siswa[s]);
+}
+const cov=0;
+const skor=gain;
+if(!best||skor>best.skor) best={c,skor,gain,cov,muatC,lepas,take:new Set(take)};
 }
 if(!best||best.skor<=0) break;                                             // tidak ada lokasi yang masih memberi manfaat
 
@@ -1007,7 +1029,7 @@ let nSek=0,hemat=0,siswaHemat=0;
 const perJ={};
 for(let s=0;s<N;s++){
 const t=col[s]==null?null:baris[col[s]];
-if(t!=null&&t<=BATAS_DETIK&&t<tKini[s]){
+if(best.take.has(s)){
 if(Number.isFinite(tKini[s])){hemat+=(tKini[s]-t)*siswa[s];siswaHemat+=siswa[s];}
 g[s]=idxBaru;tKini[s]=t;nSek++;
 const jj=sekolahData[s].properties.jenjang;perJ[jj]=(perJ[jj]||0)+1;
@@ -1156,11 +1178,11 @@ const ring=document.getElementById('hasilKandidat');
 const daftar=document.getElementById('listKandidat');
 if(!ring||!daftar) return;
 if(!h||!h.daftar.length){
-ring.innerText='Tidak ada lokasi baru yang memberi manfaat (beban sudah tertangani dan tidak ada sekolah yang belum tercakup).';
+ring.innerText='Tidak ada siswa yang tidak tertampung pada skenario ini ('+skenarioTeks()+'), jadi tidak ada lokasi baru yang diperlukan. Coba skenario yang lebih berat di menu Atur.';
 daftar.innerHTML='';
 return;
 }
-ring.innerHTML=`Kelebihan beban: <b>${fmt(h.sebelum.kelebihan)}</b> &rarr; <b>${fmt(h.sesudah.kelebihan)}</b> siswa.<br>Belum tercakup 10 menit: <b>${fmt(h.sebelum.belum)}</b> &rarr; <b>${fmt(h.sesudah.belum)}</b> siswa.`;
+ring.innerHTML=`Siswa tidak tertampung: <b>${fmt(h.sebelum.kelebihan)}</b> &rarr; <b>${fmt(h.sesudah.kelebihan)}</b> (${skenarioTeks()}).`;
 // ================= memperbaiki daftar kandidat yang hanya satu baris menjadi bisa dibuka (details) berisi alasan pemilihan lokasi berdasarkan data =================
 daftar.innerHTML=h.daftar.map(k=>`<li><b>${esc(k.host.kel)}, ${esc(k.host.kec)}</b>: ambil alih ${k.sekolah} sekolah (${fmt(k.siswa)} siswa)${k.gainBeban>0?`, kelebihan &minus;${fmt(k.gainBeban)}`:''}<details><summary style="cursor:pointer;color:#38bdf8">Mengapa di sini?</summary><ul style="margin:2px 0 4px 14px;padding:0;list-style:disc;font-size:12px">${alasanKandidat(k).map(t=>`<li>${t}</li>`).join('')}</ul></details></li>`).join('');
 }
@@ -1197,11 +1219,11 @@ const idx=[...sekolahTdkTercakup];
 const sJauh=idx.reduce((a,i)=>a+getSiswa(sekolahData[i]),0);
 const minta=beban.muatan.reduce((a,b)=>a+b,0),kapT=grup.reduce((a,g)=>a+g.n*kap,0);
 const k=ringkasanKandidat;
-let t=`<b>Temuan:</b> ${Math.round(100*minta/kapT)}% kapasitas terpakai, ${fmt(beban.kelebihan)} siswa tidak tertampung. `;
-if(idx.length){
-t+=`${idx.length} sekolah (${fmt(sJauh)} siswa) berada di luar area ${waktuIso/60} menit dari SPPG mana pun`;
-t+=k&&k.n?(k.akhir===0?`; <b>${k.n} lokasi baru</b> (titik merah muda) cukup untuk menutupnya.`:`; ${k.n} lokasi usulan (titik merah muda) menurunkan sisanya menjadi ${fmt(k.akhir)} siswa.`):'.';
-}else t+=`Semua sekolah berada dalam ${waktuIso/60} menit dari suatu SPPG.`;
+let t=`<b>Temuan:</b> ${Math.round(100*minta/kapT)}% kapasitas terpakai, ${fmt(beban.kelebihan)} siswa tidak tertampung (skenario: ${skenarioTeks()}). `;
+t+=beban.kelebihan===0?'Semua sekolah terlayani dalam batas BGN (30 menit), jadi <b>tidak ada SPPG baru yang diperlukan</b>. ':'';
+if(idx.length) t+=`${idx.length} sekolah (${fmt(sJauh)} siswa) berada di luar area ${waktuIso/60} menit, tetapi masih dalam 30 menit. `;
+if(k&&k.n) t+=k.akhir===0?`<b>${k.n} lokasi baru</b> (titik merah muda) menutup semua siswa yang tidak tertampung.`:`${k.n} lokasi usulan (titik merah muda) menurunkan siswa tidak tertampung menjadi ${fmt(k.akhir)}.`;
+else if(beban.kelebihan===0) t+='Uji skenario lebih berat (kapasitas riil, lalu lintas pagi) di menu Atur.';
 el.innerHTML=t;
 }
 
