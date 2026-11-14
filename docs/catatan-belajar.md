@@ -1166,3 +1166,21 @@ Layar pertama langsung menyatakan temuan: 79% kapasitas terpakai, 0 siswa tidak 
 
 **Pelajaran**
 Setiap kali tampilan atau aturan berubah, cari teks lama yang masih menjelaskan versi sebelumnya (di sini "SPPG merah"). Menguji sebagai orang asing menemukan masalah yang tidak terlihat oleh pembuatnya.
+
+## 48. Kartu dashboard bawah: waktu tempuh siswa dan daftar usulan lokasi
+
+**Masalah**
+Kartu "Sebaran utilisasi" tidak informatif (kapasitas dibatasi 3.000, hampir semua SPPG ada di satu kelompok) dan kurva "Jika dibangun SPPG baru" sulit dibaca pengunjung baru. Hasil akhir proyek, yaitu lokasi usulan, tersembunyi di tab Usulan.
+
+**Perubahan**
+- Kartu 2 menjadi sebaran siswa per rentang waktu tempuh ke SPPG pelayannya (0–5, 5–10, 10–20, 20–30 menit); totalnya sama dengan siswa teralokasi (292.425).
+- Kartu 3 menjadi daftar 5 lokasi usulan teratas (kelurahan, kecamatan, sekolah dan siswa yang diambil alih). Klik baris untuk zoom ke lokasi dan membuka popup alasannya.
+
+**Alasan**
+Waktu tempuh langsung menjawab batas 10 dan 30 menit tanpa istilah teknis, dan keputusan yang diusulkan sebaiknya terlihat tanpa membuka menu.
+
+**Hasil**
+78% siswa dalam 5 menit, 18% dalam 5–10 menit, 3% dalam 10–20 menit, 261 siswa (0%) di 20–30 menit. Console bersih (hanya favicon 404).
+
+**Pelajaran**
+Cocokkan jumlah kartu baru dengan angka yang sudah ada (jumlah rentang = 292.425) untuk memastikan tidak ada siswa yang hilang dari hitungan.

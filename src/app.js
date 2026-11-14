@@ -753,26 +753,14 @@ setKpi(4,'Tidak tertampung',fmt(beban.kelebihan),'siswa tanpa kuota SPPG',beban.
 const terjauh=sekolahData.map((s,si)=>({nama:s.properties.NAMA||'-',t:beban.dekat[si].t})).filter(o=>o.t!=null).sort((a,b)=>b.t-a.t).slice(0,6);
 setCard(1,'Sekolah terjauh dari SPPG pelayannya (garis putus = 10 menit)',terjauh.map(o=>barisBar(o.nama,o.t,1800,(o.t/60).toFixed(1)+' mnt',o.t>600?'#fb923c':'#4ade80',600)).join('')+'<div class="cat">Skala sampai 30 menit (batas BGN).</div>');
 
-// sebaran utilisasi (tiga kelompok)
-const u=grup.map((g,i)=>beban.muatan[i]/(g.n*kap));
-const b1=u.filter(x=>x<=0.5).length,b2=u.filter(x=>x>0.5&&x<=1).length,b3=u.filter(x=>x>1).length;
-const mb=Math.max(b1,b2,b3,1);
-setCard(2,'Sebaran utilisasi (titik SPPG)',`<div class="hist"><div style="height:${100*b1/mb}%;background:#4ade80">${b1}</div><div style="height:${100*b2/mb}%;background:#fbbf24">${b2}</div><div style="height:${100*b3/mb}%;background:#fb923c">${b3}</div></div><div class="cat">&le;50% &nbsp; 50&ndash;100% &nbsp; &gt;100%</div>`);
+// ================= mengganti kartu "Sebaran utilisasi" menjadi sebaran waktu tempuh siswa ke SPPG pelayannya (0-5, 5-10, 10-20, 20-30 menit) =================
+const RENTANG=[{l:'0-5 mnt',a:0,b:300,w:'#4ade80'},{l:'5-10 mnt',a:300,b:600,w:'#a3e635'},{l:'10-20 mnt',a:600,b:1200,w:'#fbbf24'},{l:'20-30 mnt',a:1200,b:1801,w:'#fb923c'}];
+const sisRentang=RENTANG.map(()=>0);let sisTotal=0;
+sekolahData.forEach((s,si)=>{const t=beban.dekat[si].t;if(t==null) return;const n=getSiswa(s);sisTotal+=n;const r=RENTANG.findIndex(x=>t>=x.a&&t<x.b);if(r>=0) sisRentang[r]+=n;});
+setCard(2,'Waktu tempuh siswa ke SPPG pelayannya',RENTANG.map((r,i)=>barisBar(r.l,sisRentang[i],Math.max(1,sisTotal),fmt(sisRentang[i])+' ('+Math.round(100*sisRentang[i]/Math.max(1,sisTotal))+'%)',r.w)).join('')+'<div class="cat">Jumlah siswa per rentang waktu tempuh (batas BGN 30 menit).</div>');
 
-// kurva manfaat kandidat (dihitung tertunda agar tidak berat saat kapasitas diketik; dibatalkan jika pengguna sudah memilih titik)
-setCard(3,'Jika dibangun SPPG baru','<div class="cat">Menghitung...</div>');
-clearTimeout(kurvaTimer);
-kurvaTimer=setTimeout(()=>{
-if(pilihan) return;
-// ================= memperbaiki kurva yang tanpa penjelasan menjadi berjudul "Jika dibangun SPPG baru" dengan kalimat yang menyebut apa yang dihitung: siswa tidak tertampung + siswa di luar area 10 menit, sekarang dan setelah n lokasi usulan =================
-let nilai=[beban.kelebihan];
-try{const kk=cariKandidat(20);nilai=[kk.sebelum.kelebihan+kk.sebelum.belum];kk.daftar.forEach(d=>nilai.push(d.sisaKelebihan+d.sisaBelum));}catch(e){console.error(e);}
-const mx=Math.max(1,nilai[0]),W=120,H=80;
-const pts=nilai.map((v,i)=>`${6+(W-12)*i/Math.max(1,nilai.length-1)},${8+(H-16)*(1-v/mx)}`).join(' ');
-const nol=nilai.findIndex(v=>v===0),akhir=nilai[nilai.length-1];
-const kalimat=nilai[0]===0?'Tidak ada siswa yang tidak terlayani baik.':(nol>0?`<b>${fmt(nilai[0])}</b> siswa belum terlayani baik &rarr; <b>0</b> setelah <b>${nol}</b> lokasi baru.`:`<b>${fmt(nilai[0])}</b> siswa belum terlayani baik &rarr; <b>${fmt(akhir)}</b> setelah ${nilai.length-1} lokasi baru.`);
-setCard(3,'Jika dibangun SPPG baru',`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:60px"><polyline fill="none" stroke="#38bdf8" stroke-width="2.5" points="${pts}"/></svg><div class="cat">${kalimat}<br>"Belum terlayani baik" = tidak tertampung + di luar area ${waktuIso/60} menit.</div>`);
-},60);
+// ================= mengganti kurva "Jika dibangun SPPG baru" menjadi daftar usulan lokasi yang bisa diklik (zoom ke lokasi) =================
+renderKartuUsulan();
 
 // kualitas data (ringkas)
 const semua=sppgSemuaData,dipakai=semua.filter(f=>f.properties.dipakai_analisis);
@@ -780,6 +768,24 @@ const jalan=dipakai.filter(f=>['jalan','ruas_jalan','tempat'].includes(f.propert
 const asli=sekolahData.filter(s=>s.properties.sumber_siswa==='bps'||s.properties.siswa).length;
 setCard(4,'Kualitas data',barisInfo('SPPG dipakai / tercatat',`${dipakai.length} / ${semua.length}`)+barisInfo('Koordinat SPPG: jalan / kelurahan',`${jalan} / ${dipakai.length-jalan}`)+barisInfo('Titik SPPG unik',grup.length)+barisInfo('Jumlah siswa','estimasi (BPS kecamatan, dibagi rata)'));
 }
+
+// ================= pembuatan kartu usulan lokasi SPPG baru: tiap baris berisi kelurahan, kecamatan, sekolah dan siswa yang diambil alih; klik untuk zoom dan membuka popup =================
+function renderKartuUsulan(){
+if(pilihan) return;
+const d=kandidatTerakhir&&kandidatTerakhir.daftar;
+if(!d||!d.length){setCard(3,'Usulan lokasi SPPG baru','<div class="cat">'+(analisisDasar?'Tidak ada lokasi baru yang diperlukan.':'Menghitung...')+'</div>');return;}
+const rk=ringkasanKandidat;
+const ket=rk?(rk.akhir===0?`${d.length} lokasi menutup semua sekolah yang belum terlayani baik.`:`${d.length} lokasi menurunkan sisa menjadi ${fmt(rk.akhir)} siswa.`):'';
+setCard(3,'Usulan lokasi SPPG baru',d.slice(0,5).map((k,i)=>`<div class="row kand-row" data-i="${i}" style="cursor:pointer;justify-content:space-between;gap:8px" title="Klik untuk melihat lokasi di peta"><span style="width:auto;color:#f472b6">#${k.rank}</span><span class="n" style="flex:1" title="${esc(k.host.kel)}, ${esc(k.host.kec)}">${esc(k.host.kel)}, ${esc(k.host.kec)}</span><b>${k.sekolah} sek &middot; ${fmt(k.siswa)}</b></div>`).join('')+`<div class="cat">${ket}${d.length>5?' (5 teratas ditampilkan)':''}</div>`);
+}
+document.addEventListener('click',(e)=>{
+const r=e.target.closest&&e.target.closest('.kand-row');
+if(!r||!kandidatTerakhir) return;
+const k=kandidatTerakhir.daftar[+r.dataset.i];
+if(!k) return;
+map.flyTo({center:k.xy,zoom:14});
+new maplibregl.Popup().setLngLat(k.xy).setHTML(teksKandidat(k)).addTo(map);
+});
 
 // ================= pembuatan tampilan SPPG terpilih: porsi, utilisasi, sekolah dilayani per jenjang, dan catatan SPPG =================
 function renderDashSppg(f){
@@ -1179,6 +1185,7 @@ const inp=document.getElementById('jumlahKandidat');
 if(inp&&daftar.length) inp.value=daftar.length;
 }catch(e){console.error(e);ringkasanKandidat=null;}
 perbaruiTemuan();
+renderKartuUsulan();
 }
 
 // ================= pembuatan kartu temuan utama di pengantar: kapasitas terpakai, siswa tidak tertampung, sekolah di luar area 10 menit, dan jumlah lokasi usulan yang menutupnya =================
@@ -1212,7 +1219,7 @@ const LANGKAH_TUR=[
 {j:'Peta',t:'Titik hitam adalah dapur SPPG. Titik berwarna adalah sekolah: biru SD/MI, kuning SMP/MTs, ungu SMA/SMK/MA (pinggiran putih = madrasah). Besar titik mengikuti jumlah siswa. Cincin merah = sekolah yang jauh dari SPPG mana pun, titik merah muda = usulan SPPG baru.',sel:null},
 {j:'Angka kunci',t:'Empat angka di kiri atas: berapa siswa yang terjangkau dalam 10 menit, seberapa penuh kapasitas SPPG, berapa sekolah di luar jangkauan, dan berapa siswa tanpa kuota. Arahkan kursor ke kartu untuk penjelasan.',sel:'#kpiStrip'},
 {j:'Coba klik',t:'Klik satu titik hitam (SPPG). Popup menampilkan siswa yang dialokasikan (maks 3.000 per hari) dan sekolah yang dilayani, dan semua angka serta grafik berganti untuk SPPG itu. Klik tempat kosong untuk kembali ke ringkasan kota.',sel:null},
-{j:'Grafik di bawah',t:'Sekolah terjauh dari SPPG pelayannya, sebaran kapasitas terpakai, manfaat membangun SPPG baru, dan kualitas data.',sel:'#dock'},
+{j:'Grafik di bawah',t:'Sekolah terjauh dari SPPG pelayannya, sebaran waktu tempuh siswa, daftar usulan lokasi SPPG baru (klik untuk zoom), dan kualitas data.',sel:'#dock'},
 {j:'Menu di kiri',t:'Layer: nyalakan atau matikan titik dan lihat legenda. Analisis: area jangkauan dan heatmap. Atur: waktu tempuh dan kapasitas. Usulan: daftar lokasi SPPG baru beserta alasannya. Data: metode dan keterbatasan.',sel:'#rail'}
 ];
 function tampilTur(i){

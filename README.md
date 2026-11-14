@@ -33,7 +33,7 @@ Catatan alokasi: SPPG yang penuh melepas sekolah ke SPPG terdekat berikutnya, se
 - **Alokasi berkapasitas berbasis waktu tempuh**: pasangan SPPG–sekolah diproses dari waktu tempuh terpendek; tiap SPPG mengambil sekolah terdekatnya sampai kuota 3.000 per hari penuh, lalu sisa sekolah diambil SPPG terdekat lain yang masih punya kuota, semuanya maksimal 30 menit.
 - **Sekolah jauh**: sekolah di luar area 10 menit diberi cincin merah (cincin lebih besar bila tidak tertampung), dengan filter "hanya sekolah jauh" untuk menimbang lokasi SPPG baru.
 - **Usulan SPPG baru**: pencarian serakah dari 150 calon lokasi, dinilai dengan waktu tempuh dan kapasitas, lengkap dengan alasan tiap lokasi; jumlah paling sedikit yang menutup semua sekolah jauh tampil otomatis.
-- Dashboard ringkasan kota: empat angka kunci, sekolah terjauh dari SPPG pelayannya, sebaran kapasitas terpakai, manfaat membangun SPPG baru, dan kualitas data.
+- Dashboard ringkasan kota: empat angka kunci, sekolah terjauh dari SPPG pelayannya, sebaran waktu tempuh siswa (0–5, 5–10, 10–20, 20–30 menit), daftar usulan lokasi SPPG baru (klik baris untuk zoom ke lokasinya), dan kualitas data.
 
 ## Cara kerja singkat
 
