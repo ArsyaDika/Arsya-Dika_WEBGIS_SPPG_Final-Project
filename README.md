@@ -35,7 +35,6 @@ Catatan alokasi: SPPG yang penuh melepas sekolah ke SPPG terdekat berikutnya, se
 - Peta sekolah (SD/MI, SMP/MTs, SMA/SMK/MA; madrasah berpinggiran putih) dan titik SPPG hitam, dengan basemap gelap, jalan, dan satelit. Ukuran titik mengikuti jumlah siswa dan zoom.
 - **Area jangkauan (isochrone) dinamis**: slider waktu tempuh 1–10 menit dari data multi-waktu (tanpa memanggil API dari browser).
 - **Alokasi berkapasitas berbasis waktu tempuh**: pasangan SPPG–sekolah diproses dari waktu tempuh terpendek; tiap SPPG mengambil sekolah terdekatnya sampai kuota 3.000 per hari penuh, lalu sisa sekolah diambil SPPG terdekat lain yang masih punya kuota, semuanya maksimal 30 menit.
-- **Sekolah jauh**: sekolah di luar area 10 menit diberi cincin merah (cincin lebih besar bila tidak tertampung), dengan filter "hanya sekolah jauh" untuk menimbang lokasi SPPG baru.
 - **Usulan SPPG baru (uji ketahanan)**: pemilih skenario kapasitas riil (2.000 / 2.500 / 3.000) dan lalu lintas jam pagi (normal / ×1,25 / ×1,5 / ×2). Pencarian serakah dari 150 calon lokasi, dinilai dengan waktu tempuh dan kapasitas, lengkap dengan alasan tiap lokasi; jumlah paling sedikit yang menutup semua siswa yang tidak tertampung tampil otomatis.
 - Dashboard ringkasan kota: empat angka kunci, sekolah terjauh dari SPPG pelayannya, sebaran waktu tempuh siswa (0–5, 5–10, 10–20, 20–30 menit), daftar usulan lokasi SPPG baru (klik baris untuk zoom ke lokasinya), dan kualitas data.
 

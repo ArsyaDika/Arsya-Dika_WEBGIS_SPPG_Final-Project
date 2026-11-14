@@ -1200,3 +1200,19 @@ BGN (3.000, normal): 0 lokasi. 3.000 dengan macet ×1,5: 232 siswa, 1 lokasi. 2.
 
 **Pelajaran**
 Dasar sebuah usulan harus sama dengan aturan yang berlaku; parameter buatan sendiri hanya layak jadi pengujian tambahan. Setelah mengubah tujuan pencarian, periksa juga bahwa algoritmanya benar-benar mencapai tujuan itu (di sini kapasitas lokasi baru terbuang).
+
+## 50. Audit kontrol dan kartu: hapus yang tidak berfungsi atau tidak berguna
+
+**Masalah**
+Beberapa kontrol tidak berfungsi atau mengulang informasi, dan satu angka tampil dua versi (siswa tidak tertampung 2.300 di kartu, 2.365 di panel).
+
+**Perubahan**
+- Dihapus: cincin merah sekolah jauh, tombol "Hanya sekolah jauh", tombol "Tampilkan area semua SPPG" (hasilnya 36,8 titik tumpang tindih per sekolah tidak informatif dan mengulang tombol area 10 menit), baris "Titik melebihi kapasitas" dan "Kelebihan permintaan" yang mengulang KPI.
+- Diperbaiki: tombol Heatmap sekarang membuat heatmap saat pertama dinyalakan (sebelumnya tidak berbuat apa-apa sebelum tombol area ditekan). Angka "tidak tertampung" kini satu versi (siswa dari sekolah yang tidak tertampung) di semua tempat.
+- Teks panel Usulan, legenda, pengantar, dan tur diselaraskan.
+
+**Hasil**
+Tidak ada tombol atau teks sisa yang merujuk ke cincin merah; console bersih. Kapasitas 2.500: kartu, panel, dan usulan sama-sama menyebut 2.365 → 0 dengan 1 lokasi.
+
+**Pelajaran**
+Setiap kontrol harus bisa diuji sendiri tanpa urutan tersembunyi (heatmap yang bergantung pada tombol lain tampak rusak). Dua angka dengan nama sama harus berasal dari satu hitungan.

@@ -126,10 +126,6 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <button onclick="toggleLayer('smp-layer,mts-layer')" class="btn">SMP / MTs</button>
 <button onclick="toggleLayer('sma-layer,smk-layer,ma-layer')" class="btn">SMA / SMK / MA</button>
 <button onclick="toggleLayer('sppg-layer')" class="btn">SPPG</button>
-<!-- ================= pembuatan filter sekolah bermasalah jangkauan: hanya sekolah bercincin merah (di luar isochrone 10 menit atau tidak tertampung kapasitas) yang terlihat, sebagai bahan menimbang lokasi SPPG baru ================= -->
-<button onclick="toggleLayer('status-layer')" class="btn">Cincin sekolah jauh</button>
-<button onclick="hanyaSekolahJauh()" class="btn">Hanya sekolah jauh / tidak tertampung</button>
-<p class="text-xs text-slate-500">Sekolah bercincin merah: <b id="jumlahJauh">-</b>.</p>
 <p class="text-xs text-slate-500">Hasil perhitungan (area jangkauan, beban, heatmap, usulan lokasi) ada di tab Analisis.</p>
 </div>
 
@@ -139,7 +135,6 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <li><span style="color:#3b82f6">●</span> SD / MI &nbsp; <span style="color:#f59e0b">●</span> SMP / MTs &nbsp; <span style="color:#a78bfa">●</span> SMA / SMK / MA</li>
 <li class="text-xs text-slate-500">Madrasah (MI, MTs, MA) = warna jenjang yang sama dengan pinggiran putih.</li>
 <li><span style="color:#000;text-shadow:0 0 0 #fff,-1px 0 #fff,1px 0 #fff,0 1px #fff,0 -1px #fff">●</span> SPPG (hitam); pinggiran putih tebal = SPPG berdekatan (tab Atur)</li>
-<li><span style="color:#ef4444">◉</span> Cincin merah: sekolah di luar area 10 menit berkendara; cincin lebih besar: tidak tertampung kapasitas</li>
 <li class="text-xs text-slate-500">Ukuran titik sekolah mengikuti jumlah siswa dan tingkat zoom.</li>
 <li><span style="color:#38bdf8">●</span> Biru: area layanan SPPG yang diklik</li>
 </ul>
@@ -154,7 +149,7 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <button onclick="toggleLayer('beban-layer')" class="btn">Halo SPPG kelebihan beban</button>
 <button onclick="toggleLayer('heatmap-layer')" class="btn">Heatmap siswa</button>
 <button onclick="toggleLayer('candidate-layer')" class="btn">Usulan SPPG baru</button>
-<p class="text-xs text-slate-500">Area mengikuti waktu tempuh yang dipilih di tab Atur. Usulan lokasi tampil otomatis dan bisa dicoba ulang di tab Usulan. Heatmap muncul setelah tombol "Tampilkan area" ditekan di tab Atur.</p>
+<p class="text-xs text-slate-500">Area mengikuti waktu tempuh yang dipilih di tab Atur. Usulan lokasi tampil otomatis dan bisa dicoba ulang di tab Usulan.</p>
 </div>
 <div class="panel">
 <h3 class="font-bold">Legenda analisis</h3>
@@ -163,7 +158,7 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <li><span style="color:#f97316">●</span> Halo oranye: SPPG kelebihan permintaan (muncul bila kapasitas diturunkan di tab Atur)</li>
 <li><span style="color:#f472b6">●</span> Usulan SPPG baru</li>
 <li>🟡 Heatmap sebaran siswa</li>
-<li>🟢 Area satu SPPG / semua SPPG (tombol "Tampilkan area")</li>
+<li>🟢 Area satu SPPG (klik SPPG, lalu tombol di tab Atur)</li>
 </ul>
 </div>
 </section>
@@ -175,7 +170,7 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <!-- ================= memperbaiki input waktu terkunci 600 detik menjadi slider 1-10 menit (isochrone sudah dihitung per menit) agar pengguna bisa memilih waktu tempuh <= 600 detik ================= -->
 <label for="waktuMenit" class="text-sm">Waktu tempuh berkendara: <b id="waktuLabel">10 menit (600 detik)</b></label>
 <input id="waktuMenit" type="range" min="1" max="10" step="1" value="10" class="w-full mb-2"/>
-<p class="text-xs text-slate-500 mb-2">Geser untuk mengubah waktu tempuh (maksimum 10 menit; batas resmi BGN 20-30 menit, 10 menit dipakai sebagai ukuran yang lebih ketat). Area, angka cakupan, dan sekolah bercincin merah mengikuti. Klik satu titik SPPG, lalu tekan tombol di bawah untuk melihat area jangkauan SPPG itu saja.</p>
+<p class="text-xs text-slate-500 mb-2">Geser untuk mengubah waktu tempuh (maksimum 10 menit; batas resmi BGN 20-30 menit, 10 menit dipakai sebagai ukuran yang lebih ketat). Area dan angka cakupan mengikuti. Klik satu titik SPPG, lalu tekan tombol di bawah untuk melihat area jangkauan SPPG itu saja.</p>
 <button id="run-local" class="btn">Tampilkan area 1 SPPG (klik SPPG dulu)</button>
 </div>
 
@@ -199,8 +194,6 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <p class="text-sm font-semibold mt-2">Beban per SPPG</p>
 <p class="text-sm">Kapasitas total: <b id="kpiKapasitas">-</b></p>
 <p class="text-sm">Permintaan (estimasi): <b id="kpiPermintaan">-</b> (<b id="kpiUtil">-</b>)</p>
-<p class="text-sm">Titik melebihi kapasitas: <b id="kpiOver">-</b> dari <b id="kpiGrup">-</b></p>
-<p class="text-sm">Kelebihan permintaan: <b id="kpiKelebihan">-</b></p>
 <!-- ================= pembuatan KPI alokasi berkapasitas berbasis waktu tempuh (batas BGN 30 menit): berapa siswa tertampung dalam kapasitas, tidak tertampung, di luar 10 menit, dan rata-rata waktu tempuh ================= -->
 <p class="text-sm font-semibold mt-2">Alokasi berkapasitas (waktu tempuh, maks 30 menit)</p>
 <p class="text-sm">Tertampung: <b id="kpiTertampung">-</b></p>
@@ -215,10 +208,6 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <p class="text-xs text-slate-500 mt-1">Tiap SPPG mengutamakan sekolah terdekatnya sampai kuota penuh (aturan resmi 3.000/hari, maksimal 30 menit), lalu sekolah yang tersisa diambil SPPG terdekat lain yang masih punya kuota. Jumlah siswa adalah estimasi: tabel BPS tahun ajaran 2025/2026 per kecamatan dan status (negeri/swasta), dibagi rata ke sekolah di kelompok itu.</p>
 </div>
 
-<div class="panel">
-<h3 class="font-bold">Semua SPPG sekaligus</h3>
-<button id="run-global" class="btn">Tampilkan area semua SPPG</button>
-</div>
 
 <div class="panel">
 <h3 class="font-bold">Hasil area yang ditampilkan</h3>
@@ -242,7 +231,7 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <button id="run-kandidat" class="btn">Cari Lokasi SPPG Baru</button>
 <p class="text-sm" id="hasilKandidat">Belum dijalankan.</p>
 <ol class="text-sm list-decimal pl-5 space-y-1" id="listKandidat"></ol>
-<p class="text-xs text-slate-500 mt-1">Saat dibuka, aplikasi otomatis menampilkan jumlah lokasi paling sedikit yang menutup sekolah di luar area 10 menit. Ubah jumlahnya lalu tekan tombol untuk mencoba skenario lain. Metode: tiap putaran memilih satu lokasi sekolah yang paling banyak mengurangi siswa tidak tertampung dan sekolah di luar area (kapasitas sesuai kotak di tab Atur). Usulan tidak boleh lebih dekat dari 300 m ke SPPG yang ada dan 1 km ke usulan lain. Lokasi masih berupa titik sekolah acuan, bukan lahan yang sudah dicek.</p>
+<p class="text-xs text-slate-500 mt-1">Saat dibuka, aplikasi otomatis menampilkan jumlah lokasi paling sedikit yang menutup siswa tidak tertampung pada skenario kapasitas dan lalu lintas di tab Atur (kosong bila semua tertampung). Ubah jumlahnya lalu tekan tombol untuk mencoba skenario lain. Metode: tiap putaran memilih satu lokasi sekolah yang paling banyak mengurangi siswa tidak tertampung (kapasitas sesuai kotak di tab Atur). Usulan tidak boleh lebih dekat dari 300 m ke SPPG yang ada dan 1 km ke usulan lain. Lokasi masih berupa titik sekolah acuan, bukan lahan yang sudah dicek.</p>
 </div>
 </section>
 
@@ -277,7 +266,6 @@ body.dock-on .maplibregl-ctrl-bottom-right,body.dock-on .maplibregl-ctrl-bottom-
 <span><i style="background:#3b82f6"></i>SD/MI</span>
 <span><i style="background:#f59e0b"></i>SMP/MTs</span>
 <span><i style="background:#a78bfa"></i>SMA/SMK/MA</span>
-<span><i style="background:#3b82f6;border:2px solid #ef4444"></i>sekolah jauh</span>
 <span><i style="background:#f472b6;border:1.5px solid #fff"></i>usulan SPPG baru</span>
 </div>
 <p id="temuan">Menghitung...</p>

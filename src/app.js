@@ -325,19 +325,6 @@ wadah.innerHTML=`<p class="text-sm"><b>Dijangkau</b> dalam ${menit} menit: <b>${
 +`<p class="text-sm"><b>Dilayani</b> (alokasi waktu tempuh, eksklusif): <b>${dilayani.length}</b> sekolah &middot; ${fmt(jumlahSiswa(dilayani))} siswa${luar.length?`<br><span class="text-xs" style="color:#fb923c">${luar.length} di antaranya di luar isochrone ${menit} menit.</span>`:''}${g&&g.n>1?`<br><span class="text-xs text-slate-500">Titik ini berisi ${g.n} SPPG; daftar dilayani dibagi di antara mereka.</span>`:''}</p>`
 +`<p class="text-sm"><b>Tumpang tindih</b>: ${dijangkau.length?Math.round(100*tumpang.length/dijangkau.length):0}% (${tumpang.length} sekolah) juga dijangkau SPPG lain; rata-rata ${rata.toFixed(1)} titik SPPG menjangkau tiap sekolah di area ini.</p>`;
 }
-// ringkasan untuk Run Global (gabungan semua SPPG): berapa sekolah dijangkau dan seberapa tumpang tindih
-async function ringkasanGlobal(){
-const wadah=document.getElementById('hasilD');
-if(!wadah) return;
-const menit=waktuIso/60;
-const cnt=await jumlahPenjangkau(waktuIso);
-const ada=[];cnt.forEach((v,i)=>{if(v>0) ada.push(i);});
-const rata=ada.length?ada.reduce((a,i)=>a+cnt[i],0)/ada.length:0;
-const banyak=ada.filter(i=>cnt[i]>1).length;
-wadah.innerHTML=`<p class="text-sm"><b>Dijangkau</b> oleh minimal satu SPPG dalam ${menit} menit: <b>${ada.length}</b> dari ${sekolahData.length} sekolah &middot; ${fmt(jumlahSiswa(ada))} siswa (tiap sekolah dihitung sekali).</p>`
-+`<p class="text-sm"><b>Tumpang tindih</b>: ${Math.round(100*banyak/Math.max(1,ada.length))}% sekolah dijangkau lebih dari satu titik SPPG; rata-rata ${rata.toFixed(1)} titik per sekolah.</p>`;
-}
-
 // ================= CHART =================
 // ================= memperbaiki drawChart yang tetap tiga label (SD, SMP, SMA) menjadi menerima label, jumlah sekolah, jumlah siswa, dan warna per jenjang agar semua jenjang tergambar =================
 function drawChart(label,jumlah,siswa,warna){
@@ -438,7 +425,7 @@ muatan[b]+=getSiswa(s);
 return {idx:b,d:jarakM(xy,grup[b].xy),t:bt,tertampung:!ak};
 });
 const kelebihan=grup.reduce((a,g,i)=>a+Math.max(0,muatan[i]-g.n*kap),0);
-return {muatan,dekat,kelebihan,ak};
+return {muatan,dekat,kelebihan:ak?ak.tidak:kelebihan,ak};   // dengan alokasi berkapasitas, "kelebihan" = siswa dari sekolah yang tidak tertampung (sama dengan angka di KPI)
 }
 
 // ================= pembuatan alokasi berkapasitas: sekolah diurut dari yang paling sedikit pilihannya (regret), lalu dilayani SPPG tercepat yang masih punya sisa kapasitas dan berjarak <= batas waktu BGN (30 menit); sisanya dicatat tidak tertampung, dan yang melewati 10 menit dicatat "di luar isochrone 10 menit" =================
@@ -496,7 +483,6 @@ try{cak=await hitungCakupan();}catch(e){console.error(e);}
 analisisDasar={grup,kap,beban,tot:cak?cak.tot:null,iw,kapasitasAlok};
 gambarCakupan(cak?cak.gab:null);
 gambarBeban();
-gambarStatusSekolah();
 perbaruiKpi();
 kandidatOtomatis();   // usulan lokasi baru langsung ditampilkan tanpa perlu membuka tab Usulan
 }
@@ -546,41 +532,6 @@ if(!analisisDasar) return 0;
 if(analisisDasar.beban.dekat[si].tertampung===false) return 2;
 return sekolahTdkTercakup.has(si)?1:0;
 }
-function gambarStatusSekolah(){
-safeRemove('status');
-if(!analisisDasar) return;
-const fitur=[];
-sekolahData.forEach((s,si)=>{
-const st=statusSekolah(si);
-if(!st) return;
-const j=JENJANG.find(x=>x.k===s.properties.jenjang);
-fitur.push({type:'Feature',geometry:s.geometry,properties:{status:st,warna:j?j.warna:'#94a3b8',sidx:si}});
-});
-map.addSource('status',{type:'geojson',data:{type:'FeatureCollection',features:fitur}});
-map.addLayer({
-id:'status-layer',
-type:'circle',
-source:'status',
-paint:{
-'circle-color':['get','warna'],
-'circle-radius':['interpolate',['linear'],['zoom'],10,['match',['get','status'],2,6,5],15,['match',['get','status'],2,10,8]],
-'circle-stroke-color':'#ef4444',
-'circle-stroke-width':['match',['get','status'],2,4,3]
-}
-},map.getLayer('sppg-layer')?'sppg-layer':undefined);
-const el=document.getElementById('jumlahJauh');
-if(el) el.innerText=`${fitur.filter(f=>f.properties.status===1).length} di luar ${waktuIso/60} menit, ${fitur.filter(f=>f.properties.status===2).length} tidak tertampung`;
-}
-// tombol "hanya sekolah jauh / tidak tertampung": menyembunyikan titik sekolah biasa agar hanya yang bercincin merah terlihat
-// (memakai transparansi, bukan visibility none, agar titik tetap bisa diklik untuk popup)
-let hanyaJauhAktif=false;
-window.hanyaSekolahJauh=()=>{
-hanyaJauhAktif=!hanyaJauhAktif;
-JENJANG.map(j=>j.id+'-layer').filter(id=>map.getLayer(id)).forEach(id=>{
-map.setPaintProperty(id,'circle-opacity',hanyaJauhAktif?0.06:OPASITAS_SEKOLAH);
-map.setPaintProperty(id,'circle-stroke-opacity',hanyaJauhAktif?0:1);
-});
-};
 
 // ================= memperbaiki pencarian titik SPPG dari fitur peta: koordinat fitur dibulatkan MapLibre sehingga tidak sama persis dengan data, jadi dicari lewat properti No SPPG =================
 function idxGrupFitur(f){
@@ -613,9 +564,6 @@ const over=grup.filter((g,i)=>beban.muatan[i]>g.n*kap).length;
 set('kpiKapasitas',fmt(kapTotal)+' penerima/hari');
 set('kpiPermintaan',fmt(minta));
 set('kpiUtil',Math.round(100*minta/kapTotal)+'% dari kapasitas');
-set('kpiOver',over);
-set('kpiGrup',grup.length);
-set('kpiKelebihan',fmt(beban.kelebihan)+' siswa');
 // ================= pembuatan baris KPI alokasi berkapasitas (waktu tempuh, batas 30 menit): siswa tertampung, tidak tertampung, di luar 10 menit, dan rata-rata waktu tempuh =================
 const ak=analisisDasar.kapasitasAlok;
 if(ak){
@@ -637,7 +585,6 @@ try{
 const cak=await hitungCakupan();
 analisisDasar.tot=cak.tot;
 gambarCakupan(cak.gab);
-gambarStatusSekolah();
 perbaruiKpi();
 kandidatOtomatis();
 }catch(e){console.error(e);}
@@ -754,7 +701,7 @@ setKpi(2,'Kapasitas terpakai',Math.round(100*minta/kapT)+'%',`${fmt(minta)} / ${
 // ================= memperbaiki KPI "SPPG > kapasitas" (selalu 0 pada alokasi berkapasitas) dan kartu campuran "tidak tertampung + sekolah jauh" menjadi dua kartu terpisah: sekolah di luar area 10 menit (dengan jumlah siswa) dan siswa tidak tertampung =================
 const idxJauh=sekolahData.map((s,si)=>si).filter(si=>statusSekolah(si)===1);
 const nJauh=idxJauh.length,sJauh=idxJauh.reduce((a,si)=>a+getSiswa(sekolahData[si]),0);
-setKpi(3,`Di luar ${waktuIso/60} menit`,fmt(nJauh),`sekolah &middot; ${fmt(sJauh)} siswa`,nJauh>0?'bad':'ok',`Sekolah yang tidak berada dalam ${waktuIso/60} menit berkendara dari SPPG mana pun (bercincin merah di peta)`);
+setKpi(3,`Di luar ${waktuIso/60} menit`,fmt(nJauh),`sekolah &middot; ${fmt(sJauh)} siswa`,nJauh>0?'bad':'ok',`Sekolah yang tidak berada dalam ${waktuIso/60} menit berkendara dari SPPG mana pun`);
 setKpi(4,'Tidak tertampung',fmt(beban.kelebihan),'siswa tanpa kuota SPPG',beban.kelebihan>0?'bad':'ok','Siswa yang tidak muat di kuota SPPG mana pun dalam batas 30 menit');
 
 // ================= memperbaiki kartu "SPPG terpadat" (semua 100% karena beban dibatasi kapasitas, tidak informatif) menjadi "sekolah terjauh dari SPPG pelayannya" (waktu tempuh ke SPPG yang melayani, garis putus = 10 menit, skala sampai 30 menit) =================
@@ -1238,7 +1185,7 @@ introBtn.addEventListener('click',()=>{introEl.classList.toggle('kecil');labelIn
 
 // ================= pembuatan tur 5 langkah (peta, angka kunci, klik SPPG, grafik, menu) dengan sorotan elemen =================
 const LANGKAH_TUR=[
-{j:'Peta',t:'Titik hitam adalah dapur SPPG. Titik berwarna adalah sekolah: biru SD/MI, kuning SMP/MTs, ungu SMA/SMK/MA (pinggiran putih = madrasah). Besar titik mengikuti jumlah siswa. Cincin merah = sekolah yang jauh dari SPPG mana pun, titik merah muda = usulan SPPG baru.',sel:null},
+{j:'Peta',t:'Titik hitam adalah dapur SPPG. Titik berwarna adalah sekolah: biru SD/MI, kuning SMP/MTs, ungu SMA/SMK/MA (pinggiran putih = madrasah). Besar titik mengikuti jumlah siswa. Titik merah muda = usulan SPPG baru (muncul bila ada siswa yang tidak tertampung pada skenario yang dipilih).',sel:null},
 {j:'Angka kunci',t:'Empat angka di kiri atas: berapa siswa yang terjangkau dalam 10 menit, seberapa penuh kapasitas SPPG, berapa sekolah di luar jangkauan, dan berapa siswa tanpa kuota. Arahkan kursor ke kartu untuk penjelasan.',sel:'#kpiStrip'},
 {j:'Coba klik',t:'Klik satu titik hitam (SPPG). Popup menampilkan siswa yang dialokasikan (maks 3.000 per hari) dan sekolah yang dilayani, dan semua angka serta grafik berganti untuk SPPG itu. Klik tempat kosong untuk kembali ke ringkasan kota.',sel:null},
 {j:'Grafik di bawah',t:'Sekolah terjauh dari SPPG pelayannya, sebaran waktu tempuh siswa, daftar usulan lokasi SPPG baru (klik untuk zoom), dan kualitas data.',sel:'#dock'},
@@ -1292,19 +1239,6 @@ alert(e.message);
 }
 };
 
-// ================= memperbaiki Run Global yang hanya memakai satu SPPG (sppgData[0]) menjadi memakai gabungan isochrone semua SPPG agar "Global" benar-benar mencerminkan seluruh SPPG =================
-document.getElementById('run-global').onclick=async()=>{
-try{
-const iso=await gabungIsochrone();
-drawIso(iso);
-analyze(iso);
-await ringkasanGlobal();
-generateHeatmap();
-}catch(e){
-alert(e.message);
-}
-};
-
 
 // ================= UTIL =================
 function safeRemove(id){
@@ -1315,14 +1249,14 @@ if(map.getSource(id)) map.removeSource(id);
 function clear(){
 // ================= memperbaiki daftar clear() yang hanya 7 layer menjadi juga cover dan beban agar tidak terduplikasi saat ganti basemap =================
 // ================= memperbaiki daftar layer tetap (sd, smp, sma) pada clear() menjadi semua jenjang di JENJANG agar layer MI, MTs, SMK, MA juga dibersihkan saat ganti basemap =================
-[...JENJANG.map(j=>j.id),'sppg','iso','candidate','heatmap','cover','beban','status'].forEach(safeRemove);
+[...JENJANG.map(j=>j.id),'sppg','iso','candidate','heatmap','cover','beban'].forEach(safeRemove);
 // ================= memperbaiki clear() agar juga menghapus area layanan SPPG sebelum menggambar ulang =================
 hapusLayanan();
-hanyaJauhAktif=false;   // layer dibuat ulang dengan opasitas penuh
 }
 
 // ================= memperbaiki toggleLayer yang hanya menerima satu id menjadi menerima beberapa id dipisah koma (mis. 'sd-layer,mi-layer') agar satu tombol bisa mengatur jenjang yang setara; keadaan ditentukan dari layer pertama yang ada =================
 window.toggleLayer=(daftar)=>{
+if(String(daftar)==='heatmap-layer'&&!map.getLayer('heatmap-layer')){generateHeatmap();return;}   // heatmap dibuat saat pertama kali dinyalakan
 const ids=String(daftar).split(',').map(s=>s.trim()).filter(id=>map.getLayer(id));
 if(!ids.length) return;
 const v=map.getLayoutProperty(ids[0],'visibility');
