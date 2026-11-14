@@ -1196,7 +1196,7 @@ Usulan 5 lokasi SPPG baru hanya didasarkan pada batas 10 menit buatan sendiri. M
 - Pencarian kandidat diperbaiki: lokasi baru hanya mengambil sekolah dari SPPG yang melebihi kapasitas, sebatas kelebihannya dan kapasitas lokasi baru. Sebelumnya kapasitas lokasi baru terbuang untuk sekolah yang sudah terlayani baik, sehingga hasilnya kurang (2.500 menyisakan 1.285 siswa dengan 3 lokasi).
 
 **Hasil**
-BGN (3.000, normal): 0 lokasi. 3.000 dengan macet ×1,5: 232 siswa, 1 lokasi. 2.500 normal: 2.300 siswa, 1 lokasi. 2.500 dengan macet ×1,5: 8.338 siswa, 5 lokasi. 2.000: sekitar 50.000 siswa, 10 lokasi belum cukup (30.091 tersisa). Simulasi terpisah memberi angka sejalan (2.500 normal: 2.365 siswa).
+BGN (3.000, normal): 0 lokasi. 3.000 dengan macet ×1,5: 261 siswa, 1 lokasi. 2.500 normal: 2.365 siswa, 1 lokasi. 2.500 dengan macet ×1,5: 8.734 siswa, 5 lokasi. 2.000: 51.490 siswa, 10 lokasi belum cukup (30.091 tersisa). Simulasi terpisah memberi angka sejalan (2.500 normal: 2.365 siswa).
 
 **Pelajaran**
 Dasar sebuah usulan harus sama dengan aturan yang berlaku; parameter buatan sendiri hanya layak jadi pengujian tambahan. Setelah mengubah tujuan pencarian, periksa juga bahwa algoritmanya benar-benar mencapai tujuan itu (di sini kapasitas lokasi baru terbuang).

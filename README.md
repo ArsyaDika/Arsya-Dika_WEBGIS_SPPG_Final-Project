@@ -17,8 +17,8 @@ Dengan aturan resmi BGN yang dipakai proyek ini (maksimal 3.000 porsi per SPPG p
 | Siswa yang tidak tertampung kuota SPPG mana pun dalam 30 menit | **0** |
 | Sekolah di luar area 10 menit dari SPPG mana pun | **10 sekolah** (2.070 siswa) |
 | Lokasi SPPG baru yang diperlukan menurut aturan BGN | **0** (semua siswa tertampung dalam 30 menit) |
-| Uji ketahanan: kapasitas riil 2.500, lalu lintas normal | 2.300 siswa tidak tertampung; **1 lokasi baru** menutupnya |
-| Uji ketahanan: kapasitas riil 2.500, lalu lintas jam pagi ×1,5 | 8.338 siswa tidak tertampung; **5 lokasi baru** menutupnya |
+| Uji ketahanan: kapasitas riil 2.500, lalu lintas normal | 2.365 siswa tidak tertampung; **1 lokasi baru** menutupnya |
+| Uji ketahanan: kapasitas riil 2.500, lalu lintas jam pagi ×1,5 | 8.734 siswa tidak tertampung; **5 lokasi baru** menutupnya |
 | Waktu tempuh ke SPPG tercepat | median 2,5 menit, persentil 90 5,0 menit, maksimum 17,4 menit |
 
 Artinya, **menurut aturan BGN jaringan SPPG Kota Semarang sudah mencukupi dan tidak ada lokasi baru yang wajib dibangun**. Batas 10 menit adalah ukuran internal yang lebih ketat dari batas BGN (20–30 menit); sepuluh sekolah di tepi kota berada di luar 10 menit, tetapi tidak ada yang lebih dari 17,4 menit dari SPPG terdekat.
@@ -27,7 +27,9 @@ Usulan lokasi baru karena itu dihitung dari **uji ketahanan**, bukan dari aturan
 
 Catatan alokasi: SPPG yang penuh melepas sekolah ke SPPG terdekat berikutnya, sehingga sebagian sekolah dilayani SPPG yang bukan tercepat. Rata-rata waktu tempuh siswa 3,5 menit, tetapi 38 sekolah dilayani SPPG yang berjarak lebih dari 10 menit (terjauh 23 menit, masih di bawah 30).
 
-![Kandidat lokasi SPPG baru](docs/screenshot/kandidat.png)
+![Usulan lokasi SPPG baru pada skenario kapasitas 2.500 dan lalu lintas ×1,5](docs/screenshot/kandidat.png)
+
+*Contoh skenario uji ketahanan: kapasitas riil 2.500 per SPPG dan lalu lintas pagi ×1,5; titik merah muda adalah 5 lokasi usulan.*
 
 ## Fitur
 
