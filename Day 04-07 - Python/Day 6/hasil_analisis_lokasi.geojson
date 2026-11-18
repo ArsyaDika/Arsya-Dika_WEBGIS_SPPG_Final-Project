@@ -1,0 +1,12 @@
+{
+"type": "FeatureCollection",
+"name": "hasil_analisis_lokasi",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "KEPADATAN": "TINGGI", "RISIKO_BANJIR": "SEDANG", "AIR_BERSIH": "TIDAK", "LUAS_LAHAN": 11000, "DEKAT_PENDIDIKAN": "TIDAK", "DEKAT_TRANSPORTASI": "TIDAK", "HARGA_LAHAN": 275000000, "TINGKAT_POLUSI": "RENDAH", "SKOR_TOTAL": 15, "KESESUAIAN": "SEDANG" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 106.88, -6.29 ], [ 106.88, -6.28 ], [ 106.89, -6.28 ], [ 106.89, -6.29 ], [ 106.88, -6.29 ] ] ] } },
+{ "type": "Feature", "properties": { "KEPADATAN": "SEDANG", "RISIKO_BANJIR": "RENDAH", "AIR_BERSIH": "YA", "LUAS_LAHAN": 9500, "DEKAT_PENDIDIKAN": "YA", "DEKAT_TRANSPORTASI": "YA", "HARGA_LAHAN": 210000000, "TINGKAT_POLUSI": "SEDANG", "SKOR_TOTAL": 16, "KESESUAIAN": "SEDANG" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 106.86, -6.27 ], [ 106.86, -6.26 ], [ 106.87, -6.26 ], [ 106.87, -6.27 ], [ 106.86, -6.27 ] ] ] } },
+{ "type": "Feature", "properties": { "KEPADATAN": "RENDAH", "RISIKO_BANJIR": "TINGGI", "AIR_BERSIH": "YA", "LUAS_LAHAN": 15000, "DEKAT_PENDIDIKAN": "YA", "DEKAT_TRANSPORTASI": "TIDAK", "HARGA_LAHAN": 300000000, "TINGKAT_POLUSI": "RENDAH", "SKOR_TOTAL": 15, "KESESUAIAN": "SEDANG" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 106.84, -6.25 ], [ 106.84, -6.24 ], [ 106.85, -6.24 ], [ 106.85, -6.25 ], [ 106.84, -6.25 ] ] ] } },
+{ "type": "Feature", "properties": { "KEPADATAN": "SEDANG", "RISIKO_BANJIR": "SEDANG", "AIR_BERSIH": "TIDAK", "LUAS_LAHAN": 8000, "DEKAT_PENDIDIKAN": "TIDAK", "DEKAT_TRANSPORTASI": "YA", "HARGA_LAHAN": 180000000, "TINGKAT_POLUSI": "TINGGI", "SKOR_TOTAL": 14, "KESESUAIAN": "SEDANG" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 106.82, -6.23 ], [ 106.82, -6.22 ], [ 106.83, -6.22 ], [ 106.83, -6.23 ], [ 106.82, -6.23 ] ] ] } },
+{ "type": "Feature", "properties": { "KEPADATAN": "TINGGI", "RISIKO_BANJIR": "RENDAH", "AIR_BERSIH": "YA", "LUAS_LAHAN": 12000, "DEKAT_PENDIDIKAN": "YA", "DEKAT_TRANSPORTASI": "YA", "HARGA_LAHAN": 250000000, "TINGKAT_POLUSI": "SEDANG", "SKOR_TOTAL": 18, "KESESUAIAN": "TINGGI" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 106.8, -6.21 ], [ 106.8, -6.2 ], [ 106.81, -6.2 ], [ 106.81, -6.21 ], [ 106.8, -6.21 ] ] ] } }
+]
+}

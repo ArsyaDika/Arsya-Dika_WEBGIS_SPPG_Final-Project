@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebGIS MAPID - Sesi 2</title>
+    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="app.js" defer></script>
+  </head>
+
+
+  <body class="w-screen h-screen">
+    <nav class="w-full flex">
+      <div>WebGIS MAPID - Sesi 2</div>
+    </nav>
+
+
+    <div class="flex h-screen">
+      <aside class="w-[350px] bg-white z-20">
+        <section>
+          <h2>Basemap Switcher</h2>
+          <div class="flex flex-col gap-2 p-2">
+            <button
+              onclick="updateStyleToStreet()"
+              class="p-2 border border-1 rounded-sm"
+            >
+              Mapid Street
+            </button>
+            <button
+              onclick="updateStyleToSatellite()"
+              class="p-2 border border-1 rounded-sm"
+            >
+              Mapid Satellite
+            </button>
+            <button
+              onclick="updateStyleToDark()"
+              class="p-2 border border-1 rounded-sm"
+            >
+              Mapid Dark
+            </button>
+          </div>
+        </section>
+
+
+        <!-- TOGGLE LAYER -->
+        <section>
+          <h2>Toggle Layer</h2>
+          <div>
+            <button onclick="toggleLayerApartemen()"
+            class="p-4 border border-2 rounded-sm">
+              Toggle Layer Apartemen
+            </button>
+          </div>
+        </section>
+
+
+        <!-- TOGGLE LAYER -->
+        <section>
+          <h2>Toggle Layer</h2>
+          <div>
+            <button onclick="toggleLayerAdministrasi()"
+            class="p-4 border border-2 rounded-sm">
+              Toggle Layer Administrasi
+            </button>
+          </div>
+        </section>
+
+        
+         <!-- TOGGLE LAYER -->
+        <section>
+          <h2>Toggle Layer</h2>
+          <div>
+            <button onclick="toggleLayerDrainase()"
+            class="p-4 border border-2 rounded-sm">
+              Toggle Layer Drainase
+            </button>
+            <button onclick="zoomKeDrainase()"
+            class="p-4 border border-2 rounded-sm">
+              Lihat Drainase (Yogyakarta)
+            </button>
+          </div>
+        </section>
+      </aside>
+
+      <div id="map" class="w-full h-full"></div>
+    </div>
+  </body>
+</html>

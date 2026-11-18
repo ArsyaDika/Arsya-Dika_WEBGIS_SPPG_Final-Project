@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_4363a86ddfe6399e3a52077f27f87a4c {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    
+                    <style>
+                        .foliumtooltip {
+                            
+                        }
+                       .foliumtooltip table{
+                            margin: auto;
+                        }
+                        .foliumtooltip tr{
+                            text-align: left;
+                        }
+                        .foliumtooltip th{
+                            padding: 2px; padding-right: 8px;
+                        }
+                    </style>
+            
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_4363a86ddfe6399e3a52077f27f87a4c" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_4363a86ddfe6399e3a52077f27f87a4c = L.map(
+                "map_4363a86ddfe6399e3a52077f27f87a4c",
+                {
+                    center: [-6.56, 107.73999999999998],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 8,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_a27b4a9f5855f9262696a050f4ea4efb = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_a27b4a9f5855f9262696a050f4ea4efb.addTo(map_4363a86ddfe6399e3a52077f27f87a4c);
+        
+    
+        function geo_json_01918263d8bf718b96daac4c9302419c_styler(feature) {
+            switch(feature.id) {
+                default:
+                    return {"color": "black", "fillColor": "#3186cc", "fillOpacity": 0.5, "weight": 2};
+            }
+        }
+
+        function geo_json_01918263d8bf718b96daac4c9302419c_onEachFeature(feature, layer) {
+
+            layer.on({
+            });
+        };
+        var geo_json_01918263d8bf718b96daac4c9302419c = L.geoJson(null, {
+                onEachFeature: geo_json_01918263d8bf718b96daac4c9302419c_onEachFeature,
+            
+                style: geo_json_01918263d8bf718b96daac4c9302419c_styler,
+            ...{
+}
+        });
+
+        function geo_json_01918263d8bf718b96daac4c9302419c_add (data) {
+            geo_json_01918263d8bf718b96daac4c9302419c
+                .addData(data);
+        }
+            geo_json_01918263d8bf718b96daac4c9302419c_add({"bbox": [107.0, -7.0, 108.6, -6.1], "features": [{"bbox": [108.5, -6.7, 108.6, -6.6], "geometry": {"coordinates": [[[108.5, -6.7], [108.6, -6.7], [108.6, -6.6], [108.5, -6.6], [108.5, -6.7]]], "type": "Polygon"}, "id": "0", "properties": {"cluster_potensi": "Sedang", "jenis_batuan": "Sandstone", "kecamatan": "Kec. A", "kedalaman": 2500, "latitude": -6.65, "longitude": 108.54999999999998, "permeabilitas": 120, "porositas": 18, "potensi_hidrokarbon": 120, "wilayah": "Cirebon"}, "type": "Feature"}, {"bbox": [107.0, -6.3, 107.1, -6.2], "geometry": {"coordinates": [[[107.0, -6.3], [107.1, -6.3], [107.1, -6.2], [107.0, -6.2], [107.0, -6.3]]], "type": "Polygon"}, "id": "1", "properties": {"cluster_potensi": "Tinggi", "jenis_batuan": "Limestone", "kecamatan": "Kec. B", "kedalaman": 3200, "latitude": -6.25, "longitude": 107.05, "permeabilitas": 210, "porositas": 22, "potensi_hidrokarbon": 200, "wilayah": "Bekasi"}, "type": "Feature"}, {"bbox": [107.3, -6.2, 107.4, -6.1], "geometry": {"coordinates": [[[107.3, -6.2], [107.4, -6.2], [107.4, -6.1], [107.3, -6.1], [107.3, -6.2]]], "type": "Polygon"}, "id": "2", "properties": {"cluster_potensi": "Sedang", "jenis_batuan": "Shale", "kecamatan": "Kec. C", "kedalaman": 2800, "latitude": -6.15, "longitude": 107.35, "permeabilitas": 90, "porositas": 15, "potensi_hidrokarbon": 150, "wilayah": "Karawang"}, "type": "Feature"}, {"bbox": [107.7, -6.5, 107.8, -6.4], "geometry": {"coordinates": [[[107.7, -6.5], [107.8, -6.5], [107.8, -6.4], [107.7, -6.4], [107.7, -6.5]]], "type": "Polygon"}, "id": "3", "properties": {"cluster_potensi": "Rendah", "jenis_batuan": "Sandstone", "kecamatan": "Kec. D", "kedalaman": 2100, "latitude": -6.449999999999999, "longitude": 107.75000000000001, "permeabilitas": 160, "porositas": 20, "potensi_hidrokarbon": 80, "wilayah": "Subang"}, "type": "Feature"}, {"bbox": [108.0, -6.4, 108.1, -6.3], "geometry": {"coordinates": [[[108.0, -6.4], [108.1, -6.4], [108.1, -6.3], [108.0, -6.3], [108.0, -6.4]]], "type": "Polygon"}, "id": "4", "properties": {"cluster_potensi": "Tinggi", "jenis_batuan": "Shale", "kecamatan": "Kec. E", "kedalaman": 3000, "latitude": -6.35, "longitude": 108.05000000000001, "permeabilitas": 130, "porositas": 17, "potensi_hidrokarbon": 170, "wilayah": "Indramayu"}, "type": "Feature"}, {"bbox": [107.2, -6.5, 107.3, -6.4], "geometry": {"coordinates": [[[107.2, -6.5], [107.3, -6.5], [107.3, -6.4], [107.2, -6.4], [107.2, -6.5]]], "type": "Polygon"}, "id": "5", "properties": {"cluster_potensi": "Sedang", "jenis_batuan": "Limestone", "kecamatan": "Kec. F", "kedalaman": 2600, "latitude": -6.449999999999999, "longitude": 107.24999999999999, "permeabilitas": 115, "porositas": 19, "potensi_hidrokarbon": 110, "wilayah": "Purwakarta"}, "type": "Feature"}, {"bbox": [108.3, -6.8, 108.4, -6.7], "geometry": {"coordinates": [[[108.3, -6.8], [108.4, -6.8], [108.4, -6.7], [108.3, -6.7], [108.3, -6.8]]], "type": "Polygon"}, "id": "6", "properties": {"cluster_potensi": "Rendah", "jenis_batuan": "Sandstone", "kecamatan": "Kec. G", "kedalaman": 2400, "latitude": -6.75, "longitude": 108.35, "permeabilitas": 100, "porositas": 16, "potensi_hidrokarbon": 95, "wilayah": "Majalengka"}, "type": "Feature"}, {"bbox": [107.6, -6.8, 107.7, -6.7], "geometry": {"coordinates": [[[107.6, -6.8], [107.7, -6.8], [107.7, -6.7], [107.6, -6.7], [107.6, -6.8]]], "type": "Polygon"}, "id": "7", "properties": {"cluster_potensi": "Sedang", "jenis_batuan": "Shale", "kecamatan": "Kec. H", "kedalaman": 2700, "latitude": -6.75, "longitude": 107.64999999999999, "permeabilitas": 140, "porositas": 21, "potensi_hidrokarbon": 130, "wilayah": "Sumedang"}, "type": "Feature"}, {"bbox": [107.5, -6.9, 107.6, -6.8], "geometry": {"coordinates": [[[107.5, -6.9], [107.6, -6.9], [107.6, -6.8], [107.5, -6.8], [107.5, -6.9]]], "type": "Polygon"}, "id": "8", "properties": {"cluster_potensi": "Rendah", "jenis_batuan": "Limestone", "kecamatan": "Kec. I", "kedalaman": 1800, "latitude": -6.85, "longitude": 107.55, "permeabilitas": 80, "porositas": 14, "potensi_hidrokarbon": 60, "wilayah": "Bandung"}, "type": "Feature"}, {"bbox": [107.8, -7.0, 107.9, -6.9], "geometry": {"coordinates": [[[107.8, -7.0], [107.9, -7.0], [107.9, -6.9], [107.8, -6.9], [107.8, -7.0]]], "type": "Polygon"}, "id": "9", "properties": {"cluster_potensi": "Rendah", "jenis_batuan": "Sandstone", "kecamatan": "Kec. J", "kedalaman": 2200, "latitude": -6.95, "longitude": 107.85000000000001, "permeabilitas": 110, "porositas": 18, "potensi_hidrokarbon": 75, "wilayah": "Garut"}, "type": "Feature"}], "type": "FeatureCollection"});
+
+        
+    
+    geo_json_01918263d8bf718b96daac4c9302419c.bindTooltip(
+    function(layer){
+    let div = L.DomUtil.create('div');
+    
+    let handleObject = feature => {
+        if (feature === null) {
+            return '';
+        } else if (typeof(feature)=='object') {
+            return JSON.stringify(feature);
+        } else {
+            return feature;
+        }
+    }
+    let fields = ["wilayah", "potensi_hidrokarbon", "kedalaman", "jenis_batuan", "porositas", "permeabilitas", "kecamatan"];
+    let aliases = ["Wilayah:", "Potensi (juta barrel):", "Kedalaman (m):", "Jenis Batuan:", "Porositas (%):", "Permeabilitas (mD):", "Kecamatan:"];
+    let table = '<table>' +
+        String(
+        fields.map(
+        (v,i)=>
+        `<tr>
+            <th>${aliases[i].toLocaleString()}</th>
+            
+            <td>${handleObject(layer.feature.properties[v]).toLocaleString()}</td>
+        </tr>`).join(''))
+    +'</table>';
+    div.innerHTML=table;
+    
+    return div
+    }
+    ,{
+  "sticky": true,
+  "className": "foliumtooltip",
+});
+                     
+    
+            geo_json_01918263d8bf718b96daac4c9302419c.addTo(map_4363a86ddfe6399e3a52077f27f87a4c);
+        
+    
+            var marker_fe2da2cd4347e264cb993168c8b9b32b = L.marker(
+                [-6.65, 108.54999999999998],
+                {
+}
+            ).addTo(map_4363a86ddfe6399e3a52077f27f87a4c);
+        
+    
+            var icon_e3d9d11ff7c0bfafd5f6c6423a108e83 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b737d5d7bb2f9e0646e1e5273446555d = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d628b9808f9ba1e9014e9e070cbebfc8 = $(`<div id="html_d628b9808f9ba1e9014e9e070cbebfc8" style="width: 100.0%; height: 100.0%;">Cirebon<br>Potensi: 120 juta barrel<br>Kedalaman: 2500 m</div>`)[0];
+                popup_b737d5d7bb2f9e0646e1e5273446555d.setContent(html_d628b9808f9ba1e9014e9e070cbebfc8);
+            
+        
+
+        marker_fe2da2cd4347e264cb993168c8b9b32b.bindPopup(popup_b737d5d7bb2f9e0646e1e5273446555d)
+        ;
+
+        
+    
+    
+                marker_fe2da2cd4347e264cb993168c8b9b32b.setIcon(icon_e3d9d11ff7c0bfafd5f6c6423a108e83);
+            
+    
+            var marker_f958860644d8b177ff7841aa76e39b4f = L.marker(
+                [-6.25, 107.05],
+                {
+}
+            ).addTo(map_4363a86ddfe6399e3a52077f27f87a4c);
+        
+    
+            var icon_1208f86a9f0d68b0e39a98e45a7b18e0 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e3fb6abb0e653609c581b4b9110f061e = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_53b29f3f9833482faf2eed0039d610ab = $(`<div id="html_53b29f3f9833482faf2eed0039d610ab" style="width: 100.0%; height: 100.0%;">Bekasi<br>Potensi: 200 juta barrel<br>Kedalaman: 3200 m</div>`)[0];
+                popup_e3fb6abb0e653609c581b4b9110f061e.setContent(html_53b29f3f9833482faf2eed0039d610ab);
+            
+        
+
+        marker_f958860644d8b177ff7841aa76e39b4f.bindPopup(popup_e3fb6abb0e653609c581b4b9110f061e)
+        ;
+
+        
+    
+    
+                marker_f958860644d8b177ff7841aa76e39b4f.setIcon(icon_1208f86a9f0d68b0e39a98e45a7b18e0);
+            
+    
+            var marker_214c82d937e9df1a6837383ce6956d52 = L.marker(
+                [-6.15, 107.35],
+                {
+}
+            ).addTo(map_4363a86ddfe6399e3a52077f27f87a4c);
+        
+    
+            var icon_ee19e21cc66b7f701c835bb9989928b7 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_cb2b6f1aba88c2bc7f7e5765fd29d1fa = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_fbc28c2a8a40b211c4af48a2900727ea = $(`<div id="html_fbc28c2a8a40b211c4af48a2900727ea" style="width: 100.0%; height: 100.0%;">Karawang<br>Potensi: 150 juta barrel<br>Kedalaman: 2800 m</div>`)[0];
+                popup_cb2b6f1aba88c2bc7f7e5765fd29d1fa.setContent(html_fbc28c2a8a40b211c4af48a2900727ea);
+            
+        
+
+        marker_214c82d937e9df1a6837383ce6956d52.bindPopup(popup_cb2b6f1aba88c2bc7f7e5765fd29d1fa)
+        ;
+
+        
+    
+    
+                marker_214c82d937e9df1a6837383ce6956d52.setIcon(icon_ee19e21cc66b7f701c835bb9989928b7);
+            
+    
+            var marker_cf3f49818dcbb88ab5127838b05bd649 = L.marker(
+                [-6.449999999999999, 107.75000000000001],
+                {
+}
+            ).addTo(map_4363a86ddfe6399e3a52077f27f87a4c);
+        
+    
+            var icon_0fbe97751c802711b523c3dec1951139 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_ef6cbf3730cde450da4db7f7b1106ed2 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_6613bb37a3adb308b7cfa4154ba33c53 = $(`<div id="html_6613bb37a3adb308b7cfa4154ba33c53" style="width: 100.0%; height: 100.0%;">Subang<br>Potensi: 80 juta barrel<br>Kedalaman: 2100 m</div>`)[0];
+                popup_ef6cbf3730cde450da4db7f7b1106ed2.setContent(html_6613bb37a3adb308b7cfa4154ba33c53);
+            
+        
+
+        marker_cf3f49818dcbb88ab5127838b05bd649.bindPopup(popup_ef6cbf3730cde450da4db7f7b1106ed2)
+        ;
+
+        
+    
+    
+                marker_cf3f49818dcbb88ab5127838b05bd649.setIcon(icon_0fbe97751c802711b523c3dec1951139);
+            
+    
+            var marker_260e5f9862acb5043c2e59074e3bfb09 = L.marker(
+                [-6.35, 108.05000000000001],
+                {
+}
+            ).addTo(map_4363a86ddfe6399e3a52077f27f87a4c);
+        
+    
+            var icon_810f50f7068f9e17da33797ae48c73fa = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_4f2b0ed630cce49e98c5a089bd29560c = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_40fdf0c02e069e15fbfd38deeac0e337 = $(`<div id="html_40fdf0c02e069e15fbfd38deeac0e337" style="width: 100.0%; height: 100.0%;">Indramayu<br>Potensi: 170 juta barrel<br>Kedalaman: 3000 m</div>`)[0];
+                popup_4f2b0ed630cce49e98c5a089bd29560c.setContent(html_40fdf0c02e069e15fbfd38deeac0e337);
+            
+        
+
+        marker_260e5f9862acb5043c2e59074e3bfb09.bindPopup(popup_4f2b0ed630cce49e98c5a089bd29560c)
+        ;
+
+        
+    
+    
+                marker_260e5f9862acb5043c2e59074e3bfb09.setIcon(icon_810f50f7068f9e17da33797ae48c73fa);
+            
+    
+            var marker_2a2d5be61cf0d07805c3bc3871eca247 = L.marker(
+                [-6.449999999999999, 107.24999999999999],
+                {
+}
+            ).addTo(map_4363a86ddfe6399e3a52077f27f87a4c);
+        
+    
+            var icon_10dcdddc0c54ee503dd353388c30e17d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c0ddf28edab27657de3f8f035ae54b25 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_b59ce0440299bd0b67f05786a47a434b = $(`<div id="html_b59ce0440299bd0b67f05786a47a434b" style="width: 100.0%; height: 100.0%;">Purwakarta<br>Potensi: 110 juta barrel<br>Kedalaman: 2600 m</div>`)[0];
+                popup_c0ddf28edab27657de3f8f035ae54b25.setContent(html_b59ce0440299bd0b67f05786a47a434b);
+            
+        
+
+        marker_2a2d5be61cf0d07805c3bc3871eca247.bindPopup(popup_c0ddf28edab27657de3f8f035ae54b25)
+        ;
+
+        
+    
+    
+                marker_2a2d5be61cf0d07805c3bc3871eca247.setIcon(icon_10dcdddc0c54ee503dd353388c30e17d);
+            
+    
+            var marker_19bc7fd8aaaaa0faaba18235d9ba4e63 = L.marker(
+                [-6.75, 108.35],
+                {
+}
+            ).addTo(map_4363a86ddfe6399e3a52077f27f87a4c);
+        
+    
+            var icon_0d78c9eafba950db7c9c8cfffb783a98 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f9edd5de5aa65d95cfca47d9722ce15b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ac6d2e0a7dc64936c424ec2547b70a36 = $(`<div id="html_ac6d2e0a7dc64936c424ec2547b70a36" style="width: 100.0%; height: 100.0%;">Majalengka<br>Potensi: 95 juta barrel<br>Kedalaman: 2400 m</div>`)[0];
+                popup_f9edd5de5aa65d95cfca47d9722ce15b.setContent(html_ac6d2e0a7dc64936c424ec2547b70a36);
+            
+        
+
+        marker_19bc7fd8aaaaa0faaba18235d9ba4e63.bindPopup(popup_f9edd5de5aa65d95cfca47d9722ce15b)
+        ;
+
+        
+    
+    
+                marker_19bc7fd8aaaaa0faaba18235d9ba4e63.setIcon(icon_0d78c9eafba950db7c9c8cfffb783a98);
+            
+    
+            var marker_2a58ab7c27a1287176e9a87e456551df = L.marker(
+                [-6.75, 107.64999999999999],
+                {
+}
+            ).addTo(map_4363a86ddfe6399e3a52077f27f87a4c);
+        
+    
+            var icon_e9d785bb77fd0d2787368d0ca968f36a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_61ae23dfe846ac6604fd9ea20ab82f0d = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_b4bdc4bdf9bb34a22c5cd6d035a0206b = $(`<div id="html_b4bdc4bdf9bb34a22c5cd6d035a0206b" style="width: 100.0%; height: 100.0%;">Sumedang<br>Potensi: 130 juta barrel<br>Kedalaman: 2700 m</div>`)[0];
+                popup_61ae23dfe846ac6604fd9ea20ab82f0d.setContent(html_b4bdc4bdf9bb34a22c5cd6d035a0206b);
+            
+        
+
+        marker_2a58ab7c27a1287176e9a87e456551df.bindPopup(popup_61ae23dfe846ac6604fd9ea20ab82f0d)
+        ;
+
+        
+    
+    
+                marker_2a58ab7c27a1287176e9a87e456551df.setIcon(icon_e9d785bb77fd0d2787368d0ca968f36a);
+            
+    
+            var marker_195a88255fdb5cf51a2cd55d10988c98 = L.marker(
+                [-6.85, 107.55],
+                {
+}
+            ).addTo(map_4363a86ddfe6399e3a52077f27f87a4c);
+        
+    
+            var icon_e6cf5921192dcf0619805cf2584e7467 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c662d80cdec99952cdfcbf793fb6913b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_8f6b71365424c3f91c91a754b39fb8ed = $(`<div id="html_8f6b71365424c3f91c91a754b39fb8ed" style="width: 100.0%; height: 100.0%;">Bandung<br>Potensi: 60 juta barrel<br>Kedalaman: 1800 m</div>`)[0];
+                popup_c662d80cdec99952cdfcbf793fb6913b.setContent(html_8f6b71365424c3f91c91a754b39fb8ed);
+            
+        
+
+        marker_195a88255fdb5cf51a2cd55d10988c98.bindPopup(popup_c662d80cdec99952cdfcbf793fb6913b)
+        ;
+
+        
+    
+    
+                marker_195a88255fdb5cf51a2cd55d10988c98.setIcon(icon_e6cf5921192dcf0619805cf2584e7467);
+            
+    
+            var marker_5c8a0698a095e9e050c5580c1acbea82 = L.marker(
+                [-6.95, 107.85000000000001],
+                {
+}
+            ).addTo(map_4363a86ddfe6399e3a52077f27f87a4c);
+        
+    
+            var icon_9f9946c6ecd23111eeb3402b346ccee6 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_09ba78c1ed2c5305b28781fa3cfd67bd = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_187c2d1fcafda4aa4240e79eff00ec6f = $(`<div id="html_187c2d1fcafda4aa4240e79eff00ec6f" style="width: 100.0%; height: 100.0%;">Garut<br>Potensi: 75 juta barrel<br>Kedalaman: 2200 m</div>`)[0];
+                popup_09ba78c1ed2c5305b28781fa3cfd67bd.setContent(html_187c2d1fcafda4aa4240e79eff00ec6f);
+            
+        
+
+        marker_5c8a0698a095e9e050c5580c1acbea82.bindPopup(popup_09ba78c1ed2c5305b28781fa3cfd67bd)
+        ;
+
+        
+    
+    
+                marker_5c8a0698a095e9e050c5580c1acbea82.setIcon(icon_9f9946c6ecd23111eeb3402b346ccee6);
+            
+    
+            var marker_d19895fa1c79977372bb3df88691cad4 = L.marker(
+                [-6.56, 107.73999999999998],
+                {
+}
+            ).addTo(map_4363a86ddfe6399e3a52077f27f87a4c);
+        
+    
+            var icon_a5da99a5d2559276ce1e6af7270af0c3 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_bebf3f0de6b14c66bbef26880017bbec = L.popup({
+  "maxWidth": 450,
+});
+
+        
+            
+                var html_452dabeee61cd39434505e0ab61a8ee8 = $(`<div id="html_452dabeee61cd39434505e0ab61a8ee8" style="width: 100.0%; height: 100.0%;"> <b>Kesimpulan ESDA:</b><br> - Wilayah dengan potensi hidrokarbon tertinggi: <b>Bekasi</b> (200 juta barrel).<br> - Cluster potensi: 4 wilayah sedang, 4 wilayah rendah, 2 wilayah tinggi.<br> - Area prospek (multi-parameter): Bekasi, Sumedang.<br> - Korelasi porositas dan permeabilitas: 0.88.<br> - Outlier terdeteksi di wilayah: Tidak ada.<br> - Analisis spasial dan statistik membantu identifikasi area prioritas eksplorasi. </div>`)[0];
+                popup_bebf3f0de6b14c66bbef26880017bbec.setContent(html_452dabeee61cd39434505e0ab61a8ee8);
+            
+        
+
+        marker_d19895fa1c79977372bb3df88691cad4.bindPopup(popup_bebf3f0de6b14c66bbef26880017bbec)
+        ;
+
+        
+    
+    
+                marker_d19895fa1c79977372bb3df88691cad4.setIcon(icon_a5da99a5d2559276ce1e6af7270af0c3);
+            
+</script>
+</html>

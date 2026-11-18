@@ -1,0 +1,165 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "wilayah": "Cirebon",
+        "potensi_hidrokarbon": 120,
+        "kedalaman": 2500,
+        "jenis_batuan": "Sandstone",
+        "porositas": 18,
+        "permeabilitas": 120,
+        "kecamatan": "Kec. A"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[108.5, -6.7], [108.6, -6.7], [108.6, -6.6], [108.5, -6.6], [108.5, -6.7]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilayah": "Bekasi",
+        "potensi_hidrokarbon": 200,
+        "kedalaman": 3200,
+        "jenis_batuan": "Limestone",
+        "porositas": 22,
+        "permeabilitas": 210,
+        "kecamatan": "Kec. B"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[107.0, -6.3], [107.1, -6.3], [107.1, -6.2], [107.0, -6.2], [107.0, -6.3]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilayah": "Karawang",
+        "potensi_hidrokarbon": 150,
+        "kedalaman": 2800,
+        "jenis_batuan": "Shale",
+        "porositas": 15,
+        "permeabilitas": 90,
+        "kecamatan": "Kec. C"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[107.3, -6.2], [107.4, -6.2], [107.4, -6.1], [107.3, -6.1], [107.3, -6.2]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilayah": "Subang",
+        "potensi_hidrokarbon": 80,
+        "kedalaman": 2100,
+        "jenis_batuan": "Sandstone",
+        "porositas": 20,
+        "permeabilitas": 160,
+        "kecamatan": "Kec. D"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[107.7, -6.5], [107.8, -6.5], [107.8, -6.4], [107.7, -6.4], [107.7, -6.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilayah": "Indramayu",
+        "potensi_hidrokarbon": 170,
+        "kedalaman": 3000,
+        "jenis_batuan": "Shale",
+        "porositas": 17,
+        "permeabilitas": 130,
+        "kecamatan": "Kec. E"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[108.0, -6.4], [108.1, -6.4], [108.1, -6.3], [108.0, -6.3], [108.0, -6.4]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilayah": "Purwakarta",
+        "potensi_hidrokarbon": 110,
+        "kedalaman": 2600,
+        "jenis_batuan": "Limestone",
+        "porositas": 19,
+        "permeabilitas": 115,
+        "kecamatan": "Kec. F"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[107.2, -6.5], [107.3, -6.5], [107.3, -6.4], [107.2, -6.4], [107.2, -6.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilayah": "Majalengka",
+        "potensi_hidrokarbon": 95,
+        "kedalaman": 2400,
+        "jenis_batuan": "Sandstone",
+        "porositas": 16,
+        "permeabilitas": 100,
+        "kecamatan": "Kec. G"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[108.3, -6.8], [108.4, -6.8], [108.4, -6.7], [108.3, -6.7], [108.3, -6.8]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilayah": "Sumedang",
+        "potensi_hidrokarbon": 130,
+        "kedalaman": 2700,
+        "jenis_batuan": "Shale",
+        "porositas": 21,
+        "permeabilitas": 140,
+        "kecamatan": "Kec. H"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[107.6, -6.8], [107.7, -6.8], [107.7, -6.7], [107.6, -6.7], [107.6, -6.8]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilayah": "Bandung",
+        "potensi_hidrokarbon": 60,
+        "kedalaman": 1800,
+        "jenis_batuan": "Limestone",
+        "porositas": 14,
+        "permeabilitas": 80,
+        "kecamatan": "Kec. I"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[107.5, -6.9], [107.6, -6.9], [107.6, -6.8], [107.5, -6.8], [107.5, -6.9]]]
+      }
+    },
+    {
+  "type": "Feature",
+  "properties": {
+    "wilayah": "Garut",
+    "potensi_hidrokarbon": 75,
+    "kedalaman": 2200,
+    "jenis_batuan": "Sandstone",
+    "porositas": 18,
+    "permeabilitas": 110,
+    "kecamatan": "Kec. J"
+  },
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [[[107.8, -7.0], [107.9, -7.0], [107.9, -6.9], [107.8, -6.9], [107.8, -7.0]]]
+  }
+}
+  ]
+}

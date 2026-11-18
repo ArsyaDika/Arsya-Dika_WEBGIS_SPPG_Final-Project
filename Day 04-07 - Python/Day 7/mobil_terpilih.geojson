@@ -1,0 +1,18 @@
+{
+  "type": "Feature",
+  "properties": {
+    "NAMA_DRIVER": "Siti",
+    "TIPE": "Sedan",
+    "KAPASITAS": 4,
+    "RATING": 4.9,
+    "JARAK_KM": 0.5397539133039302,
+    "SKOR": 120
+  },
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      106.825,
+      -6.205
+    ]
+  }
+}
